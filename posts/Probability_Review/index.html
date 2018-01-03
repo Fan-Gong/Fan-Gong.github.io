@@ -11,15 +11,38 @@
     <title>Fan Gong's Blog</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom fonts for this template -->
-    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
 
     <!-- Custom styles for this template -->
-    <link href="css/clean-blog.min.css" rel="stylesheet">
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
 
   </head>
 
@@ -28,7 +51,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
       <div class="container">
-        <a class="navbar-brand" href="index.html">Fan Gong's Blog</a>
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           Menu
           <i class="fa fa-bars"></i>
@@ -36,16 +59,16 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-              <a class="nav-link" href="index.html">Home</a>
+              <a class="nav-link" href="../../index.html">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="about.html">About</a>
+              <a class="nav-link" href="../../about.html">About</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="post.html">Article</a>
+              <a class="nav-link" href="../../article.html">Article</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="contact.html">Contact</a>
+              <a class="nav-link" href="../../contact.html">Contact</a>
             </li>
           </ul>
         </div>
@@ -53,17 +76,17 @@
     </nav>
 
     <!-- Page Header -->
-    <header class="masthead" style="background-image: url('img/post-bg.jpg')">
+    <header class="masthead" style="background-image: url('../../img/probability.jpg')">
       <div class="overlay"></div>
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
             <div class="post-heading">
-              <h1>Man must explore, and this is exploration at its greatest</h1>
-              <h2 class="subheading">Problems look mighty small from 150 miles up</h2>
+              <h1>Probability Review</h1>
+              <h2 class="subheading">The first step to be a data scientist</h2>
               <span class="meta">Posted by
-                <a href="#">Start Bootstrap</a>
-                on August 24, 2017</span>
+                <a href="../../about.index">Fan Gong</a>
+                on January 4, 2018</span>
             </div>
           </div>
         </div>
@@ -75,42 +98,62 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
-            <p>Never in all their history have men been able truly to conceive of the world as one: a single sphere, a globe, having the qualities of a globe, a round earth in which all the directions eventually meet, in which there is no center because every point, or none, is center — an equal earth which all men occupy as equals. The airman's earth, if free men make it, will be truly round: a globe in practice, not in theory.</p>
+            <p>Probability is the most basic subject among all the statistics courses. Since I decide to review what I have learned from these years, it is natural to start from reviewing Probability. </p>
+            <p>In this article I will only include something I think is important.</p>
 
-            <p>Science cuts two ways, of course; its products can be used for both good and evil. But there's no turning back from science. The early warnings about technological dangers also come from science.</p>
+            <h2 class="section-heading">1. Counting Methods</h2>
+              <h3> 1.1 Some definations and rules </h3>
+              <p> <b>Multiplication Rule </b> <br> K experiment stages s.t. there are $n_k$ outcomes for each outcome of the first (k-1) stages. Then there are $n_1 \times n_2 \dots \times n_k$ possible outcomes of this k-stage experiment.</p>
 
-            <p>What was most significant about the lunar voyage was not that man set foot on the Moon but that they set eye on the earth.</p>
+              <p><b>Permutation</b><br>The number of ways to arrange N numbers = The number of ways to order first N numbers</p>
 
-            <p>A Chinese tale tells of some men sent to harm a young girl who, upon seeing her beauty, become her protectors rather than her violators. That's how I felt seeing the Earth for the first time. I could not help but love and cherish her.</p>
+              <p><b>Combination</b><br>Choosing k out of N distinct objects</p>
 
-            <p>For those who have seen the Earth from space, and for the hundreds and perhaps thousands more who will, the experience most certainly changes your perspective. The things that we share in our world are far more valuable than those which divide us.</p>
+              <h3> 1.2 Application summary </h3>
+              <p>Normally the permutation questions are not very difficult. So here I only summarise the combination problems. Basically there are four situations, the key factors to divide these situations are replacement and order. </p>
+              <p>Suppose the question is to choose k number from N distinct numbers, here are the number of distinct results:</p>
 
-            <h2 class="section-heading">The Final Frontier</h2>
+              <table style="width:100%">
+                <tr>
+                  <th>Condition</th>
+                  <th>Care for order</th>
+                  <th>Not care for order</th>
+                </tr>
+                <tr>
+                  <td>With replacement</td>
+                  <td>$N^k$</td>
+                  <td>$C_{N+k-1}^{k}$</td>
+                </tr>
+                <tr>
+                  <td>Without replacement</td>
+                  <td>$P_{N}^{k}$</td>
+                  <td>$C_{N}^{k}$</td>
+                </tr>
+              </table>
 
-            <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a task to occupy the generations. And no matter how much progress one makes, there is always the thrill of just beginning.</p>
+              <p>The most confusing result is when we don't care for order and replacement is allowed. Here we could think of the k number as balls and N-1 as the number of movable sticks since N-1 sticks will divide all the number into N parts and the balls in each part belong to one number. In that case, we ignore the order and at the same time allow the k number to be the same.</p>
 
-            <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a task to occupy the generations. And no matter how much progress one makes, there is always the thrill of just beginning.</p>
+              <h2 class="section-heading">2. Conditional Probability</h2>
+              <h3> 2.1 Some definations and rules </h3>
+              <p><b>Total Probability</b><br>$F_1, F_2 \dots, F_n$ are a set of disjoint events whose union is the entile sample space E, then we have:<br>$$P(E) = P(E|F_1)P(F_1)+\dots+P(E|F_n)P(F_n) $$</p>
 
-            <blockquote class="blockquote">The dreams of yesterday are the hopes of today and the reality of tomorrow. Science has not yet mastered prophecy. We predict too much for the next year and yet far too little for the next ten.</blockquote>
+              <p>Normally, the event $E$ will be the output, and every sub event $F_i$ will be the reason that leads to that output. The intuition is that we sum all the probabilty that each reason leads to this output. (Reason infers Output)</p>
 
-            <p>Spaceflights cannot be stopped. This is not the work of any one man or even a group of men. It is a historical process which mankind is carrying out in accordance with the natural laws of human development.</p>
+              <p><b>Bayes Formula</b><br>Think of $E$ = outcome of an experiment, $F_1, F_2 \dots, F_n$ = hypothesis. We want to update our beliefs given the outcome of the experiment. That is, we want to compute $$P(F_k|E) = \frac{P(F_k)P(E|F_k)}{\sum_{i=1}^{n}P(F_i)P(E|F_i)}$$</p>
+              <p>If you carefully review bayes formula, you will find that what it calculates is just the opposite of the total probability. How to say that? Because for bayes formula, we already know the output and want to find the probability that each reason leads to this output. (Output infers reason/hypothesis)</p>
 
-            <h2 class="section-heading">Reaching for the Stars</h2>
+              <h3> 2.2 Application </h3>
+              <p><b>Example</b></p>
+              <p>Here is an example of the application of bayes formula<br>Suppose the probability that one person has this illness is 0.03. Due to the lag of the technology, the test results may make some mistakes. Here are the test information:<br>$$P(positive|ill) = 0.99$$$$P(negative|ill) = 0.01$$$$P(positive|not\ ill) = 0.95$$$$P(negative|not\ ill) = 0.05$$</p>
+              <p>Here I want to calculate the probability that the person is ill (output) given the test is positive (hypothesis). $$P(ill|positive) = \frac{P(ill)P(positive|ill)}{P(ill)P(positive|ill)+P(not\ ill)P(positive|not\ ill)}=0.38$$</p>
 
-            <p>As we got further and further away, it [the Earth] diminished in size. Finally it shrank to the size of a marble, the most beautiful you can imagine. That beautiful, warm, living object looked so fragile, so delicate, that if you touched it with a finger it would crumble and fall apart. Seeing this has to change a man.</p>
+              <p><b>Further application</b></p>
+              <p>Based on these thoughts, bayes formula is widely used in machine learning field; The most famous one is the <b>naive bayes classifier</b>.</p>
+              <p>For example we want to decide people's gender based on $h$(height) and $w$(weight) two factors. What we need to do is to compare these two probabilities: $$P(male|h,w)\qquad P(female|h,w)$$ Based on bayes formula, $$P(gender|h,w)=\frac{P(gender)P(h,w|gender)}{P(male)P(h,w|male)+P(female)P(h,w|female)}$$ Since the denominator is $P(h,w)$ will be a constant, we could just ignore it. Then the problem goes to like this:$$gender = argmax_{gender}P(h,w|gender)P(gender)$$</p>
 
-            <a href="#">
-              <img class="img-fluid" src="img/post-sample-image.jpg" alt="">
-            </a>
-            <span class="caption text-muted">To go places and do things that have never been done before – that’s what living is all about.</span>
+              <p>We suppose $p(h|gender)$,$p(w|gender)$ is iid normal distribution. Then we have:$$gender = argmax_{gender}P(h|gender)P(w|gender)P(gender)$$ and based on their distribution we could calcualte the final results. This is how to use bayes formula in ML field.</p>
 
-            <p>Space, the final frontier. These are the voyages of the Starship Enterprise. Its five-year mission: to explore strange new worlds, to seek out new life and new civilizations, to boldly go where no man has gone before.</p>
 
-            <p>As I stand out here in the wonders of the unknown at Hadley, I sort of realize there’s a fundamental truth to our nature, Man must explore, and this is exploration at its greatest.</p>
-
-            <p>Placeholder text by
-              <a href="http://spaceipsum.com/">Space Ipsum</a>. Photographs by
-              <a href="https://www.flickr.com/photos/nasacommons/">NASA on The Commons</a>.</p>
           </div>
         </div>
       </div>
@@ -125,7 +168,7 @@
           <div class="col-lg-8 col-md-10 mx-auto">
             <ul class="list-inline text-center">
               <li class="list-inline-item">
-                <a href="#">
+                <a href="https://twitter.com/Fan93fine">
                   <span class="fa-stack fa-lg">
                     <i class="fa fa-circle fa-stack-2x"></i>
                     <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
@@ -133,7 +176,7 @@
                 </a>
               </li>
               <li class="list-inline-item">
-                <a href="#">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
                   <span class="fa-stack fa-lg">
                     <i class="fa fa-circle fa-stack-2x"></i>
                     <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
@@ -141,7 +184,7 @@
                 </a>
               </li>
               <li class="list-inline-item">
-                <a href="#">
+                <a href="https://github.com/Fan-Gong">
                   <span class="fa-stack fa-lg">
                     <i class="fa fa-circle fa-stack-2x"></i>
                     <i class="fa fa-github fa-stack-1x fa-inverse"></i>
@@ -149,7 +192,7 @@
                 </a>
               </li>
             </ul>
-            <p class="copyright text-muted">Copyright &copy; Your Website 2017</p>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
           </div>
         </div>
       </div>
