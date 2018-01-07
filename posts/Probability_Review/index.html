@@ -162,6 +162,37 @@
               <p>We suppose $p(h|gender)$,$p(w|gender)$ is iid normal distribution. Then we have:$$gender = argmax_{gender}P(h|gender)P(w|gender)P(gender)$$ and based on their distribution we could calcualte the final results. This is how to use bayes formula in ML field.</p>
 
               <h2 class="section-heading">3. Random Variables and Distributions</h2>
+              <h3> Summary Table </h3>
+              <p>In this section,I ignore the basic defination of continuous and discrete variables. </p>
+              <p>Here is the summary table for the comparison between continuous and discrete variables.</p>
+
+              <table style="width:100%">
+                <tr>
+                  <th></th>
+                  <th>Continuous</th>
+                  <th>Discrete</th>
+                </tr>
+                <tr>
+                  <td>pdf/pmf</td>
+                  <td>$f\ge0$, s.t. $P(x\in A)=\int_Af(x)dx$</td>
+                  <td>$1\ge f\ge 0, P(x\in A)=\sum_Af(x)$</td>
+                </tr>
+                <tr>
+                  <td>cdf</td>
+                  <td>$F(x)=P(X\le x)$</td>
+                  <td>$F(x)=P(X\le x)$</td>
+                </tr>
+                <tr>
+                  <td>pdf/pmf -> cdf</td>
+                  <td>$F(x)=\int_{-\infty}^{x}f(y)dy$</td>
+                  <td>$F(x)=\sum_{y\in x}f(x)$</td>
+                </tr>
+                <tr>
+                  <td>cdf -> pdf/pmf</td>
+                  <td>$f(x) = \frac{\partial F(x)}{\partial x}$</td>
+                  <td>$f(x)=F(x)-lim_{y->x^{-}}F(y)$</td>
+                </tr>
+              </table>
 
           </div>
         </div>
