@@ -22,10 +22,35 @@
     <!-- Custom styles for this template -->
     <link href="../../css/clean-blog.min.css" rel="stylesheet">
 
-    <script type="text/x-mathjax-config"> MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
     </script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
     </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
 
   </head>
 
@@ -59,14 +84,14 @@
     </nav>
 
     <!-- Page Header -->
-    <header class="masthead" style="background-image: url('../../img/probability.jpg')">
+    <header class="masthead" style="background-image: url('../../img/inference.jpg')">
       <div class="overlay"></div>
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
             <div class="post-heading">
-              <h1>Inference Review</h1>
-              <h2 class="subheading">The second step to be a data scientist..</h2>
+              <h1>Inference Review (Part1)</h1>
+              <h2 class="subheading">Deep dive into statistics</h2>
               <span class="meta">Posted by
                 <a href="../../about.index">Fan Gong</a>
                 on January 6, 2018</span>
@@ -81,17 +106,178 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
-            <p></p>
+            <p>Last time we review the basic knowledge of Probability Theory, which gives us an fundamental understanding about statistics. This time we will go to the next step -- statistical inference.</p>
+            <p>Inference aims to learn about unknown quantities after observing some data that we believe contains relevant information. Normally, a statistical model specifies a joint distribution for observable random; parameters of that distribution are assumed unknown. </p>
+            <p><li> When we treat unknown parameters as fixed => "Frequentist" approach to statistical inference.</li>
+              <li> When we treat unknown parameters as random => "Bayesian" framework</li></p>
+
+            <h2 class="section-heading">1. Parameter Estimation</h2>
+            <h3>1.1 Point Estimation</h3>
+            <p><b> MLE (Maxmize Likelihood Estimation) </b><br>
+              We want to find the MLE of $\theta$, $\hat{\theta}=g(x_1,...,x_n) s.t. L(\hat{\theta} \ge L(\theta) $ for all other $\theta$.<br>
+
+              The intuition here is that suppose we know the distribution of the sample data, we want to find the parameter that maximize the likelihood that we get these sample data.<br>
+
+              <b> MME (Method of Moments)</b><br>
+              Compute moments such as $$E(X_i)=\mu, \quad E(X_i-\mu)^k$$, then equate sample moments to theoretical moments $$ \bar{X_n}=\mu, \quad \frac{1}{n}\sum(X_i-\bar{X})^k=E(X_i-\mu)^k $$
+
+              <b> Bayes Estimator: </b><br>
+              Let $L(\theta,\hat{\theta})$ be a loss function. $E_\pi(L(\theta,\hat{\theta}))$ is the bayes risk. An estimator $\hat{\theta} $is said to be a Bayes estimator if it minimizes the Bayes risk among all estimators.<br>
+
+              Some notes on Bayes framework:<br>
+              $$f(\theta|x_1,...,x_n) = \frac{f(x_1,...,x_n|\theta)h(\theta)}{f_x(x_1,...,x_n)}$$
+              <li> $h(\theta)$ - prior distribution of $\Theta$. Which is that prior belief about $\Theta$, here we choose based on experience. </li>
+              <li> $f(x_1,...,x_n|\theta)$ - Our model of data given a specific value of $\Theta=\theta$. Or we could say, the likelihood we observe these data based on this distribution. </li>
+              <li> $f_x(x_1,...,x_n)$ is the marginal distribution of x. So we will get a constant if we assign x equals to $x_1,...,x_n$. </li>
+              <li> $f(\theta|x_1,...,x_n)$ - posterior distribution. We collect data $x_1,...,x_n$ from experiment and update our beliefs about $\Theta$. </li></p>
+
+            <h3>1.2 Interval Estimation</h3>
+              <p><b>Some Important Distribution</b><br>
+              <ul>
+              <li> Chi-square distribution:</li><br>
+              Is a special gamma distribution when a = n/2 and b = 2; In particular, $$x_1,...x_n \sim ^{iid} N(0,1); then \sum_{i=1}^{n}x_i^{2}\sim x^{2}(n) $$
+
+              <li>t-distribution:</li><br>
+              If $W\sim N(0,1)$ and $V\sim X^2(r)$ and $W\perp V$, then $$T=\frac{W}{\sqrt{V/r}}\sim t(r)$$
+
+              <li>F-distribution</li><br>
+              If $U\sim X^{2}(r_1)$, $V\sim X^2(r_2)$, and $U\perp V$, then $$F = \frac{U/r_1}{V/r_2}\sim F(r_1,r_2)$$
+              </ul>
+
+              <b>Very Useful Application</b><br>
+              If $\bar{X} \sim N(\mu, \sigma^2/n)$, $\bar{X}\perp S^2$, then we have:
+              $$\frac{(n-1)S^2}{\sigma^2}\sim X^2(n-1)$$ Based on the above two distributions, we could get:
+              $$\frac{\bar{X}-\mu}{S}\sqrt{n} \sim t(n-1)$$
+
+              <b>Quantiles of distribution</b><br>
+              For any distribution, let $\alpha^{th}$ quantile (upper percentage point) be
+              $$F(X_{\alpha})=P(X\le X_{\alpha}) = 1-\alpha$$
+
+              <b>Confidence Interval</b><br>
+              In statistics, a confidence interval (CI) is a type of interval estimate that is computed from the observed data.
+              The confidence level is the frequency of possible confidence intervals that contain the true value of their corresponding parameter.
+              The intuiation here is that we try to find a function $u(X, \theta)$ such that its distribution does not depend on $\theta$.
+              Then we look for a,b s.t.
+              $$P(a< U(X, \theta)< b)=1-\alpha$$
+              and finally invert this to get a statement about $\theta$
+              $$P(f_1(x;a,b))<\theta< P(f_2(x;a,b))$$
+
+              <h3>1.3 Important Interval Estimation Summary</h3>
+                <h4> 1.3.1 Sample Mean </h4>
+                <p>
+                Let $X_1,...,X_n \sim N(\mu, \sigma^2)$
+                <ul>
+                <li><b>$\sigma$ is Known: </b><br></li>
+                $$\frac{\bar{X}-\mu}{\sigma}\sqrt{n}\sim N(0,1)$$
+                <li><b>$\sigma$ is Unknown: </b><br></li>
+                $$\frac{\bar{X}-\mu}{S}\sqrt{n}\sim t(n-1)$$
+                </ul>
+                </p>
+
+                <h4> 1.3.2 Sample Proportion</h4>
+                <p>
+                Let $X_1,..., X_n \sim Bernoulli(P)$, n kown, $Y = \sum X_i \sim Bin(n, p)$. We will use an approximation to construct a CI for p. Recall, by central-limit theorem:
+                $$\frac{Y-np}{\sqrt{np(1-p)}}\sim N(0,1)$$then we have
+                $$\frac{Y}{n}-Z_{\alpha/2} \sqrt{\frac{P(1-P)}{n}} < P<\frac{Y}{n}+Z_{\alpha/2} \sqrt{\frac{P(1-P)}{n}}$$
+                Here we need to use MLE to get the point estimation of $\hat{P}= \frac{Y}{n}$
+                </p>
+
+                <h4>1.3.3 Sample Variance </h4>
+                <p>
+                Let $X_1,...,X_n \sim N(\mu, \sigma^2)$, both $\mu$ and $\sigma$ are unknown.
+                $$\frac{(n-1)S^2}{\sigma^2} \sim X^2(n-1)$$
+
+                Brief Summary: For sample mean and proportion, if our sample size is large or we know the $\mu$ and $\sigma$, we normally use z-statistics; If we do not know $\sigma$, we will use t-statistics. For sample variance, we use chi-square statistics.
+                </p>
+
+                <!--Add a picture to make it more colorful-->
+                <div style="text-align: center;">
+                <img class="img-fluid" src="../../img/sample1_inference.png" alt="" align='middle' height="200" width="400">
+                </div>
+                <span class="caption text-muted">Interval Estimation</span>
+
+              <h2 class="section-heading">2. Hypothesis Testing</h2>
+                <p>
+                  Here is a basic set up for a hypothesis test: we have some default belief about a parameter, this is our null hypothesis. And we're trying to investigate whether an alternative hypothesis is in fact true.
+                </p>
+                <h3>2.1 Some definations and summary</h3>
+                <p>
+                  <b>Type I and II error</b><br>
+                  Upon conducting a test we will arrive at one of two possible conclusions:
+                  <li> Reject $H_0$: sufficient evidence against $H_0$</li>
+                  <li> Not Reject $H_0$: Not enough evidence</li>
+
+                  Then it is reasonable that we will make errors.
+
+                  <table style="width:100%">
+                  <tr>
+                    <th></th>
+                    <th>$H_0$ is True</th>
+                    <th>$H_A$ is True</th>
+                  </tr>
+                  <tr>
+                    <td>Reject $H_0$</td>
+                    <td>Type I error</td>
+                    <td>Correct</td>
+                  </tr>
+                  <tr>
+                    <td>Not Reject $H_0$</td>
+                    <td>Correct</td>
+                    <td>Type II error</td>
+                  </tr>
+                  </table>
+                  </p>
+                  <p>
+                  More specifically, <b>Type I Error</b> equals to $P(\theta \in C|H_0)$, which means when $H_0$ is true, the probability that our parameter locates in critical region (rejection region). <b>Type II Error</b> equals to $P(\theta \in C^c|H_A)$, which means when $H_A$ is true, the probability that our parameter locates in the non-rejection area. <br><br>
+
+                  Based on the analysis above, we could see an obvious trade-off between these two type of errors. Since if we shrink the rejection area to decrease type I error, the non-rejection area will be larger which means the type II error will increase. The reason that we always first control type I error is that:
 
 
-            <h2 class="section-heading">The Final Frontier</h2>
+                  <blockquote class="blockquote"> In practical, our null hypothesis is always very specific, whereas the alternative hypothesis is always very general. For example, $H_0=1000$, then $H_A\ne 1000$. Therefore, in comparison, we are more willing to know the error that one specific hypothesis is actually false. </blockquote>
 
-            <blockquote class="blockquote">The dreams of yesterday are the hopes of today and the reality of tomorrow. Science has not yet mastered prophecy. We predict too much for the next year and yet far too little for the next ten.</blockquote>
+                  <b>Significance Level</b><br><br>
+                  In practice, we often specify the maximal allowable type I error. Specifically, $P(\theta \in C|H_0) \le \alpha$, where $\alpha$ is the significance level.<br><br>
 
-            <a href="#">
-              <img class="img-fluid" src="../../img/post-sample-image.jpg" alt="">
-            </a>
-            <span class="caption text-muted">To go places and do things that have never been done before – that’s what living is all about.</span>
+                  <b>P value</b><br>
+                  P value is the probability of observing a result equal to or more extreme than what was actually observed, when $H_0$ is true.<br><br>
+
+                  <I>Intuition Here: We start by saying assume $H_0$ is true. We collect data, and analyze it in some manner. When we look at that summary, the p-value let us know how reasonable our data is, assuming the null is true. When the p-value is small, it tells us one of two things. 1) If the null hypothesis is true, then we’re seeing something that’s unlikely or 2) these data are really incompatible with the null hypothesis (because we had a low chance to see this or more extreme results), therefore, I suspect the null hypothesis does not hold. Your job is to pick an alpha level to decide your comfort in making a Type I error. </I>
+
+                  <br><br>Example:<br>
+                  We want to construct a hypothesis test about whether this person is guilty or not. Suppose he is inocent, after observing some data, we find the probability that these resources appear is 4%. And our significance level is 0.05. Based on that, we could reject our null hypothesis.
+                </p>
+
+                <h3>2.2 Constructing Hypothesis Tests</h3>
+                <p>
+                  After understanding the whole process of hypothesis testing, we will then wonder how to choose the best critical region. Since it is the most important part of our test. In general, the <b>best critical region of size $\alpha$</b> is that for every subset $A$ such that $P_{H_0}(x \in C) = \alpha$, we have $P_{H_A}(x \in C^c) \le P_{H_A}(x \in A^c)$. Which means we have minimum type II error with fixed type I error.
+                  </p>
+
+                  <p>
+                  We have three method to find the best critical region:<br>
+                  <li><b>Neyman-Pearson Lemma (simple to simple)</b></li>
+                  Suppose we have a random sample $X_1, X_2, ..., X_n$ from a probability distribution with parameter $\theta$. Then, if $C$ is a critical region of size $\alpha$ and $k$ is a constant such that:
+
+                  $$\frac{L(\theta_0)}{L(\theta_α)}≤k$$ inside the critical region C
+
+                  and:
+                  $$\frac{L(\theta_0)}{L(\theta_α)}\ge k$$
+
+                  outside the critical region C
+
+                  then $C$ is the best, that is, most powerful, critical region for testing the simple null hypothesis H0: $θ = θ_0$ against the simple alternative hypothesis HA: $θ = θ_a$.<br><br>
+
+                  <li><b>Uniformly Most Powerful Tests (simple to composite)</b></li>
+                  Basically, UMP is an extension of NP lemma. We could select one from the composite set, and test $H_0$ against each one in $H_A$.<br><br>
+
+                  <li><b>Likelihood Ratio Tests (composite to composite)</b></li>
+                  May not get the best critical regions, but reasonable and have desired properties. The LRT use test statistics
+                  $$\Lambda = \frac{max_{\theta\in H_0}L(\theta)}{max_{\theta\in \Omega}L(\theta)}$$ to reject $H_0$ for small values of $\Lambda$.
+                </p>
+
+                <p>Let us talk about other inference knowledge in the next post!
+                </p>
+
+
 
 
           </div>
