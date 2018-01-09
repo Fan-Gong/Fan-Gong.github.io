@@ -22,10 +22,35 @@
     <!-- Custom styles for this template -->
     <link href="../../css/clean-blog.min.css" rel="stylesheet">
 
-    <script type="text/x-mathjax-config"> MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
     </script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
     </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
 
   </head>
 
@@ -59,17 +84,17 @@
     </nav>
 
     <!-- Page Header -->
-    <header class="masthead" style="background-image: url('../../img/probability.jpg')">
+    <header class="masthead" style="background-image: url('../../img/inference.jpg')">
       <div class="overlay"></div>
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
             <div class="post-heading">
-              <h1>Inference Review</h1>
-              <h2 class="subheading">The second step to be a data scientist..</h2>
+              <h1>Inference Review (Part2)</h1>
+              <h2 class="subheading">Deep dive into statistics</h2>
               <span class="meta">Posted by
                 <a href="../../about.index">Fan Gong</a>
-                on January 6, 2018</span>
+                on January 8, 2018</span>
             </div>
           </div>
         </div>
@@ -81,17 +106,11 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
-            <p></p>
+            <p>Let us continue our study and review of statistical inference. In this post, I will mainly talk about $\chi^2$ test and ANOVA test.</p>
+
+            <h2 class="section-heading">1. $\chi^2$ Test</h2>
 
 
-            <h2 class="section-heading">The Final Frontier</h2>
-
-            <blockquote class="blockquote">The dreams of yesterday are the hopes of today and the reality of tomorrow. Science has not yet mastered prophecy. We predict too much for the next year and yet far too little for the next ten.</blockquote>
-
-            <a href="#">
-              <img class="img-fluid" src="../../img/post-sample-image.jpg" alt="">
-            </a>
-            <span class="caption text-muted">To go places and do things that have never been done before – that’s what living is all about.</span>
 
 
           </div>
