@@ -109,7 +109,113 @@
             <p>Let us continue our study and review of statistical inference. In this post, I will mainly talk about $\chi^2$ test and ANOVA test.</p>
 
             <h2 class="section-heading">1. $\chi^2$ Test</h2>
+            <h3>1.1 Multinomial Distribution</h3>
+            <p>Multinomial Distribution is an extension of Binomial distribution. It will have $n$ number of trials; $m$ number of conditions in each trial; $X_1,...,X_m$ is corresponding events; $\theta_1,...,\theta_m$ is the respective probabilities.
+              the pdf is:
+              $$p(X;\theta)=\frac{n!}{x_1!\cdots x_m!}\theta_1^{x_1}\cdots \theta_m^{x_m}$$ </p>
 
+            <h3>1.2 Goodness of Fit Test</h3>
+            <p>Goodness of fit test examine how well does the data match what we think is true under $H_0$. Here is the basic set-up:<br><br>
+
+              $$H_0: \theta_1=a_1,\theta_2=a_2,...,\theta_m=a_m$$
+              $$H_A: Otherwise$$
+
+              The test will be based on the following statistic:
+              $$\chi^2=\sum_{i=1}^{m}\frac{x_i-E_{H_0}(x_i)}{E_{H_0}(x_i)}=\sum_{i=1}^{m}\frac{obs_i-n\cdot a_i}{n\cdot a_i} \sim \chi^2(m-1)$$
+              $x_i$ is the observed count in $i^{th}$ category<br><br></p>
+
+            <h3>1.3 Test of Independence (Contingency Table)</h3>
+            <p>This test aims to test whether two factors A, B are independent or not. Here is the basic set-up: <br><br>
+
+              $$H_0: \theta_{i,j}=\theta_{i\cdot}\cdot \theta_{\cdot j},\  for\ all\ i,j$$
+              $$H_A: Otherwise$$
+
+              The test will be based on the following statistic:
+              $$\chi^2=\sum_{i=1}^{r}\sum_{j=1}^{c} \frac{n_{ij}- \frac{n_{i.}n_{.j}}{n}}{\frac{n_{i.}n_{.j}}{n}} \sim \chi^2((r-1)(c-1))$$</p>
+
+            <br> Here is one good example I copy from <a href="https://onlinecourses.science.psu.edu/statprogram/node/158">Pennstate University's Website: </a><br>
+            <div style="text-align: center;">
+            <img class="img-fluid" src="../../img/example_chi.jpg" alt="" align='middle'>
+            </div>
+
+            <h2 class="section-heading">2. ANOVA Test</h2>
+            <p>ANOVA test aims to test whether the mean value in different groups are the same or not. But essentially, it tests whether the factor has the effect to the numerical dependent variable.</p>
+            <h3>2.1 Some definations and theories</h3>
+            <p>First let us talk about some terminologies in ANOVA:</p>
+            <p><b>Factor</b> is the object that we would like to test. And the different performance for this factor is called <b>treatment</b>. The data we get for each treatment are called <b>observed value</b>. For example, we want to test whether the complaint rate (observed value) is different in retail industry (treatment one), tourist industry (treatment two), household industry (treatment three). The factor here is industry.
+
+
+              <br><br><b>Fundamental Theory</b><br>
+              The reason that people call this test analysis of variance is because we will use variance to tell us whether there are significant mean differences among these groups. In other words, we need to analyze the source of the errors. What does that mean?<br><br>
+
+              First of all, within one treatment, we have different observed values. Since we randomly sample the data, so there are only random errors here. This kind of error is called <b>within-group error</b>. It represents the degree of dispersion within each treatment.<br><br>
+
+              Then, the observed values in different treatment are also different. These errors maybe result from the sampling random error, but may also result from the differences between these treatment (system error). These kind of error is called <b>between-group error</b>. It equals to the sum of random error and system error and it represents the degree of dispersion between these treatments.<br><br>
+
+              Then the intuition for ANOVA is very clear:
+              <I>If the factor has no influence to our observed value, then there is only random error included in between-group error; then the averaged within-group error will be very similer to the averaged between-group error. Otherwise, there is system error in between-group error and it will larger than within-group error.</I>
+            </p>
+
+            <h3>2.2 Assumptions for ANOVA</h3>
+            <p>There are three basic assumption for ANOVA:
+              <ul>
+                <li>Every treatment should belong to normal distribution</li>
+                <li>The $\sigma^2$ for each treatment should be the same</li>
+                <li>The observed value in one treatment is indepedent with other observed value in another treatment.</li>
+              </ul></p>
+
+            <h3>2.3 One-way analysis of variance</h3>
+            <p>Here are the basic step for one-way analysis of variance.
+              <ol>
+              <li>Make Assumption: $$H_0:\mu_1=\mu_2=\cdots=\mu_k$$ $$H_1: \mu_i(i=1,2,...,k) \ not \ all \ equal$$</li>
+
+              <li>Construct Test Statistics: <br> We need to calculate some important values first. <br>
+              <b>1) sum of squares for factor A: (between-group square error)</b>
+              $$SSA = \sum_{i=1}^{k}n_i(\bar{x_i}-\bar{\bar{x}})^2$$
+              where $n_i$ is the number of observations in the $i^{th}$ treatment; $k$ is the number of treatment; $\bar{x_i}$ is the mean value in the $i^{th}$ treatment; $\bar{\bar{x}}$ is the mean value for all the observations. <br>
+
+              <b>2) sum of squares for error: (within-group square error)</b>
+              $$SSE = \sum_{i=1}^{k} \sum_{j=1}^{n_i}(x_{ij}-\bar{x_i})^2$$
+
+              <b>3) sum of squres for total: (within-group square error)</b>
+              $$SST = \sum_{i=1}^{k} \sum_{j=1}^{n_i}(x_{ij}-\bar{\bar{x}})^2 = SSA + SSE$$
+              <br></li>
+
+              <li>Calculate Test Statistics:<br>
+              Since the size of error squares is decided by the number of observations, we then need average them first and then make comparison. <br>
+              <b>1) Mean of squares for factor A:</b>
+              $$MSA=\frac{SSA}{df_{SSA}}=\frac{SSA}{k-1}$$<br>
+              <b>2) Mean of squares error:</b>
+              $$MSE=\frac{SSE}{df_{SSE}}=\frac{SSA}{n-k}$$
+
+              If you want to know the reason why their degree of freedom should be like this, please refer to this link:
+              <a href="https://www.zhihu.com/question/20983193">
+              https://www.zhihu.com/question/20983193
+              </a><br>
+              In a word, it is because the mean value that let us lose some degree of freedom.<br><br>
+
+              Then, we obtain the F-statistics:
+              $$F = \frac{MSA}{MSE}\sim F(k-1,n-k)$$
+              Based on our significane level, we then could make a conclusion. If $F> F_{\alpha}$, we then reject our null hypothesis.
+              </li>
+              </ol>
+              </p>
+
+            <h3>2.4 Two-way analysis of variance</h3>
+            <p>Since there are two factors in two-way analysis of variance, we need to know whether there is interaction effect for these two factors. If it has, we call it <b>two-factor with replication</b>; If not, we call it <b>two-factor without replication</b><br><br>
+
+              Normally, we will put one factor on the 'row' called row factor and another on the 'column' called column factor. </p>
+
+            <h4>2.4.1 Two-factor without replication</h4>
+            <p>Difference with the one-factor ANOVA:
+              <ol>
+                <li>Make two assumptions: one for row factor and one for column factor.</li>
+                <li>$SST=SSR+SSC+SSE$, where $SSR$ is the sum of squares for the row and $SSC$ is the sum of squares for the column. $SSE$ is still the random error.</li>
+                <li>Test two statistics $F_R=\frac{MSR}{MSE}\sim F(k-1,(k-1)(r-1))$, $F_C=\frac{MSC}{MSE}\sim F(r-1,(k-1)(r-1))$ individually. </li>
+              </ol></p>
+            <h4>2.4.2 Two-factor with replication</h4>
+            <p>Difference with the two-factor without replication:<br>
+              $SST = SSE+SSC+SSR+SSRC$, where $SSRC$ represent the sum of square for the interaction effect between row factor and column factor. </p>
 
 
 
