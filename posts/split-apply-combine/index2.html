@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('../../img/split2.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Split-Apply-Combine in Python</h1>
+              <h2 class="subheading">How to process data in Python?</h2>
+              <span class="meta">Posted by
+                <a href="../../about.index">Fan Gong</a>
+                on January 12, 2018</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+            <h1>Split-Apply-Combine in Python</h1>
+<p>Last time we talked about how to do data wrangling by R, and we found that the package <code>dplyr</code> is very functional. Then I am wondering, does python also have a similar module or package?</p>
+<p>The answer is Yes! <code>Pandas</code> has the similar <code>groupby</code> operation. Let us then see how does python work on split-Apply-Combine problems.</p>
+<p>First let us load some libraries and load the classic iris data as our example dataset.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># First we load the library</span>
+<span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> pandas <span class="im">as</span> pd
+<span class="im">import</span> seaborn <span class="im">as</span> sns
+<span class="im">from</span> sklearn <span class="im">import</span> datasets
+iris <span class="op">=</span> datasets.load_iris()
+
+<span class="co">#Transform the sklearn Dataframe into pandas Dataframe</span>
+iris <span class="op">=</span> pd.DataFrame(np.hstack((iris.data, iris.target.reshape(<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>))),
+                   columns <span class="op">=</span> iris.feature_names <span class="op">+</span> [<span class="st">&#39;target&#39;</span>])
+iris.target <span class="op">=</span> iris.target.astype(<span class="st">&#39;category&#39;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">iris.head()</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal length (cm)</th>
+      <th>sepal width (cm)</th>
+      <th>petal length (cm)</th>
+      <th>petal width (cm)</th>
+      <th>target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5.1</td>
+      <td>3.5</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.9</td>
+      <td>3.0</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.7</td>
+      <td>3.2</td>
+      <td>1.3</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4.6</td>
+      <td>3.1</td>
+      <td>1.5</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5.0</td>
+      <td>3.6</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>Then let us see more specific functions comparing with <code>dplyr</code> in R.</p>
+<h2 class="subheading">1. select</h2>
+<p>There is no specific select function in pandas but we can use its normal extraction or indexing operators. Also, if we want to rename the column, we can use <code>rename()</code> function. <br>Here is an example:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Select from column &#39;sepal length(cm)&#39; to &#39;target&#39;</span>
+iris.loc[:, <span class="st">&#39;sepal length (cm)&#39;</span>:<span class="st">&#39;target&#39;</span>].head()</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal length (cm)</th>
+      <th>sepal width (cm)</th>
+      <th>petal length (cm)</th>
+      <th>petal width (cm)</th>
+      <th>target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5.1</td>
+      <td>3.5</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.9</td>
+      <td>3.0</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.7</td>
+      <td>3.2</td>
+      <td>1.3</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4.6</td>
+      <td>3.1</td>
+      <td>1.5</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5.0</td>
+      <td>3.6</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Select and at the same time rename the columns</span>
+iris.rename(columns<span class="op">=</span>{<span class="st">&#39;sepal length (cm)&#39;</span>:<span class="st">&#39;sepal_len&#39;</span>,
+                     <span class="co">&#39;sepal width (cm)&#39;</span>:<span class="st">&#39;sepal_w&#39;</span>,
+                     <span class="co">&#39;petal length (cm)&#39;</span>:<span class="st">&#39;petal_len&#39;</span>,
+                     <span class="co">&#39;petal width (cm)&#39;</span>:<span class="st">&#39;petal_w&#39;</span>}, inplace <span class="op">=</span> <span class="va">True</span>)
+iris.head()</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal_len</th>
+      <th>sepal_w</th>
+      <th>petal_len</th>
+      <th>petal_w</th>
+      <th>target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5.1</td>
+      <td>3.5</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.9</td>
+      <td>3.0</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.7</td>
+      <td>3.2</td>
+      <td>1.3</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4.6</td>
+      <td>3.1</td>
+      <td>1.5</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5.0</td>
+      <td>3.6</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br>
+<h2 class="subheading">2. filter</h2>
+<p>This time pandas has a matching function called <code>query</code>. The difference is that we nned to write the expression as a string, and evaluate the string in the context of the DataFrame.</p>
+<p><code>pd.DataFrame.query(expr, inplace=False, **kwargs)</code></p>
+<p>Here is an example:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Filter to only have the first species whose sepal_len longer or equal to 5 </span>
+iris.query(<span class="st">&#39;sepal_len &gt;= 5 &amp; target in [0.0, 1.0]&#39;</span>).head()</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal_len</th>
+      <th>sepal_w</th>
+      <th>petal_len</th>
+      <th>petal_w</th>
+      <th>target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5.1</td>
+      <td>3.5</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5.0</td>
+      <td>3.6</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>5.4</td>
+      <td>3.9</td>
+      <td>1.7</td>
+      <td>0.4</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>5.0</td>
+      <td>3.4</td>
+      <td>1.5</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>5.4</td>
+      <td>3.7</td>
+      <td>1.5</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br>
+<h2 class="subheading">3. arrange</h2><br />
+Here, the matching function is called <code>sort_values</code>, here is the detailed information:</p>
+<p><code>pd.DataFrame.sort_values(by, axis=0, ascending=True, inplace=False, kind='quicksort', na_position='last')</code> <br><br />
+where <code>by</code> is a string or list of string contains names which refer to the axis items; <code>axis</code> is the axis to sort. 0 represents index and 1 represents columns. for <code>na_position</code> we could choose put them at the beginning or at the end.</p>
+<p>Here is an example:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co">#Descending sort by sepal length and width</span>
+iris.sort_values([<span class="st">&#39;sepal_len&#39;</span>, <span class="st">&#39;sepal_w&#39;</span>], ascending <span class="op">=</span> <span class="va">False</span>).head()</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal_len</th>
+      <th>sepal_w</th>
+      <th>petal_len</th>
+      <th>petal_w</th>
+      <th>target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>131</th>
+      <td>7.9</td>
+      <td>3.8</td>
+      <td>6.4</td>
+      <td>2.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>117</th>
+      <td>7.7</td>
+      <td>3.8</td>
+      <td>6.7</td>
+      <td>2.2</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>135</th>
+      <td>7.7</td>
+      <td>3.0</td>
+      <td>6.1</td>
+      <td>2.3</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>122</th>
+      <td>7.7</td>
+      <td>2.8</td>
+      <td>6.7</td>
+      <td>2.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>118</th>
+      <td>7.7</td>
+      <td>2.6</td>
+      <td>6.9</td>
+      <td>2.3</td>
+      <td>2.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>Actually, there is another sorting method called <code>sort_index</code>, which as its literally meaning, sorts the dataframe by index.</p>
+<h2 class="subheading">4. mutate</h2>
+<p>Here, the matching function is called <code>assign</code>. The difference between <code>arrange</code> and <code>assign</code> here is that python cannot calculate the arguments in order since here the args are considered in a dictionary which is unordered. In this case, we need to split up the assigns and pass in a callable to the second assign (We may use <code>lambda</code> function as our callable).</p>
+<p>Here is an example:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Calculate the ratio of sepal</span>
+iris.assign(sepal_ratio <span class="op">=</span> iris.sepal_len<span class="op">/</span>iris.sepal_w).head()</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal_len</th>
+      <th>sepal_w</th>
+      <th>petal_len</th>
+      <th>petal_w</th>
+      <th>target</th>
+      <th>sepal_ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5.1</td>
+      <td>3.5</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+      <td>1.457143</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.9</td>
+      <td>3.0</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+      <td>1.633333</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.7</td>
+      <td>3.2</td>
+      <td>1.3</td>
+      <td>0.2</td>
+      <td>0.0</td>
+      <td>1.468750</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4.6</td>
+      <td>3.1</td>
+      <td>1.5</td>
+      <td>0.2</td>
+      <td>0.0</td>
+      <td>1.483871</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5.0</td>
+      <td>3.6</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+      <td>1.388889</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Calculate the ratio of sepal and petal and then calculate the difference between them</span>
+iris.assign(sepal_ratio <span class="op">=</span> iris.sepal_len<span class="op">/</span>iris.sepal_w,
+           petal_ratio <span class="op">=</span> iris.petal_len<span class="op">/</span>iris.petal_w).assign(diff <span class="op">=</span> <span class="kw">lambda</span> df: df.sepal_ratio <span class="op">-</span> df.petal_ratio).head()</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal_len</th>
+      <th>sepal_w</th>
+      <th>petal_len</th>
+      <th>petal_w</th>
+      <th>target</th>
+      <th>sepal_ratio</th>
+      <th>petal_ratio</th>
+      <th>diff</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5.1</td>
+      <td>3.5</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+      <td>1.457143</td>
+      <td>7.0</td>
+      <td>-5.542857</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.9</td>
+      <td>3.0</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+      <td>1.633333</td>
+      <td>7.0</td>
+      <td>-5.366667</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.7</td>
+      <td>3.2</td>
+      <td>1.3</td>
+      <td>0.2</td>
+      <td>0.0</td>
+      <td>1.468750</td>
+      <td>6.5</td>
+      <td>-5.031250</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4.6</td>
+      <td>3.1</td>
+      <td>1.5</td>
+      <td>0.2</td>
+      <td>0.0</td>
+      <td>1.483871</td>
+      <td>7.5</td>
+      <td>-6.016129</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5.0</td>
+      <td>3.6</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+      <td>1.388889</td>
+      <td>7.0</td>
+      <td>-5.611111</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br>
+<h2 class="subheading">5. summarise</h2><br />
+In <code>pandas</code> these summarised functions are spread across <code>pd.DataFrame.mean</code> or <code>pd.DataFrame.sum</code>. There is also a <code>pd.DataFrame.agg</code> function. Here is the detailed information:</p>
+<p><code>DataFrame.agg(func, axis=0, *args, **kwargs)</code> where <code>func</code> is the function to use for aggregating the data. Accepted Combinations are:<br />
+<ul><br />
+<li>string function name</li><br />
+<li>function</li><br />
+<li>list of functions</li><br />
+<li>dict of column names -&gt; functions (or list of functions)</li><br />
+</ul><br />
+Here is an example:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Use simple mean function</span>
+iris.sepal_len.mean()</code></pre></div>
+<pre><code>5.843333333333335</code></pre>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Use agg</span>
+<span class="bu">print</span>(iris.agg([<span class="st">&#39;mean&#39;</span>,<span class="st">&#39;sum&#39;</span>]))
+
+<span class="co"># Specify which column</span>
+<span class="bu">print</span>(iris.agg({<span class="st">&#39;sepal_len&#39;</span>: [<span class="st">&#39;count&#39;</span>,<span class="st">&#39;std&#39;</span>]}))</code></pre></div>
+<pre><code>       sepal_len  sepal_w   petal_len     petal_w
+mean    5.843333    3.054    3.758667    1.198667
+sum   876.500000  458.100  563.800000  179.800000
+        sepal_len
+count  150.000000
+std      0.828066</code></pre>
+<h2 class="subheading">6. group_by</h2>
+<p><code>pandas</code> has create an specific function for groupby. After this operation, the DataFrame will become to another type of object called <code>pd.DataFrame.groupby</code> objects. Here is the detailed information:</p>
+<p><code>pd.DataFrame.groupby(by=None, axis=0, level=None, as_index=True, sort=True, group_keys=True, squeeze=False, **kwargs)[source]</code> Normally, we will pass a string or a list of column names to <code>by</code>.</p>
+<p>Here is an example:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">iris.groupby(<span class="st">&#39;target&#39;</span>).agg([<span class="st">&#39;mean&#39;</span>,<span class="st">&#39;sum&#39;</span>,<span class="st">&#39;count&#39;</span>])</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead tr th {
+        text-align: left;
+    }
+
+    .dataframe thead tr:last-of-type th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="3" halign="left">sepal_len</th>
+      <th colspan="3" halign="left">sepal_w</th>
+      <th colspan="3" halign="left">petal_len</th>
+      <th colspan="3" halign="left">petal_w</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th>mean</th>
+      <th>sum</th>
+      <th>count</th>
+      <th>mean</th>
+      <th>sum</th>
+      <th>count</th>
+      <th>mean</th>
+      <th>sum</th>
+      <th>count</th>
+      <th>mean</th>
+      <th>sum</th>
+      <th>count</th>
+    </tr>
+    <tr>
+      <th>target</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0.0</th>
+      <td>5.006</td>
+      <td>250.3</td>
+      <td>50</td>
+      <td>3.418</td>
+      <td>170.9</td>
+      <td>50</td>
+      <td>1.464</td>
+      <td>73.2</td>
+      <td>50</td>
+      <td>0.244</td>
+      <td>12.2</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <th>1.0</th>
+      <td>5.936</td>
+      <td>296.8</td>
+      <td>50</td>
+      <td>2.770</td>
+      <td>138.5</td>
+      <td>50</td>
+      <td>4.260</td>
+      <td>213.0</td>
+      <td>50</td>
+      <td>1.326</td>
+      <td>66.3</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <th>2.0</th>
+      <td>6.588</td>
+      <td>329.4</td>
+      <td>50</td>
+      <td>2.974</td>
+      <td>148.7</td>
+      <td>50</td>
+      <td>5.552</td>
+      <td>277.6</td>
+      <td>50</td>
+      <td>2.026</td>
+      <td>101.3</td>
+      <td>50</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>We could see the results is a <code>MultiIndex</code> in the columns which can be a bit aawkward to work with (We can drop a level with <code>df.columns.droplevel()</code>). That is the reason that <code>agg</code> is not that good here.</p>
+<p>So, sometimes I will choose to generate summary attributes and then join them together. (Example in <code>join</code> part)</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">iris.groupby(<span class="st">&#39;target&#39;</span>).mean()</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal_len</th>
+      <th>sepal_w</th>
+      <th>petal_len</th>
+      <th>petal_w</th>
+    </tr>
+    <tr>
+      <th>target</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0.0</th>
+      <td>5.006</td>
+      <td>3.418</td>
+      <td>1.464</td>
+      <td>0.244</td>
+    </tr>
+    <tr>
+      <th>1.0</th>
+      <td>5.936</td>
+      <td>2.770</td>
+      <td>4.260</td>
+      <td>1.326</td>
+    </tr>
+    <tr>
+      <th>2.0</th>
+      <td>6.588</td>
+      <td>2.974</td>
+      <td>5.552</td>
+      <td>2.026</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br>
+<h2 class="subheading">7. join</h2>
+<p>Here we use <code>join</code> function in <code>pandas</code>. Here is the detailed information:</p>
+<p><code>pd.DataFrame.join(other, on=None, how='left', lsuffix='', rsuffix='', sort=False)</code> where <code>on</code> is the column name of a list of column names; <code>how</code> can choose from <code>{‘left’, ‘right’, ‘outer’, ‘inner’}</code>; <code>lsuffix</code> and <code>rsuffix</code> is the left suffix and right suffix.</p>
+<p>By the way, we can also use <code>pd.concat</code>. Here is an example:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Both dfs are 3 x 4 DataFrame</span>
+df_mean <span class="op">=</span> iris.groupby(<span class="st">&#39;target&#39;</span>).mean()
+df_count <span class="op">=</span> iris.groupby(<span class="st">&#39;target&#39;</span>).count()</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co">#Make a outer join</span>
+df_count.join(df_mean, how<span class="op">=</span><span class="st">&#39;outer&#39;</span>, lsuffix<span class="op">=</span><span class="st">&#39;_mean&#39;</span>, rsuffix<span class="op">=</span><span class="st">&#39;_n&#39;</span>)</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal_len_mean</th>
+      <th>sepal_w_mean</th>
+      <th>petal_len_mean</th>
+      <th>petal_w_mean</th>
+      <th>sepal_len_n</th>
+      <th>sepal_w_n</th>
+      <th>petal_len_n</th>
+      <th>petal_w_n</th>
+    </tr>
+    <tr>
+      <th>target</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0.0</th>
+      <td>50</td>
+      <td>50</td>
+      <td>50</td>
+      <td>50</td>
+      <td>5.006</td>
+      <td>3.418</td>
+      <td>1.464</td>
+      <td>0.244</td>
+    </tr>
+    <tr>
+      <th>1.0</th>
+      <td>50</td>
+      <td>50</td>
+      <td>50</td>
+      <td>50</td>
+      <td>5.936</td>
+      <td>2.770</td>
+      <td>4.260</td>
+      <td>1.326</td>
+    </tr>
+    <tr>
+      <th>2.0</th>
+      <td>50</td>
+      <td>50</td>
+      <td>50</td>
+      <td>50</td>
+      <td>6.588</td>
+      <td>2.974</td>
+      <td>5.552</td>
+      <td>2.026</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br>
+<h2 class="subheading">8. Make it together!</h2>
+<p>Now we have known all the matching operations in <code>pandas</code>, let us now put them all together and see how it works.</p>
+<p>Our target is: Select only sepal information for these three species, find the samples that has sepal length longer than 4 and sepal width is 3; then generate mean and max summary information for each species</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">iris.head()</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal_len</th>
+      <th>sepal_w</th>
+      <th>petal_len</th>
+      <th>petal_w</th>
+      <th>target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5.1</td>
+      <td>3.5</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4.9</td>
+      <td>3.0</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4.7</td>
+      <td>3.2</td>
+      <td>1.3</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4.6</td>
+      <td>3.1</td>
+      <td>1.5</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5.0</td>
+      <td>3.6</td>
+      <td>1.4</td>
+      <td>0.2</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Get the groupby objects</span>
+iris_group <span class="op">=</span> iris.iloc[:,[<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">4</span>]].query(<span class="st">&#39;sepal_len &gt; 4 &amp; sepal_w == 3&#39;</span>).groupby(<span class="st">&#39;target&#39;</span>)
+<span class="co"># use agg</span>
+iris_group.agg([<span class="st">&#39;mean&#39;</span>,<span class="st">&#39;sum&#39;</span>])</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead tr th {
+        text-align: left;
+    }
+
+    .dataframe thead tr:last-of-type th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th></th>
+      <th colspan="2" halign="left">sepal_len</th>
+      <th colspan="2" halign="left">sepal_w</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th>mean</th>
+      <th>sum</th>
+      <th>mean</th>
+      <th>sum</th>
+    </tr>
+    <tr>
+      <th>target</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0.0</th>
+      <td>4.700000</td>
+      <td>28.2</td>
+      <td>3.0</td>
+      <td>18.0</td>
+    </tr>
+    <tr>
+      <th>1.0</th>
+      <td>5.950000</td>
+      <td>47.6</td>
+      <td>3.0</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>2.0</th>
+      <td>6.716667</td>
+      <td>80.6</td>
+      <td>3.0</td>
+      <td>36.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Use join</span>
+iris_group.mean().join(iris_group.<span class="bu">sum</span>(), how <span class="op">=</span> <span class="st">&#39;outer&#39;</span>,
+                       lsuffix<span class="op">=</span><span class="st">&#39;_mean&#39;</span>, rsuffix<span class="op">=</span><span class="st">&#39;_sum&#39;</span> )</code></pre></div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal_len_mean</th>
+      <th>sepal_w_mean</th>
+      <th>sepal_len_sum</th>
+      <th>sepal_w_sum</th>
+    </tr>
+    <tr>
+      <th>target</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0.0</th>
+      <td>4.700000</td>
+      <td>3.0</td>
+      <td>28.2</td>
+      <td>18.0</td>
+    </tr>
+    <tr>
+      <th>1.0</th>
+      <td>5.950000</td>
+      <td>3.0</td>
+      <td>47.6</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>2.0</th>
+      <td>6.716667</td>
+      <td>3.0</td>
+      <td>80.6</td>
+      <td>36.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br><br>
+<blockquote class="blockquote"> Reference: <br><br />
+<a href="https://pandas.pydata.org/pandas-docs/stable/groupby.html" class="uri">https://pandas.pydata.org/pandas-docs/stable/groupby.html</a><br><br />
+<a href="http://nbviewer.jupyter.org/gist/TomAugspurger/6e052140eaa5fdb6e8c0" class="uri">http://nbviewer.jupyter.org/gist/TomAugspurger/6e052140eaa5fdb6e8c0</a></blockquote></p>
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
