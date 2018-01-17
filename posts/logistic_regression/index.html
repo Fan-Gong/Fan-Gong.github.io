@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('../../img/logistic_regression.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Logistic Regression</h1>
+              <h2 class="subheading">The logic of logistic regression:D</h2>
+              <span class="meta">Posted by
+                <a href="../../about.index">Fan Gong</a>
+                on January 16, 2018</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p>Now it's time to review machine learning knowledge. Actually, I was thinking about how to start reviewing this part a long time ago, but here is the dilemma: I have written some reviews before but it did not that useful as it is supposed to be. Therefore, I will follow these new rules as I'm writing the next several ML posts:</p>
+            <ol>
+            <li>Focus more on the mathematical theory of each model (MLE/Loss function/evaluation method)</li>
+            <li>Pay attention to each model's assumption. Then I could list the pros and cons comparing with other similar models.</li>
+            <li>For some basic but very important models (such as logistic regression/k-means/random forest), try to write the algorithm myself from scratch by Python.</li>
+            </ol>
+            <p>All right, let us see whether it will be a good way to fully review the Machine Learning.</p>
+            <h2 class="section-heading">1. Introduction</h2>
+            <p>Classification problem is one of the most important parts of supervised learning. In the next several posts, I will mainly cover these methods: <strong>Logistic Regression</strong>, <strong>Naive Bayes Model</strong>, <strong>Linear Discriminate Analysis(LDA)</strong>, <strong>Quadratic Discriminate Analysis(QDA)</strong>, <strong>KNN
+            </strong> and <strong>SVM</strong> model.</p>
+            <p>In this post let us talk about Logistic Regression.</p>
+            <h2 class="section-heading">2. Theoretical Basis</h2>
+            <p>Logistic Regression is a simple linear classification model. It seeks to model the probability that Y belongs to a particular category.</p>
+            <h3 id="logistic-regression-model">2.1 Logistic Regression Model</h3>
+            <p>Logistic regression is a generalized linear model, there is no doubt that it has a very close relationship with the linear regression model. So let us then see how logistic regression model was generated, or how it extended from the linear regression model.</p>
+            <p>In a word, Logistic Regression model the class label given the data as:</p>
+            <p>$$P(y = k|x) = Bernoulli(p) = p^k\cdot (1-p)^{(1-k)}$$</p>
+            <p>Then, what is $p$? It must have a relationship with our dataset $X$, we call it $p(X)$. From our first thought, can $p(X)$ be a linear regression model with $X$? However, we know $p(X)$ is a probability, and it could happen that for some $X$s, $p(X)$ could go out of $[0,1]$. So we need to find a function to both map $p(X)$ within $[0,1]$ and also catch the data's information. Then it comes sigmoid function.<br />
+            $$\sigma(x) = \frac{1}{1+e^{-x}}$$
+            And here is the plot of this function:</p>
+            <div style="text-align: center;">
+            <img class="img-fluid" src="../../img/sigmoid.jpg" alt="" align='middle' height="200" width="400">
+            </div>
+            <p>Then our model is now like this:<br />
+            $$P(y=1|x)= \frac{1}{1+e^{-\beta x}}$$
+            $$P(y=0|x)= \frac{e^{-\beta x}}{1+e^{-\beta x}}$$
+            Or more general:<br />
+            $$P(y=k|x)=(\frac{1}{1+e^{-\beta x}})^k \cdot (\frac{e^{-\beta x}}{1+e^{-\beta x}})^{1-k}$$
+            where $\beta$ is a column vector. You may wonder where is the $\beta$ comes from. To see what the $\beta$ is, we need to do some transformation:<br />
+            $$ln(\frac{P(y=1|x)}{P(y=0|x)}) = ln(\frac{1}{e^{-\beta x}})=ln(e^{x\beta})=x\beta$$
+            By looking at this formula, we could see how logistic regression connects with linear regression and what is $\beta$ function here:</p>
+            <ul>
+            <li>Control the weight of each predictor</li>
+            <li>Also called scaling parameter: the larger the $\beta$, the closer the sigmoid function to indicator function</li>
+            </ul>
+            <p>Finally, we often call this formula <strong>logit</strong>. If the logit larger than zero, we assign the data to class one; If smaller than zero, we assign the data to class two.</p>
+            <h3 id="parameter-estimation-and-loss-function">2.2 Parameter Estimation and Loss Function</h3>
+            <p>Now we would like to estimate the coefficients $\beta$. We will use MLE here. Based on 2.1, we could easily write down the likelihood function (likelihood function is a function of the parameter of a statistical given data) of this model:<br />
+
+              $$L(\mathbf{y},\mathbf{X}|\beta) = \prod_{i=1}^{n}L(y{_i},x_i|\beta) = \prod_{i=1}^{n}
+  (\frac{1}{1+e^{-x_i \beta}})^{y{_i}} \cdot (\frac{e^{-x_i \beta }}{1+e^{-x_i \beta}})^{1-y_i}$$
+
+            And the negative log likelihood is:<br />
+            $$L(\beta)=-log(L(\mathbf{y},\mathbf{X}|\beta))=-\sum_{i=1}^{n}log(L(y{_i},x_i|\beta))=-\sum_{i=1}^{n}y_ilog(\sigma(x_i \beta))+(1-y_i)log(1-\sigma(x_i \beta))$$
+            Here we suppose each observation is independent with others.<br />
+            Then:<br />
+            $$\hat{\beta} = \arg\max_{\beta} L(\mathbf{y},\mathbf{X}|\beta)=\arg\max_{\beta}\prod_{i=1}^{n}L(y{_i},x_i|\beta)=\arg\min_{\beta}L(\beta)$$
+            So, it is natural that $L(\beta)$ is our loss function since we would like to minimize this if we want to get the optimal MLE. We often call this loss function: <strong>log loss</strong>.</p>
+            <p>Unfortunately, there is no explicit solution to this function, so we need to use some numerical algorithms such as gradient descent.</p>
+            <h3 id="model-assumption">2.3 Model Assumption</h3>
+            <p>After performing these analyses above, we could more easily understand the following assumptions:</p>
+            <ol>
+            <li>Require the observations to be independent of each other</li>
+            <li>Require little or no multicollinearity among the independent variables</li>
+            <li>Assume linearity of independent variables and log odds.</li>
+            <li>Require large sample size</li>
+            </ol>
+            <h3 id="multinomial-logistic-regression-model">2.4 Multinomial Logistic Regression Model</h3>
+            <p>Based on the analysis above, we find that logistic regression could solve the binary classification problem, then how to generalize the model to multi-classes condition?</p>
+            <p><strong>1) As a set of independent binary regressions</strong></p>
+            <p>One way to deal with this situation is to see this model as a set of independent binary regressions. So for $K$ possible outcomes, running $k-1$ independent binary logistic regression models, in which one outcome is chosen as a 'pivot' and then the other $K-1$ outcomes are seperately regressed against the pivot outcome. This would proceed as follows, if outcome $K$ is chosen as the pivot:<br />
+            $$ln\frac{P(y_i=1)}{P(y_i=K)} =X_i \beta_1$$
+            $$\cdots \cdots$$
+            $$ln\frac{P(y_i=K-1)}{P(y_i=K)} = X_i\beta_{K-1}$$
+            If we exponentiate both sides, and solve for the probabilities, we got:<br />
+            $$P(Y_i=1)=P(Y_i=K)e^{X_i\beta_1}$$
+            $$\cdots \cdots$$
+            $$P(Y_i=K-1)=P(Y_i=K)e^{X_i\beta_{K-1}}$$
+            Use the fact that all $K$ of the probabilities must sum to one, we find:<br />
+            $$P(Y_i=K)=1-\sum_{k=1}^{K-1}P(Y_i=K)e^{X_i\beta_k }$$
+            $$=&gt; \ P(Y_i=K)=\frac{1}{1+\sum_{k=1}^{K-1}e^{X_i\beta_k }}$$
+            Then we can use this to find other probabilities:<br />
+            $$P(Y_i=1) = \frac{e^{X_i\beta_1}}{1+\sum_{k=1}^{K-1}e^{X_i\beta_k}} $$
+            $$\cdots \cdots$$
+            $$P(Y_i=K-1) = \frac{e^{X_i\beta_{K-1}}}{1+\sum_{k=1}^{K-1}e^{X_i\beta_k}} $$
+            <p><strong>2) As a log-linear model</strong></p>
+            <p>The formulation of binary logistic regression as a log-linear model can be directly extended to multi-way regression. That is, we model the logarithm of the probability of seeing a given output using the linear predictor as well as an additional normalizaion factor, the logarithm of the partition function:<br />
+            $$lnP(Y_i=1)=X_i\beta_1 - lnZ$$
+            $$\cdots \cdots$$
+            $$lnP(Y_i=K)=X_i\beta_K - lnZ$$
+            Since $\sum_{k=1}^{K}P(Y_i=K)=1$, therefore $Z = \sum_{k=1}^{K}e^{X_i\beta_k}$, then we have:<br />
+            $$P(Y_i=c)=\frac{e^{X_i\beta_c}}{\sum_{k=1}^{K}e^{X_i\beta_k}}$$
+            The following function:<br />
+            $$softmax(k,x_1,...,x_n)=\frac{e^{x_k}}{\sum_{i=1}^{n}e^{x_i}}$$is referred to as the <strong>softmax</strong> function. The reason is that the effect of exponentiating the values $x_1,...,x_n$ is to exaggerate the differences between them. As a result, softmax will return a value close to 0 whenever $x_k$ is significantly less than the maximum of all the values, and will return a value close to 1 when applied to the maximum value. Thus the softmax function can be used to construct a weighted average that behaves as a smooth function and which approximates the indicator function. Thus, we can write the probability equations as:<br />
+            $$P(Y_i=c)=softmax(c, X_i\beta_1, ..., X_i\beta_K)$$
+            The softmax function thus serves as the equivalent of the sigmoid function in binary logistic regression.</p>
+            <h2 class="section-heading">3. Model Construction</h2>
+            <p>Then let me construct a binary logistic regression from scratch by Python.</p>
+            <p>Due to the space constraint, please refer to this link to see more detailed coding information:</p>
+            <p><a href = "./Logistic_Regression.html">Jupyter Notebook For Logistic Regression </a></p>
+            <p>We could see logistic regression classify IRIS data very well.</p>
+            <p>All right, I think now we could have a very good understanding of Logistic Regression both on theory and implementation. Let us move to some other classification problem in the next post.</p>
+            <blockquote class="blockquote">
+            <p>Reference: <br><br />
+            <a href="http://ml-cheatsheet.readthedocs.io/en/latest/logistic_regression.html" class="uri">http://ml-cheatsheet.readthedocs.io/en/latest/logistic_regression.html</a><br></br>
+            <a href="https://bangdasun.github.io/"> James的blog</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
