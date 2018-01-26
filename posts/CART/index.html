@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('../../img/tree.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Decision Tree Model</h1>
+              <h2 class="subheading">Classification and Regression Model (1)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.index">Fan Gong</a>
+                on January 25, 2018</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+          <p>Decision Tree involves segmenting the predictor space into a number of simple regions. This kind of method is simple and useful for interpretation, even though itself only is not competitive enough with other best supervised methods. But we could see later that combining a large number of trees can often result in dramatic improvements in prediction accuracy.</p>
+          <h2 id="basic-concept-of-decision-trees">1. Basic Concept of Decision Trees</h2>
+          <p>The logic behind decision tree model is very simple: we want to split our predictor spaces into regions that leads to the greatest reduction of our loss function. For each of the node, we will make a binary splitting until we satisfy some criteria.</p>
+          <p>Here are some concepts in tree model:<br />
+          Decision trees are typically drowned upside down. The top node is called <strong>root</strong> and the bottom node is called <strong>terminal nodes</strong> or <strong>leaves</strong> of the tree. The points along the tree where the predictor space is split are referred to as <strong>internal nodes</strong>. Finally, we call the connection between the nodes as <strong>branches</strong>.</p>
+          <h2 id="regression-trees">2. Regression Trees</h2>
+          <p>Just like most of machine learning algorithms, here is what we should consider:</p>
+          <ol>
+          <li>How does the model work?</li>
+          <li>What is the loss function?</li>
+          <li>How to prevent overfitting?</li>
+          </ol>
+          <p>then let us answer these questions one by one and then we try to implement this model from scratch by python.</p>
+          <h3 id="model-structure-and-loss-function">2.1 Model structure and Loss Function</h3>
+          <p>Roughly speaking, there are two steps to build a regression tree:</p>
+          <ol>
+          <li>Divide the predictor space $X_1,X_2,...,X_p$ into $J$ distinct and non-overlapping regions, $R_1,R_2,...,R_J$ (high-dimensional rectangles, or <strong>boxes</strong>)</li>
+          <li>For every observation that falls into that region $R_j$, we make the same prediction, since here is the regression problem, we simply use <strong>the mean of the response values</strong> for the training observations in $R_j$. Then in each of the box $R_j$, the loss will be: $\sum_{i\in R_j}(y_i - \bar{y_{R_j}})$</li>
+          </ol>
+          <p>So the total loss will be:<br />
+          $$\sum_{j=1}^{J}\sum_{i\in R_j}(y_i - \bar{y_{R_j}})$$<br />
+          Which is the loss function for regression tree.</p>
+          <p>However, it is computationally infeasible to consider every possible partition of the feature space, so we take a top-down, greedy approach that is known as <strong>recursive binary splitting</strong>. Basically, It begins at the top of the tree and then successively splits the predictor space into two regions. It is greedy because the best split is made at each step, rather than looking ahead and picking a split that will lead to a better tree in some future step.</p>
+          <p>In mathematics, it means we will select the predictor $X_j$ and the cutpoint $s$ that splitting the predictor space into the regions${X|X_j&lt;s}$ and ${X|X_j\ge s}$ lead to the greatest reduction of our loss function. Next, we will repeat this procedure on one of the two previously identified regions, we continue until no region contains more than a specific number of observations.</p>
+          <h3 id="regularization">2.2 Regularization</h3>
+          <p>After seeing the stop criteria for this model, we could know how easily it getting overfits. To prevent this, a better strategy is to grow a very large tree $T_0$ and then prune back in order to obtain a subtree. So we have a method called <strong>cost-complexity pruning</strong> also known as <strong>weakest link pruning</strong>. What it does is adding the penalty on growing a very deep tree, and use cross-validation to find the optimal penalty level (the tunning parameter $\alpha$ below). Here is the loss function for this method:<br />
+          $$\sum_{m=1}^{|T|}\sum_{i: x_i \in R_m}(y_i - \hat{y_{R_m}})^2 + \alpha|T|$$<br />
+          where $|T|$ is the number of the leaves of the tree $T$</p>
+          <h3 id="model-implememtation">2.3 Model Implememtation</h3>
+          <p>This time I did spend some time on constructing this model. It seems that it is difficult than I thought. Here is the link to my Jupiter Notebook.<br />
+          <a href = './Decision_Tree.html'> Decision Tree Model</a><br />
+          Certainly, I need to improve this algorithm. Let me get back to it later.</p>
+          <h2 id="classification-tree">3. Classification Tree</h2>
+          <p>Basically, the classification tree is very similar to regression tree. If we follow the same thinking structure of regression tree, here are some differences:</p>
+          <ol>
+          <li>Change the response value in each region. We use majority vote or mode labels to represent the prediction value in this region.</li>
+          <li>Change the loss function.
+          <ul>
+          <li>0-1 loss: $\sum_{j=1}^{J}\sum_{i: x_i \in R_j}\mathbb{I}{y_i \ne \hat{y_{R_j}}}$ or the classification error rate: $\sum_{j=1}^{J}\frac{1}{n_j}\sum_{i: x_i \in R_j}\mathbb{I}{y_i \ne \hat{y_{R_j}}}$</li>
+          <li>Gini Index: $\sum_{j=1}^{J}\sum_{k=1}^{K}p_{jk}(1-p_{jk})$ where $p_{jk}$ represents the proportion of the training observations in the $j^{th}$ region that are from the $k^{th}$ class.</li>
+          <li>Cross-Entrpy: $-\sum_{j=1}^{J}\sum_{k=1}^{K}p_{jk} log(p_{jk})$</li>
+          </ul></li>
+          </ol>
+          <p>Normally, Gini Index and Cross-entropy are very similar and they both reflect the purity of one region and so are more sensitive to node purity than classification error rate. But the classification error rate is preferable if prediction accuracy of the final pruned tree is the goal.</p>
+          <h2 id="summary">4. Summary</h2>
+          <p>Trees are very easy to explain to people and can be displayed graphically. Also, Trees can easily handle qualitative predictors without the need to create dummy variables.<br />
+          However, trees generally do not have the same level of predictive accuracy as some of the other regression and classification approaches.</p>
+          <p>How to improve this good method? let us see how ensemble method solves this problem next time.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
