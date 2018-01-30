@@ -145,7 +145,7 @@
           <li>Change the response value in each region. We use majority vote or mode labels to represent the prediction value in this region.</li>
           <li>Change the loss function.
           <ul>
-          <li>0-1 loss: $\sum_{j=1}^{J}\sum_{i: x_i \in R_j}\mathbb{I}{y_i \ne \hat{y_{R_j}}}$ or the classification error rate: $\sum_{j=1}^{J}\frac{1}{n_j}\sum_{i: x_i \in R_j}\mathbb{I}{y_i \ne \hat{y_{R_j}}}$</li>
+          <li>0-1 loss: $\sum_{j=1}^{J}\sum_{i: x_i \in R_j}I{(y_i \ne \hat{y_{R_j}})}$ or the classification error rate: $\sum_{j=1}^{J}\frac{1}{n_j}\sum_{i: x_i \in R_j}\mathbb{I}{y_i \ne \hat{y_{R_j}}}$</li>
           <li>Gini Index: $\sum_{j=1}^{J}\sum_{k=1}^{K}p_{jk}(1-p_{jk})$ where $p_{jk}$ represents the proportion of the training observations in the $j^{th}$ region that are from the $k^{th}$ class.</li>
           <li>Cross-Entrpy: $-\sum_{j=1}^{J}\sum_{k=1}^{K}p_{jk} log(p_{jk})$</li>
           </ul></li>
