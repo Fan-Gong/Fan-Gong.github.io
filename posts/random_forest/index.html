@@ -112,8 +112,7 @@
             <br>
             <h3 id="bootstrapping">1.1 Bootstrapping</h3>
             <p>The most important technique random forest model uses to reduce the variance is bootstrap aggregation or bagging. If you have learned about statistics before, you must hear about the term bootstrapping, which laid the foundation for bagging algorithm. Even though the theory behind it is fairly easy, I felt pretty confused at first about why it works. Thus, I think it is necessary to talk about how and why bootstrapping works and then move to the discussion of bagging algorithm.</p>
-            <p><strong>Bootstrapping</strong> is a way of estimating statistical parameters (e.g. the population mean and its confidence<br />
-            interval) from the sample by means of resampling with replacement. It is a <strong>non-parametric approach</strong> since bootstrapping does not make any assumptions about the distribution of the sample. By comparison, what we always do is to make distribution assumption about our population and make an estimation based on this parametric distribution, hence <strong>parametric approach</strong>. <em>The major assumption behind bootstrapping is that the sample distribution is a good approximation to the population distribution.</em></p>
+            <p><strong>Bootstrapping</strong> is a way of estimating statistical parameters (e.g. the population mean and its confidence interval) from the sample by means of resampling with replacement. It is a <strong>non-parametric approach</strong> since bootstrapping does not make any assumptions about the distribution of the sample. By comparison, what we always do is to make distribution assumption about our population and make an estimation based on this parametric distribution, hence <strong>parametric approach</strong>. <em>The major assumption behind bootstrapping is that the sample distribution is a good approximation to the population distribution.</em></p>
             <p>So, for example, if we care about the 95% CI for our population mean by using bootstrapping, what we do is to resampling and recalculating the sample mean for some number of iterations; sort these bootstrapped estimates, extract the 2.5th and 97.5th percentile of these estimates, to obtain an overall estimate and CI of the population mean.</p>
             <blockquote class="blockquote">
             In fact, if you look at this process schematically, you can see why the crucial assumption is just that the original sample is representative of the population. The bootstrapped samples
@@ -133,7 +132,7 @@
             Since we allow replacement, so the probability for this data point that not to be chosen for one bootstrapped datasets (also have $n$ data points) is<br />
             $$P(i^{th} \ point \ not \ to \ be \ chosen \ in \ one \ bootstrapped \ datasets) = (1-\frac{1}{n})^n$$
             <p>Based on the knowledge of calculus, if the number $n$ goes to infinity, we obtain:<br />
-            $$lim_{n\to \infty}(1-\frac{1}{n})^n = \frac{1}{e} \approx \frac{1}{3}$$<br />
+            $$lim_{n\to \infty}(1-\frac{1}{n})^n = \frac{1}{e} \approx \frac{1}{3}$$
             So these remaining one-third of the observations not used to fit a given model are referred as <strong>out-of-bag(OOB)</strong> observations.</p>
             <h3 id="variable-importance-measures">1.4 Variable Importance Measures</h3>
             <p>After knowing the procedure of bagging, we could find that if we bag a large number of trees, it is hard to understand the whole structure, since each tree may split the prediction region in different ways. Thus, <em>bagging improves prediction accuracy at the expense of interpretability</em>.</p>
