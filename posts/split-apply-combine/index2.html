@@ -668,13 +668,13 @@ iris.assign(sepal_ratio <span class="op">=</span> iris.sepal_len<span class="op"
 <br>
 <h2 class="subheading">5. summarise</h2><br />
 In <code>pandas</code> these summarised functions are spread across <code>pd.DataFrame.mean</code> or <code>pd.DataFrame.sum</code>. There is also a <code>pd.DataFrame.agg</code> function. Here is the detailed information:</p>
-<p><code>DataFrame.agg(func, axis=0, *args, **kwargs)</code> where <code>func</code> is the function to use for aggregating the data. Accepted Combinations are:<br />
-<ul><br />
-<li>string function name</li><br />
-<li>function</li><br />
-<li>list of functions</li><br />
-<li>dict of column names -&gt; functions (or list of functions)</li><br />
-</ul><br />
+<p><code>DataFrame.agg(func, axis=0, *args, **kwargs)</code> where <code>func</code> is the function to use for aggregating the data. Accepted Combinations are:
+<ul>
+<li>string function name</li>
+<li>function</li>
+<li>list of functions</li>
+<li>dict of column names -&gt; functions (or list of functions)</li>
+</ul>
 Here is an example:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># Use simple mean function</span>
 iris.sepal_len.mean()</code></pre></div>

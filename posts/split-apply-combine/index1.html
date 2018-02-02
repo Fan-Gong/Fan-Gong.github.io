@@ -110,80 +110,82 @@
               <br><br>All right, let us see how to use R to perform data wrangling.
             </p>
               <h2 class="section-heading">1. Build-in Function</h2>
-              <p>Basically, there are two groups of base function for split-apply-combine in R. One is <code>aggregate</code> function and another is the <code>apply</code> family.<br><br><br />
+              <p>Basically, there are two groups of base function for split-apply-combine in R. One is <code>aggregate</code> function and another is the <code>apply</code> family.<br><br>
                 Since most of R users are very familiar with these functions, I will only have a very brief introduction.<br />
-                <ul><br />
+                <ul>
                 <li><code>aggregate(x, by, Fun, ...)</code>, notice <code>by</code> should be a list of the grouping elements. For example: <code>aggregate(iris[,-5], by = list(iris$Species), FUN = mean)</code> will give the mean length/width value for each species. </li><br />
                 <li><code>apply(x, MARGIN, FUN)</code> applies a function to each row or column of a matrix., notice for <code>MARGIN</code>, <code>1</code> indicates rows and <code>2</code> indicates columns. </li><br />
                 <li><code>lapply(x, FUN)</code> and <code>sapply(x, FUN)</code> allow you to apply the same function to every element in a list or a vector. but <code>lapply</code> always returns a list, and <code>sapply</code> tries to simplify the return value whenever possible. Notice we always use <code>'['</code> to get the subset of the content in each list element; and we use <code>'[['</code> to extract the item in each list element. For example: <code>lapply(a, '[[', 1,2)</code> will extract item <code>[1,2]</code> from each list element.</li><br />
                 <li><code>tapply(x, Index, FUN)</code>: to apply FUN to subsets of entries in x that shares a common level in Index. which means we split our data by Index first and then use our function to every part. (seldomly use)</li><br />
                 </ul></p>
-
-
               <h2 class="section-heading">2. plyr Package</h2>
               <p><code>plyr</code> is a data manipulating package which is especially for split-apply-combine. <br><br>
                 <code>plyr</code> builds on the build-in <code>apply</code> functions by giving you control over the input and output formats and keeping the syntax consistent across all variations.<br><br>
                 The basic format is two letters followed by <code>ply()</code>. The first letter refers to the format in and the second to the format out.</p>
-                The three main letters are:<br><br>
+                The three main letters are:
                 <ol>
                 <li> <code>d</code> = data frame</li>
                 <li> <code>a</code> = array(include matrics)</li>
                 <li> <code>l</code> = list </li>
                 </ol>
-                <p><br>
+                <p>
                 There are also some less common format options, say, <code>_</code>, which means it throw away the output.</p>
                 <h3>2.1 ddply</h3>
                 <p><code>ddply</code> input a dataframe and also output a dataframe</p>
-                <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(plyr)
-                df =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">year =</span> <span class="kw">rep</span>(<span class="dv">2000</span>:<span class="dv">2002</span>, <span class="dt">each =</span> <span class="dv">3</span>), <span class="dt">count =</span> <span class="kw">round</span>(<span class="kw">runif</span>(<span class="dv">9</span>, <span class="dv">0</span>, <span class="dv">20</span>)))
-                <span class="kw">head</span>(df)</code></pre></div>
-                <pre><code>##   year count
-                ## 1 2000    13
-                ## 2 2000    16
-                ## 3 2000     4
-                ## 4 2001    14
-                ## 5 2001    20
-                ## 6 2001    18</code></pre>
-                <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#use ddply to calculate CV for every year</span>
-                <span class="kw">ddply</span>(df, .(year), function(x){
-                  mean =<span class="st"> </span><span class="kw">mean</span>(x$count)
-                  sd =<span class="st"> </span><span class="kw">sd</span>(x$count)
-                  cv =<span class="st"> </span>sd/mean
-                  <span class="kw">return</span>(<span class="kw">data.frame</span>(<span class="dt">cv.count =</span> cv))
-                })</code></pre></div>
-                <pre><code>##   year  cv.count
-                ## 1 2000 0.5677271
-                ## 2 2001 0.1762529
-                ## 3 2002 0.2359323</code></pre>
+                <pre><code>library(plyr)
+df = data.frame(year = rep(2000:2002, each = 3), count = round(runif(9, 0, 20)))
+head(df)
+
+    ##   year count
+    ## 1 2000    13
+    ## 2 2000    16
+    ## 3 2000     4
+    ## 4 2001    14
+    ## 5 2001    20
+    ## 6 2001    18
+
+#use ddply to calculate CV for every year
+ddply(df, .(year), function(x){
+  mean = mean(x$count)
+  sd = sd(x$count)
+  cv = sd/mean
+  return(data.frame(cv.count = cv))
+})
+
+    ##   year  cv.count
+    ## 1 2000 0.5677271
+    ## 2 2001 0.1762529
+    ## 3 2002 0.2359323</code></pre>
                 <h3>2.2 ldply</h3>
                 <p><code>ldply</code> input a list and output a dataframe</p>
-                <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#use ldply to calculate CV in every piece</span>
-                df2 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">year =</span> <span class="kw">rep</span>(<span class="dv">2003</span>:<span class="dv">2005</span>, <span class="dt">each =</span> <span class="dv">3</span>), <span class="dt">count =</span> <span class="kw">round</span>(<span class="kw">runif</span>(<span class="dv">9</span>, <span class="dv">32</span>, <span class="dv">50</span>)))
-                df3 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">year =</span> <span class="kw">rep</span>(<span class="dv">2006</span>:<span class="dv">2008</span>, <span class="dt">each =</span> <span class="dv">3</span>), <span class="dt">count =</span> <span class="kw">round</span>(<span class="kw">runif</span>(<span class="dv">9</span>, <span class="dv">78</span>, <span class="dv">90</span>)))
-                l =<span class="st"> </span><span class="kw">list</span>(<span class="dt">period1 =</span> df, <span class="dt">period2 =</span> df2, <span class="dt">period3 =</span> df3)
+<pre><code>#use ldply to calculate CV in every piece
+df2 = data.frame(year = rep(2003:2005, each = 3), count = round(runif(9, 32, 50)))
+df3 = data.frame(year = rep(2006:2008, each = 3), count = round(runif(9, 78, 90)))
+l = list(period1 = df, period2 = df2, period3 = df3)
 
-                a =<span class="st"> </span><span class="kw">ldply</span>(l, function(x){
-                  mean =<span class="st"> </span><span class="kw">mean</span>(x$count)
-                  sd =<span class="st"> </span><span class="kw">sd</span>(x$count)
-                  cv =<span class="st"> </span>sd/mean
-                  <span class="kw">return</span>(<span class="kw">data.frame</span>(<span class="dt">cv.count =</span> cv))
-                })
+a = ldply(l, function(x){
+  mean = mean(x$count)
+  sd = sd(x$count)
+  cv = sd/mean
+  return(data.frame(cv.count = cv))
+})
 
-                <span class="co">#also review the function of sapply</span>
-                <span class="kw">sapply</span>(l, function(x){
-                  mean =<span class="st"> </span><span class="kw">mean</span>(x$count)
-                  sd =<span class="st"> </span><span class="kw">sd</span>(x$count)
-                  cv =<span class="st"> </span>sd/mean
-                  <span class="kw">return</span>(<span class="kw">data.frame</span>(<span class="dt">cv.count =</span> cv))
-                })</code></pre></div>
-                <pre><code>## $period1.cv.count
-                ## [1] 0.3788022
-                ##
-                ## $period2.cv.count
-                ## [1] 0.1382445
-                ##
-                ## $period3.cv.count
-                ## [1] 0.05590516</code></pre>
+#also review the function of sapply
+sapply(l, function(x){
+  mean = mean(x$count)
+  sd = sd(x$count)
+  cv = sd/mean
+  return(data.frame(cv.count = cv))
+})
+
+    ## $period1.cv.count
+    ## [1] 0.3788022
+    ##
+    ## $period2.cv.count
+    ## [1] 0.1382445
+    ##
+    ## $period3.cv.count
+    ## [1] 0.05590516</code></pre>
 
                 <h2 class="section-heading">3. dplyr package</h2>
                 <p>dplyr is one of my favorite package in R. It is very intuitive and powerful. For most of the split-apply-combine problems, I will always use this package first. Here are the functions in this package:
@@ -202,45 +204,46 @@
                 <p><code>arrange(.data, var)</code> is used to re-order rows by a particular column such as the taxonomic order, list the name of the column you want to arrange the rows by.</p>
                 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">arrange</span>(iris, Sepal.Length)</code></pre></div>
                 <h3>3.4 summarise </h3>
-                <p><code>summarise</code> create summary statistics for a given column in the data frame such as finding the mean. There are many other summary statistics you could consider such as <code>sd(), min(), max(), median(), sum(),n()</code>(return the length of the vector), <code>n_distinct()</code> (number of distinct values in vector)`</p>
-                <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris %&gt;%
-                <span class="st">  </span><span class="kw">summarize</span>(<span class="dt">avg =</span> <span class="kw">mean</span>(Sepal.Length),
-                            <span class="dt">min =</span> <span class="kw">min</span>(Sepal.Length),
-                            <span class="dt">max =</span> <span class="kw">max</span>(Sepal.Length),
-                            <span class="dt">total =</span> <span class="kw">n</span>())</code></pre></div>
+                <p><code>summarise</code> create summary statistics for a given column in the data frame such as finding the mean. There are many other summary statistics you could consider such as <code>sd(), min(), max(), median(), sum(),n()</code>(return the length of the vector), <code>n_distinct()</code> (number of distinct values in vector)</p>
+<pre><code>iris %&gt;%
+  summarize(avg = mean(Sepal.Length),
+            min = min(Sepal.Length),
+            max = max(Sepal.Length),
+            total = n())</code></pre>
                 <h3>3.5 mutate</h3>
                 <p><code>mutate(.data)</code> add new columns to the data frame. Always it is used to create the attributes that <code>summarise</code> doesn't cover.</p>
                 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris %&gt;%<span class="st"> </span><span class="kw">mutate</span>(<span class="dt">ratio =</span> Sepal.Length/Sepal.Width) %&gt;%<span class="st"> </span><span class="kw">head</span>()</code></pre></div>
                 <h3>3.6 group_by</h3>
                 <p><code>group_by</code> split the data frame by some variable, apply a function to the individual data frames and then combine the output.</p>
-                <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris %&gt;%
-                <span class="st">  </span><span class="kw">group_by</span>(Species) %&gt;%
-                <span class="st">  </span><span class="kw">summarize</span>(<span class="dt">avg =</span> <span class="kw">mean</span>(Sepal.Length),
-                            <span class="dt">min =</span> <span class="kw">min</span>(Sepal.Length),
-                            <span class="dt">max =</span> <span class="kw">max</span>(Sepal.Length),
-                            <span class="dt">total =</span> <span class="kw">n</span>())</code></pre></div>
+<pre><code>iris %&gt;%
+  group_by(Species) %&gt;%
+  summarize(avg = mean(Sepal.Length),
+            min = min(Sepal.Length),
+            max = max(Sepal.Length),
+            total = n())</code></pre>
+
                 <h3>3.7 join</h3>
                 <p><code>inner_join(x, y, by = )</code> returns rows when there is a match in both tables. <code>left_join(x, y, by = )</code> reuturns all rows from the left table, even if there are no matches in the right table. There are also <code>right_join/full_join/semi_join/anti_join</code>.</p>
                 <h3>3.8 Other things in dplyr</h3>
-                <p><b>Pipe Operator: %&gt;%</b><br><br><br />
-                This operator allows you to pipe the output from one function to the input of another function. Instead of nesting functions(reading from inside to the outside), the idea of piping is to read the function from left to right.<br><br><br />
-                <b>Deprecated SE versions of main verbs</b><br><br><br />
-                dplyr used to offer twin versions of each verb suffixed with an underscore. These versions had standard evaluation (SE) semantics. Sometimes it is useful especially you would like to write a function about some variable. In this case, there are two matters needing attention:<br />
-                <ul><br />
+                <p><b>Pipe Operator: %&gt;%</b><br>
+                This operator allows you to pipe the output from one function to the input of another function. Instead of nesting functions(reading from inside to the outside), the idea of piping is to read the function from left to right.<br><br>
+                <b>Deprecated SE versions of main verbs</b><br>
+                dplyr used to offer twin versions of each verb suffixed with an underscore. These versions had standard evaluation (SE) semantics. Sometimes it is useful especially you would like to write a function about some variable. In this case, there are two matters needing attention:
+                <ul>
                 <li>Use the underscore version of functions. For example, use <code>select_()</code> and <code>filter_()</code></li><br />
                 <li>Use <code>lazyeval::interp</code> to do format transformation. For example:</p>
-                <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># here variable is a string variable</span>
-                mean_max =<span class="st"> </span>df %&gt;%<span class="st"> </span>
-                <span class="st">    </span><span class="kw">select_</span>(<span class="st">&quot;Year&quot;</span>, variable) %&gt;%<span class="st"> </span>
-                <span class="st">    </span><span class="kw">group_by_</span>(<span class="st">&quot;Year&quot;</span>) %&gt;%
-                <span class="st">    </span><span class="kw">summarise_</span>(<span class="dt">mean =</span> <span class="kw">interp</span>(~<span class="kw">mean</span>(variable), <span class="dt">variable =</span> <span class="kw">as.name</span>(variable)))</code></pre></div>
+<pre><code># here variable is a string variable
+mean_max = df %&gt;%
+    select_(&quot;Year&quot;, variable) %&gt;%
+    group_by_(&quot;Year&quot;) %&gt;%
+    summarise_(mean = interp(~mean(variable), variable = as.name(variable)))</code></pre>
                 </li>
                 </ul>
                 <hr>
-                <p><br><br />
-                That is the basic data wrangling methods in R. Then I am wondering, does python also have some functions that are similar to <code>dplyr</code>? <br><br><br />
-                Let us see in the next post!<br />
-                <br><br><br />
+                <p><br>
+                That is the basic data wrangling methods in R. Then I am wondering, does python also have some functions that are similar to <code>dplyr</code>? <br><br>
+                Let us see in the next post!
+                <br><br>
                 <blockquote class="blockquote"> Reference: <br><br />
                 <a href="http://seananderson.ca/2013/12/01/plyr.html" class="uri">http://seananderson.ca/2013/12/01/plyr.html</a><br><br />
                 <a href="https://stackoverflow.com/questions/19260951/using-square-bracket-as-a-function-for-lapply-in-r" class="uri">https://stackoverflow.com/questions/19260951/using-square-bracket-as-a-function-for-lapply-in-r</a></blockquote></p>
