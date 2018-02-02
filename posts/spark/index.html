@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('../../img/spark.png')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Spark Learning Notes (1) - Spark Core</h1>
+              <h2 class="subheading">Play With Big Data</h2>
+              <span class="meta">Posted by
+                <a href="../../about.index">Fan Gong</a>
+                on February 2, 2018</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+<p>Nowadays, ability to deal with some big data problems is a necessity to become a data scientist. So, recently I was trying to learn some big data knowledge.</p>
+<p>The reason that I start from learning Spark is that first, it has python API and also it is much functional than Hadoop. But later on, I will get back to learn the knowledge of Hadoop ecosystem, since they have a very close relationship (As far as I know, spark always runs on cluster Through Hadoop YARN).</p>
+<p>My learning materials include the online course <a href = "https://www.udemy.com/taming-big-data-with-apache-spark-hands-on/learn/v4/content">Taming Big Data with Apache Spark and Python</a> and <a href = "https://spark.apache.org/docs/latest/">the official Spark documentation </a> from spark website. I think this documentation is pretty good compared with some other obscure and elusive official documentation I have read such as <code>Tensorflow</code>'s. :D</p>
+<p>Without further ado, let me summarize what I have learned about spark core.</p>
+<h2 id="overview">1. Overview</h2>
+<p>To tell what is Spark, I would like to quote this sentence from the documentation:</p>
+<blockquote class="blockquote">Every Spark application consists of a driver program that runs the user’s main function and
+executes various parallel operations on a cluster.</blockquote>
+<p>To literally understand this sentence, spark uses parallel operation to efficiently solve our problems; At the same time, we programmer write the main function from various API, configure the cluster to let spark successfully operate on it.</p>
+<p>It seems like very easy, but the partitions of tasks or the parallel operations could go wrong easily. So we need a special data structure especially for parallel calculation. Here comes <strong>resilient distributed dataset (RDD)</strong>, which is a collection of elements partitioned across the nodes of the cluster that can be operated on in parallel. Besides, we may need <strong>shared variables</strong> that can be used in parallel operations. Next, let us have some more detailed idea about spark.</p>
+<h2 id="resilient-distributed-dataset-rdd">2. Resilient Distributed Dataset (RDD)</h2>
+<p>RDD is one of the most important abstractions of Spark, it is a fault-tolerant collection of elements that can be operated on in parallel. In this chapter I will focus on three parts of RDD:</p>
+<ul>
+<li>How to create RDD</li>
+<li>What is the RDD operation</li>
+<li>The storage of RDD</li>
+</ul>
+<h3 id="create-rdd">2.1 Create RDD</h3>
+<p>There are two ways to generate RDD:</p>
+<ol>
+<li>Parallelized Collections: The elements of the collection are copied to form a distributed dataset that can be operated on in parallel.</li>
+<li>External Datasets: Pyspark can create distributed datasets from any storage source supported by Hadoop, local file system and so on. The most commonly used method is <code>sc.textFile()</code> method.</li>
+</ol>
+<p>Here is a simple example:</p>
+<pre><code>from pyspark import SparkContext, SparkConf
+import numpy as np
+
+conf = SparkConf().setMaster(&#39;local&#39;).setAppName(&#39;try&#39;) # we will use local cpu as the master nodes
+sc = SparkContext(conf = conf)
+
+# Create an RDD from Parallelizing
+lst = np.array([[1,1],[2,2]])
+rdd1 = sc.parallelize(lst)
+
+# Create an RDD from the local text file
+rdd2 = sc.textFile(&#39;Book.txt&#39;)</code></pre>
+<h3 id="rdd-operations">2.2 RDD Operations</h3>
+<p>RDD supports two types of operations: <strong>transformations</strong>, which create a new dataset from an existing one, and <strong>actions</strong>, which return a value to the driver program after running a computation on the dataset.</p>
+<p>The transformations are only computed when an action is performed. The design is called <em>Lazy Calculation</em>, which enables Spark to run more efficiently.</p>
+<p>I will not list the specific transformation and action function here. Please refer to <a href = 'https://spark.apache.org/docs/latest/rdd-programming-guide.html'> the official documentation</a>. What I want to do here is to make an example to illustrate how to use RDD operations.</p>
+<p>As far as what I have learned, for RDD (not talking about DataFrame and Datasets), it is very common to transform the RDD to <strong>key-value</strong> pairs first, and then <strong>Use Lambda or function to RDD Operations</strong>. We could see that RDD operations always need us to pass a function in it. So, in python, it is very convenient to use <code>lambda</code> to create a simple function; Also, we could define our own function for dealing with complex RDD.</p>
+<p>Suppose our target is to find the word that is used most frequently in one book. Here is what we could do in PySpark:</p>
+<pre><code>from pyspark import SparkConf, SparkContext
+import re
+
+conf = SparkConf().setMaster(&#39;local&#39;).setAppName(&#39;Mytry2&#39;) # run locally
+sc = SparkContext(conf = conf)
+
+# Construct our own function
+def delete_punc(text):
+    find_punc = re.compile(r&#39;\W+&#39;, re.UNICODE) # matches any non-word character
+    return(find_punc.split(text.lower())) # re.split will split by this non-word character and then delete it
+
+# Create RDD by using external files
+rdd = sc.textFile(&#39;./Book.txt&#39;)
+# Use our own function
+rdd_each_word = rdd.flatMap(delete_punc)
+# Use lambda function to create key-pairs
+rdd_count = rdd_each_word.map(lambda x: (x,1)).reduceByKey(lambda x,y: x + y)
+# Sort the results
+rdd_count_sort = rdd_count.map(lambda x: (x[1],x[0])).sortByKey().collect()
+
+for i in rdd_count_sort:
+    count = str(i[0])
+    words = i[1].encode(&#39;ascii&#39;, &#39;ignore&#39;)
+    print(words.decode() + &#39;:\t &#39; + count)
+
+## results:
+##
+##  your:    1420
+##  to:      1828
+##  you:     1878
+##</code></pre>
+<p>The example illustrates how we use our own function, lambda function, and key-value pairs to solve a counting problem. The amazing part is that we could use abundant Python module in RDD's operation.</p>
+<h3 id="rdd-storage">2.3 RDD Storage</h3>
+<p>Because of the design of lazy calculation, each transformed RDD may be recomputed each time you run an action on it. So we could use <code>persist</code> or <code>cache</code> method to store the RDD in memory. The difference is that with <code>cache()</code>, you use only the default storage level <code>MEMORY_ONLY</code>. With <code>persist()</code>, you can specify which storage level you want.</p>
+<p>Here is an example:</p>
+<pre><code># Same boilerplate as the above example
+rdd_count.persist(StorageLevel(True, False, False, False, 1)) # DISK_ONLY
+rdd_count.unpersist().is_cached # --&gt; True</code></pre>
+<h2 id="shared-variables">3. Shared Variables</h2>
+<p>We know Spark work on parallel calculation, which means we will have several executors working together. So, the general read-write shared variables across tasks would be inefficient. So, Spark provides two limited types of shared variables: broadcast variables and accumulators.</p>
+<h3 id="broadcast-variables">3.1 Broadcast Variables</h3>
+<p>Broadcast variables allow the programmer to keep a read-only variable cached on each machine rather than shipping a copy of it with tasks. It is useful when tasks across multiple stages need the same data or when caching the data in deserialized form is important.</p>
+<p>Here is an example that I will use <code>sc.broadcast()</code>: We have two datasets, one contains the movie id and its rank by customers. Another dataset just contains the matching movie name for each movie id. In that case, if we care about the movie name, we could put the name dataset as a broadcast variable, like this:</p>
+<pre><code># Function to clean movie name data
+def loadnames():
+    movieNames = {}
+    with open(&#39;ml-100k/u.item&#39;, encoding = &quot;ISO-8859-1&quot;) as f:
+        for line in f:
+            fields = line.split(&#39;|&#39;)
+            movieNames[int(fields[0])] = fields[1]
+    return movieNames
+# Construct the broadcast variable
+nameDict = sc.broadcst(loadnames())
+    ....
+    ....
+# ignore some middle steps.
+# Remember to use .value to extract the information of this broadcast variable
+result_names = result_sorted.map(lambda x: (nameDict.value[x[1]],x[0])).collect()</code></pre>
+<h3 id="accumulators">3.2 Accumulators</h3>
+<p>Accumulators are variables that are used for aggregating information across the executors. For example, this information can pertain to data or API diagnosis like how many records are corrupted or how many times a particular library API was called.</p>
+<p>Basically, we create a accumulator object first <code>accum = sc.accumulator(0)</code> and use <code>accm.add(n)</code> to add <code>n</code> to our accumulator. Also, we could use <code>accum.value</code> to see the value of our accumulator.</p>
+<p>One thing needs to keep in mind is that due to the lazy calculation, unless an action happens on an RDD, the transformations are not executed. As a result of this, accumulators used inside functions like<code>map()</code> or <code>filter()</code> won't get executed unless some actions happen on the RDD.</p>
+<hr>
+<p>All right. I think I have covered the basic Core Spark knowledge. Let me talk about the Spark SQL next time.</p>
+
+
+
+
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
