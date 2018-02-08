@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('./adaboost.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>AdaBoost</h1>
+              <h2 class="subheading">Ensemble Model (2)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.index">Fan Gong</a>
+                on February 8, 2018</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p>(The Chinese New Year is getting close, so I choose a background image with festival atmosphere :D)<br /><br>
+Today I want to talk about another ensemble method - AdaBoost.</p>
+<p>AdaBoost is the most fundamental and also the first boosting algorithm. Basically, it tries to add <strong>weak leaners</strong> (classifier that is slightly better than random guessing) one at a time; and each weak learner tries to get those points which are currently not classified correctly right.</p>
+<p>At first glance, Adaboost looks very intuitive. The differences between bagging and AdaBoost is that we use different techniques to create our new sample data. For bagging, we use bootstrap; whereas for AdaBoost, we use weights to resample data. Let us then see some detailed information about how AdaBoost works.</p>
+<h2 id="model-structure">1. Model Structure</h2>
+<h3 id="overview">1.1 Overview</h3>
+<p>Let us start from seeing the output classifier of Adaboost:
+$$G(x) = sign[\sum_{m=1}^M\alpha_mG_m(x)]$$
+<p>By looking at this formula, we could say that $G(x)$ is actually <I>a weighted majority vote of each weak leaner $G_m(x)$ where each is assigned weight $\alpha _m$</I>.</p>
+<p>Basically, here is what AdaBoost does:
+<ul>
+<li>It helps us choose the training set for each weak learner based on the results of the previous classifier</li>
+<li>It determines how much weight should be given to each classifier</li>
+</ul>
+<h3 id="adaboost-model">1.2 AdaBoost Model</h3>
+<p>I would like to divide the Adaboost model into four steps:</p>
+<h4 id="step-0-generate-training-data">Step 0: Generate Training Data</h4>
+<p>We have already learned Random Forest and we know that the way it deals with generating more training data is to use bootstrap with selected features. For Adaboost, each data point will have a weight (we can then deem the data set as a distribution). And we will base on that weight to sample data.</p>
+<p>At the begining, we set $\omega_i=\frac{1}{n}$</p>
+<h4 id="step-1-fit-a-weak-learner-classifier-g_mx">Step 1: Fit a weak learner classifier $G_m(x)$</h4>
+<p>Since we only need a weak learner, the normal choice for the weak learner is to use <strong>Decision Stump</strong>. Decision stump is a simple classification tree classifier with only one splitting:
+$$G_m(x|j,t) = \begin{cases} + 1\ x^{j}&gt;t \\  -1 \ otherwise\ \end{cases}$$
+where $j \in {1,...,d}$ indexes an axis in $R^d$.</p>
+<h4 id="step-2-compute-the-model-weight">Step 2: Compute the Model Weight</h4>
+<p>For each of the weak learner, we will calculate the weighted classification error:
+$$err_m = \frac{\sum_{i=1}^{n}\omega_i I{y_i \neq G_m(x_i)} }{\sum_{i=1}^{n}\omega_i}$$
+Where $\omega_i$ is the weight for the $i_th$ data point, and we initialize the $\omega_i = \frac{1}{n}$.</p>
+<p>This error measures the goodness of the weak learner, the smaller the better. But we want to create a value that is in direct proportion to the goodness, here comes the model weight $alpha_m$:
+$$\alpha_m= log(\frac{1-err_m}{err_m})$$
+It looks like this:
+<div style="text-align: center;">
+<img class="img-fluid" src="./alpha.jpg" alt="" align='middle'>
+</div>
+We could see that $\alpha_m$ grows exponentially as the error approach 0; and grows exponentially negative as the error approaches 1; Finally, it equals to 0 when the error rate is 0.5.</p>
+<h4 id="step-3-update-the-data-point-weight">Step 3: Update the Data Point Weight</h4>
+<p>After getting the goodness of one weak learner, we then update the training data weights by using this formula:
+$$\omega_{i+1} = \frac{\omega_i \cdot exp(-\alpha_m\cdot y_i G_m(x_i)))}{\sum_{i=1}^n \omega_{i+1}}$$
+The intuition here is that:</p>
+<p>if we incorrectly classify the $i^{th}$ data point, the weight will change depending on the goodness of this classifier:</p>
+<ul>
+<li>If this classifier is good (accuracy &gt; 50%), we will get a high positive $\alpha$ value, so this data point will have larger weights, which means it will be included with a higher probability in the next training dataset</li>
+<li>If this classifier is bad (accuracy &lt; 50%), we will get high negative $\alpha$ value, so this data point will have lower weights, which means it will be included with a lower probability in the next training dataset. The reason is that this classifier is bad, the opposite is right. So we think the data that it classified incorrectly is actually correct.</li>
+</ul>
+<p>And the same reasoning when we correctly classify it. The <strong>key idea</strong> is: <em>We will give large weight to the data point that we think we classify it incorrectly and give smaller weight to the right one.</em></p>
+<h4 id="step-4-majority-vote">Step 4: Majority Vote:</h4>
+<p>We will then loop through all the steps above to generate $M$ weak learner. Fianlly we will get the output based on weighted majority vote:
+$$G(x_i) = sign[\sum_{m=1}^M\alpha_mG_m(x_i)]$$</p>
+<p>Notice that boosting can overfit with the number of weak learners, although this overfitting tends to occur slowly if at all. We use <strong>cross-validation</strong> to select $M$.</p>
+<h2 id="additive-model-and-exponential-loss">2. Additive Model and Exponential Loss</h2>
+<p>When first knew that Adaboost actually minimizes <strong>exponential loss</strong>, I felt pretty surprised. Since the procedure in Adaboost is a little bit different with other ML algorithms which usually apparently minimize some loss function to get the optimal results. So in this post, I think it is very necessary to talk about why Adaboost minimizes exponential loss.</p>
+<p>(By the way, Robert E. Schapire who create Adaboost, admitted that Adaboost not originally designed for minimizing some loss, but later found out to minimize exponential loss)</p>
+<h3 id="forward-stagewise-additive-modeling">2.1 Forward Stagewise Additive Modeling</h3>
+<p>Boosting is a way of fitting an additive expansion in a set of &quot;basis&quot; functions. It takes the form:
+$$f(x) = \sum_{m=1}^{M}\beta_m b (x;\gamma_m)$$
+where $\beta_m$ is the expansion coefficients, and $b (x;\gamma_m)$ is usually simple function of $x$, characterized by a set of parameters $\gamma$.</p>
+<p>Typically these models are fit by minimizing a loss:</p>
+<p>$$(\beta_m,\gamma_m)=\arg\min\sum_{i=1}^{N}L(y_i,\beta_mb_m(x;\gamma_m))$$</p>
+<p>And forward stagewise modeling approximated the solution by sequentially adding new basis functions to the expansion without adjusting the parameters that have already been added. (Apparently a greedy method. I find that for some hard optimization problems, people always simplified it by finding local optimal instead)</p>
+<p>Take squared-error loss for example,
+$$L(y,f(x))=(y-f(x))^2 \\
+L(y_i,f_{m-1}(x_i)+\beta b(x_i;\gamma))=(y_i-f_{m-1}(x_i)-\beta b(x_i;\gamma))^2 \\ = (r_{im}-\beta b(x_i;\gamma))^2$$
+Which equals to fitting a best model to current residuals. Think about how Adaboost works, I find that we also fit a best model for the data points that are not classified right (similar to residual).</p>
+<h3 id="exponential-loss">2.2 Exponential Loss</h3>
+<p>Now let us see how Adaboost is equivalent to forward stagewise additive modeling using the loss function:<br />
+$$L(y,f(x))=exp(-y(f(x)))$$</p>
+<p>There is a very good proof and explanation here:<br />
+<a href = "https://towardsdatascience.com/boosting-algorithm-adaboost-b6737a9ee60c">Proof For Why Adaboost Minimize Exponential Loss</a><br />
+Basically it solves two problem</p>
+<ol>
+<li><p>The rationality of exponential loss: we find that our optimal solution is almost identical to the <strong>logit</strong> and we use $F(x)$ to model the posterior probability:
+$$P(y=1|x) = \frac{e^{2F(x)}}{1+e^{2F(x)}}$$
+If $sign(F(x))&gt;0$, then $P(y=1|x)&gt;\frac{1}{2}$. So we could see that by using exponential loss, we actually tries to find a function to model the posterior probability, which is rational in Bayesian perspective. And also, it is natural that AdaBoost is a discriminant classification method.</p></li>
+<li><p>How to derive the algorithm based on minimizing exponential loss: All other mathematical proof in above link: one thing need to be noticed is that when we want to optimize two parameters, we always fix one of them, find the optimal; and based on that value to find another parameter’s optimal value.</p></li>
+</ol>
+<h2 id="model-implementation">3. Model Implementation</h2>
+<p>Then let me construct Adaboost model from scratch. As normal, I will compare my result with <code>sklearn.ensemble.AdaBoostClassifier</code> in the end. Here is the plot of my model:<br />
+<div style="text-align: center;"><br />
+<img class="img-fluid" src="./1.jpg" alt="" align='middle'><br />
+</div><br />
+And here is the link of <a href="adaboost.html">Jupyter Notebook For AdaBoost</a></p>
+<hr>
+<p>This time I did spend some time to see more detailed information about boosting and Adaboost; In the end, I want to thank for Zehao, who gave me lots of good intuition. I will get back to more boosting method next time!</p>
+<blockquote class="blockquote">
+<p>Reference: <br><br>
+Book: The Elements of Statistical Learning <br>
+<a href="https://towardsdatascience.com/boosting-algorithm-adaboost-b6737a9ee60c" class="uri">https://towardsdatascience.com/boosting-algorithm-adaboost-b6737a9ee60c</a><br>
+<a href="http://mccormickml.com/2013/12/13/adaboost-tutorial/"> http://mccormickml.com/2013/12/13/adaboost-tutorial/</a></p>
+
+
+
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
