@@ -121,19 +121,19 @@ $$G(x) = sign[\sum_{m=1}^M\alpha_mG_m(x)]$$
 <li>It determines how much weight should be given to each classifier</li>
 </ul>
 <h3 id="adaboost-model">1.2 AdaBoost Model</h3>
-<p>I would like to divide the Adaboost model into four steps:</p>
+<p>I would like to divide the Adaboost model into five steps:</p>
 <h4 id="step-0-generate-training-data">Step 0: Generate Training Data</h4>
 <p>We have already learned Random Forest and we know that the way it deals with generating more training data is to use bootstrap with selected features. For Adaboost, each data point will have a weight (we can then deem the data set as a distribution). And we will base on that weight to sample data.</p>
 <p>At the begining, we set $\omega_i=\frac{1}{n}$</p>
 <h4 id="step-1-fit-a-weak-learner-classifier-g_mx">Step 1: Fit a weak learner classifier $G_m(x)$</h4>
-<p>Since we only need a weak learner, the normal choice for the weak learner is to use <strong>Decision Stump</strong>. Decision stump is a simple classification tree classifier with only one splitting:
+<p>Since we only need a weak learner, the normal choice is to use <strong>Decision Stump</strong>. Decision stump is a simple tree classifier with only one splitting:
 $$G_m(x|j,t) = \begin{cases} + 1\ x^{j}&gt;t \\  -1 \ otherwise\ \end{cases}$$
 where $j \in {1,...,d}$ indexes an axis in $R^d$.</p>
 <h4 id="step-2-compute-the-model-weight">Step 2: Compute the Model Weight</h4>
 <p>For each of the weak learner, we will calculate the weighted classification error:
 $$err_m = \frac{\sum_{i=1}^{n}\omega_i I{y_i \neq G_m(x_i)} }{\sum_{i=1}^{n}\omega_i}$$
-Where $\omega_i$ is the weight for the $i_th$ data point, and we initialize the $\omega_i = \frac{1}{n}$.</p>
-<p>This error measures the goodness of the weak learner, the smaller the better. But we want to create a value that is in direct proportion to the goodness, here comes the model weight $alpha_m$:
+Where $\omega_i$ is the weight for the $i_{th}$ data point</p>
+<p>This error measures the goodness of the weak learner, the smaller the better. But we want to create a value that is in direct proportion to the goodness of the classifier, here comes the model weight $\alpha_m$:
 $$\alpha_m= log(\frac{1-err_m}{err_m})$$
 It looks like this:
 <div style="text-align: center;">
@@ -143,8 +143,8 @@ We could see that $\alpha_m$ grows exponentially as the error approach 0; and gr
 <h4 id="step-3-update-the-data-point-weight">Step 3: Update the Data Point Weight</h4>
 <p>After getting the goodness of one weak learner, we then update the training data weights by using this formula:
 $$\omega_{i+1} = \frac{\omega_i \cdot exp(-\alpha_m\cdot y_i G_m(x_i)))}{\sum_{i=1}^n \omega_{i+1}}$$
-The intuition here is that:</p>
-<p>if we incorrectly classify the $i^{th}$ data point, the weight will change depending on the goodness of this classifier:</p>
+The intuition here is that:<br><br>
+if we incorrectly classify the $i^{th}$ data point, the weight will change depending on the goodness of this classifier:</p>
 <ul>
 <li>If this classifier is good (accuracy &gt; 50%), we will get a high positive $\alpha$ value, so this data point will have larger weights, which means it will be included with a higher probability in the next training dataset</li>
 <li>If this classifier is bad (accuracy &lt; 50%), we will get high negative $\alpha$ value, so this data point will have lower weights, which means it will be included with a lower probability in the next training dataset. The reason is that this classifier is bad, the opposite is right. So we think the data that it classified incorrectly is actually correct.</li>
@@ -187,10 +187,10 @@ If $sign(F(x))&gt;0$, then $P(y=1|x)&gt;\frac{1}{2}$. So we could see that by us
 </div><br />
 And here is the link of <a href="adaboost.html">Jupyter Notebook For AdaBoost</a></p>
 <hr>
-<p>This time I did spend some time to see more detailed information about boosting and Adaboost; In the end, I want to thank for Zehao, who gave me lots of good intuition. I will get back to more boosting method next time!</p>
+<p>This time I did spend some time to see more detailed information about boosting and Adaboost; In the end, I want to thank for Zehao, who gave me lots of good intuition. I will get back to more boosting methods next time!</p>
 <blockquote class="blockquote">
 <p>Reference: <br><br>
-Book: The Elements of Statistical Learning <br>
+Book: <a href="https://web.stanford.edu/~hastie/Papers/ESLII.pdf">The Elements of Statistical Learning </a><br>
 <a href="https://towardsdatascience.com/boosting-algorithm-adaboost-b6737a9ee60c" class="uri">https://towardsdatascience.com/boosting-algorithm-adaboost-b6737a9ee60c</a><br>
 <a href="http://mccormickml.com/2013/12/13/adaboost-tutorial/"> http://mccormickml.com/2013/12/13/adaboost-tutorial/</a></p>
 
