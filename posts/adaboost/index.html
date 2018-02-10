@@ -131,7 +131,7 @@ $$G_m(x|j,t) = \begin{cases} + 1\ x^{j}&gt;t \\  -1 \ otherwise\ \end{cases}$$
 where $j \in {1,...,d}$ indexes an axis in $R^d$.</p>
 <h4 id="step-2-compute-the-model-weight">Step 2: Compute the Model Weight</h4>
 <p>For each of the weak learner, we will calculate the weighted classification error:
-$$err_m = \frac{\sum_{i=1}^{n}\omega_i I{y_i \neq G_m(x_i)} }{\sum_{i=1}^{n}\omega_i}$$
+$$err_m = \frac{\sum_{i=1}^{n}\omega_i I\{y_i \neq G_m(x_i)\} }{\sum_{i=1}^{n}\omega_i}$$
 Where $\omega_i$ is the weight for the $i_{th}$ data point</p>
 <p>This error measures the goodness of the weak learner, the smaller the better. But we want to create a value that is in direct proportion to the goodness of the classifier, here comes the model weight $\alpha_m$:
 $$\alpha_m= log(\frac{1-err_m}{err_m})$$
