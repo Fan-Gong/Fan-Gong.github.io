@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('./pca.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Principal Component Analysis</h1>
+              <h2 class="subheading">Unsupervised Learning Method (1)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.index">Fan Gong</a>
+                on February 13, 2018</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p>Principal component analysis or PCA, in essence, is a linear projection operator that maps a variable of interest to a new coordinate frame where the axes represent maximal variability. it is a simple, non-parametric method for extracting relevant low-dimensional information from confusing data sets.</p>
+            <p>In this post, I will first talk about how to derive PCA; and then talk about the assumption of PCA; finally, I will implement this algorithm from scratch by Python.</p>
+            <h2 id="pca-derivation">1. PCA Derivation</h2>
+            <p>To know the derivation of PCA, we need to have sufficient knowledge of Linear Algebra including <strong>eigenvalue</strong> and <strong>eigenvectors</strong>; <strong>eigenvector decomposition</strong> and <strong>SVD</strong>. I will not review them here, so if you'd like to review these terms, I recommend the classic MIT linear algebra courses by Prof. Gilbert Strang.</p>
+            <p>Basically, there are two ways to derive PCA, <em>eigenvector decomposition technique</em>, and <em>singular value decomposition</em>. I will mainly cover the first method since it is more intuitive to me.</p>
+            <h3 id="eigenvector-decomposition-method">1.1 Eigenvector Decomposition Method</h3>
+            <p>The goal of PCA is to identify <strong>the most meaningful basis to re-express a dataset.</strong> So the first question is: How should we change the basis?</p>
+            <h4 id="change-of-basis">Change of Basis</h4>
+            <p>Here comes our first assumption: <em>We would like to find a basis, which is a linear combination of the original basis, that best re-expresses our data</em>. Let me translate this sentence by math formulas:</p>
+            <p>Let $X_{m \times n}$ be the original data set (notice each row vector represent one dimension's data, different from the normal form we use), where each column is a single sample of our dataset. Let $Y_{m \times n}$ be our final transformation matrix, and $P_{m \times m}$ is the transformation matrix that makes:<br />
+            $$Y = PX$$</p>
+            <p>Then how we find the good choice of basis $P$? It depends on what features we would like to see from Y. So next we talk about how to measure the goodness of the basis.</p>
+            <h4 id="measurement-on-the-basis">Measurement on the basis</h4>
+            <p>We would like to find a basis that satisfies the following two qualities:</p>
+            <ol>
+            <li>Large Variance: Here comes our second assumption: <br><em>Combined features with larger associated</em> <strong>variance</strong> <em>represent interesting structure</em>. That makes sense since we want our transformed data to use a small number of features covering most of the information from the original data. And the feature with larger variance contains relatively more information.</li>
+            <li>Small Redundancy: <strong>Redundancy</strong> basically describe the correlated relationship between some features. So if two features are highly correlated, recording solely one would express the data more concisely. <strong>Indeed, this is the central idea behind dimensional reduction</strong>.</li>
+            </ol>
+            <p>To combine above two things together, we find that <strong>covariance matrix</strong> perfectly provides such information. After we <strong>centered</strong> each of the feature, the covariance matrix $C_{X}$ is:
+            $$C_x = \frac{1}{n-1}XX^T$$
+            where the $ij^{th}$ element of $C_x$ is the covariance of the $i^{th}$ sample and $j^{th}$ sample; Also notice the dimension of $C_X$ is $m \times m$.</p>
+            <p>So, $C_X$ captures the covariance between all possible pairs of measurements. The covariance values reflect the noise and redundancy in our measurements.</p>
+            <ul>
+            <li>In the diagonal terms, by assumption, large values correspond to the interesting structure.</li>
+            <li>In the off-diagonal term, large magnitudes correspond to high redundancy.</li>
+            </ul>
+            <p>Based on the summary above, our optimized $C_Y$ should be like this:</p>
+            <ul>
+            <li>All off-diagonal terms in $C_Y$ should be zero. Thus, $C_Y$ must be a diagonal matrix.</li>
+            <li>Each successive dimension in $Y$ should be rank-ordered according to variance.</li>
+            </ul>
+            <p>We can call this procedure <strong>diagonalizing</strong>. There are many ways to deal with this problem, PCA assumes that $P$ is an <strong>orthonormal matrix</strong> to make it simple. Basically, we first select a normalized direction along which the variance in $X$ is maximized. save this as $p_1$; and then find another direction which variance is maximized, however, because of the orthonormal condition, restrict the search to all directions orthogonal to all previously selected directions.</p>
+            <h4 id="eigenvector-decomposition">Eigenvector Decomposition</h4>
+            <p>Until Now, we have known that our goal is to <em>find some orthonormal matrix $P$ in Y = PX such that $C_Y = \frac{1}{n}YY^T$ is a diagonal matrix</em>.</p>
+            <p>Here is what we do:<br />
+            We begin by rewriting $C_Y$ in terms of the P
+            $$\begin{align*}
+            C_Y & = \frac{1}{n-1}YY^T \\ &= \frac{1}{n-1} (PX)(PX)^T \\ &= \frac{1}{n-1}PXX^TP^T \\ &=P(\frac{1}{n-1}XX^T)P^T \\&= PC_XP^T
+            \end{align*}$$</p>
+            <p>Then, we have a theorem that for a symmetric matrix $A$ is diagonalized by an orthogonal matrix of its eigenvectors. $A = EDE^T$, where $D$ is a diagonal matrix and $E$ is a matrix of eigenvectors of $A$ arranged as columns. So we want our $C_Y$ to be that $D$ matrix.</p>
+            <p>Based on theroem that the inverse of an orthogonal matrix is its transpose, we find that when $P = E^T$ or to say $p_i$ is an eigenvecotor of $C_X$, we could get that results. Here is the proof:
+            $$\begin{align*}
+            C_Y & = PC_XP^T \\ &= P(E^TDE)P^T \\ &=(PP^T)D(PP^T) \\ &=(PP^{-1})D(PP^{-1}) \\&=D
+            \end{align*}$$</p>
+            <p>Here are the <strong>brief summary</strong>:
+            <ol>
+            <li>The principal components of $X$ are the eigenvectors of $C_X$</li>
+            <li>The $i^{th}$ diagonal value of $C_Y$ is the variance of $X$ along $p_i$.</li>
+            </ol></p>
+            <h3 id="svd">1.2 SVD</h3>
+            <p>SVD tells us that any arbitrary matrix $X$ can be converted to an orthogonal matrix, a diagonal matrix and another orthogonal matrix:
+            $$X = U \Sigma V^T$$
+            Then: (here $X_{n \times m }$)
+            $$\begin{align*}
+            C_X &= \frac{1}{n-1}X^TX \\&=(V \Sigma U^T)(U\Sigma V^T) \\ &= V\Sigma^2V^T
+            \end{align*}$$</p>
+            <p>If we define $P = V$, then :
+            $$\begin{align*}
+            C_Y &= (XP)^T(XP) \\ &=P^TP\Sigma U^T U \Sigma P^TP \\ &=\Sigma^2<br />
+            \end{align*}$$</p>
+            <p>Therefore, the columns of $V$ are the principal components of $X$.</p>
+            <h2 id="model-assumption-and-notation">2. Model Assumption and Notation</h3>
+            <h3 id="model-assumption">2.1 Model Assumption</h4>
+            <p>There are three assumptions of this model:</p>
+            <ul>
+            <li>Linearity: We find the linear combination of the original basis</li>
+            <li>Large variances have important structure.</li>
+            <li>The principal components are orthogonal.</li>
+            </ul>
+            <h3 id="notation">2.2 Notation</h3>
+            <p>Suppose we have $X_{n\times p}$, $P_{p \times p}$, $Y_{n \times p}$, and $Y = XP$.</p>
+            <ul>
+            <li>The results $Y$ is always called <strong>component scores</strong>. The first column is called <strong>the first principal component</strong></li>
+            <li>The transformation matrix $P$ is called <strong>loadings</strong>, and each column is called <strong>loading vector</strong>.</li>
+            </ul>
+            <h2 id="pca-implementation">3. PCA Implementation</h2>
+            <p>In practice, computing PCA entails:</p>
+            <ol>
+            <li>Subtracting off the mean of each feature</li>
+            <li>Computing the eigenvectors of $C_X$</li>
+            </ol>
+            <p>Here is the link for <a href="./PCA.html">Jupyter Notebook of PCA </a>.</p>
+            <p>All right, these are all the reviews for PCA. Let us see more unsupervised learning method the next time.</p>
+
+<blockquote class="blockquote">
+<p>Reference: <br><br>
+Book: <a href="http://www-bcf.usc.edu/~gareth/ISL/">An Introduction to Statistical Learning </a><br>
+<a href="https://arxiv.org/abs/1404.1100">https://arxiv.org/abs/1404.1100</a><br>
+<a href="http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html"> sklean.decomposition.PCA documentation</a></p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
