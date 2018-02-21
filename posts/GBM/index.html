@@ -156,10 +156,26 @@ The parameter $v$ can be regarded as controlling the learning rate of the boosti
 <li>We first one-hot encode our label to make it like a distribution</li>
 <li>We then use our normal GBM regression method to train our data, but we use <strong>KL-divergence</strong> as our loss function (since now our output is a distribution) and transform the output score to probability by using softmax function.</li>
 </ul>
-<h2 id="implementation">3. Implementation</h2>
+<h2 id="xgboost">3. XGBoost</h2>
+<p>XGBoost is an extension for GBM. Since its introduction, XGBoost becomes more and more popular in Kaggle competition, but people always have little idea about what it really is (like me). So, this time I will have a high-level introduction to what is the difference between XGBoost and GBM and why it becomes so popular.</p>
+<p>Basically, the advantages of XGBoost comparing with GBM are:</p>
+<ol>
+<li>XGBoost decide the optimization step directly by Newton method</li>
+<li>XGBoost has more regularization options</li>
+</ol>
+<p>Here are the differences summarized by <a href ="https://towardsdatascience.com/boosting-algorithm-xgboost-4d9ec0207d">SauceCat</a>:</p>
+<blockquote class="blockquote">
+<strong>GBM has broader application</strong>. At each iteration, both GBM and XGBoost need to calculate gradient at current estimate. XGBoost also needs to calculate hessian, requiring the objective function to be twice differentiable (strictly convex). GBM only requires a differentiable loss function, thus it can be used in more applications.
+<br><br>
+<strong>XGBoost is faster</strong>. Comparing the weights calculated by GBM and XGBoost, for GBM, the weight is simply the average value of the gradients, while for XGBoost, it is the sum of gradients scaled by the sum of hessians.
+<br><br>
+<strong>XGBoost provides more regularization options</strong>, including L1(α) and L2(λ) regularization as well as penalization on the number of leaf nodes(γ).
+</blockquote>
+
+<h2 id="implementation">4. Implementation</h2>
 <p>Since GBM is a little bit complex to write from scratch, and its basic technique contains regression tree and gradient descent which I have already written before, so I will only implement it by using <code>sklearn.ensemble.GradientBoostingClassifier</code>.</p>
 <p>Here is the link of <a href = "./GBM.html">Jupyter Notebook for GBM </a></p>
-<h2 id="summary">4. Summary</h2>
+<h2 id="summary">5. Summary</h2>
 <p>Here is the summary for GBM:</p>
 <ul>
 <li>Fit an additive model in a forward stage-wise manner</li>
