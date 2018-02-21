@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('./background.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Gradient Boosting Machine</h1>
+              <h2 class="subheading">Ensemble Model (3)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.index">Fan Gong</a>
+                on February 20, 2018</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p>First, let us review what AdaBoost method does:</p>
+<ul>
+<li>Fit an additive model $\sum_{m=1}^M\beta_mb(x;\gamma_m)$ in a forward stage-wise manner.</li>
+<li>In each stage, introduce a weak leaner to compensate the shortcomings of existing weak learner. In AdaBoost, &quot;shortcomings&quot; are identified by high-weight data points.</li>
+</ul>
+<p>But AdaBoost has some obvious drawback. For example, it cannot deal with regression problem; Also, it requires the classification problem has two outputs with the label 1 and -1. So, could we extend the AdaBoost model to some more general boosting model?</p>
+<p>Sure, that is exactly what gradient boosting machine does.</p>
+<h2 id="gradient-boosting-for-regression">1. Gradient Boosting For Regression</h2>
+<h3 id="model-intuition">1.1 Model Intuition</h3>
+<p>We know that Boosting method tries to fit the model sequentially to improve our prediction power. In regression problem, after we fit a model to our original data, we could always write a formula like this:
+$$y_i = f(x_i) + h(x_i)$$
+where $y_i$ is our true value, $f(x_i)$ is our predicted value, and $h(x_i) = y_i - f(x_i)$ is the residual.<br />
+So, if we want to improve our prediction, it is very natural to fit a new model to the residual, and if the model is still not good enough, we then continue fitting model to that model's residual.</p>
+<p>That is basically the <strong>intuition behind GBM</strong>, very simple right? But how can that relate to gradient?</p>
+<h3 id="residual-vs-gradient">1.2 Residual vs Gradient</h3>
+<p>Suppose our loss function is squared loss $L(y,f(x)) = \frac{1}{2}(y-f(x))^2$, then we want to minimize $J = \sum_{i=1}^{n} L(y_i,f(x_i))$, to find optimal $f(x_i)$, we could use gradient descent. We first calculate the gradient at $x_i$:
+$$\frac{\partial J}{\partial f(x_i)}=\frac{\partial \sum_{i=1}^{n} L(y_i,f(x_i))}{\partial f(x_i)}=\frac{\partial L(y_i,f(x_i))}{\partial f(x_i)} = f(x_i)-y$$
+Therefore, we could see that <strong>we can interpret residuals as negative gradient</strong>. Then we could update our prediction like the normal gradient descent algorithm:
+$$f_n(x_i) = f_{n-1}(x_i) - \frac{\partial L(y_i,f_{n-1}(x_i))}{\partial f_{n-1}(x_i)}$$
+Then we could fit our sequential model to the negative gradient instead of residuals.</p>
+<p>But why we use gradient rather than residuals? It turns out that the concept of gradients is more general and useful than the concepts of residuals. Here is the main reason:</p>
+<p><em>Negative gradient pays less attention to outliers. We know the squared loss is not robust to outliers (which means pay much attention to outliers. Try hard to incorporate outliers into the model). If the loss function is squared loss, there is no difference between gradients and residuals. However, if we use some robust loss function such as Huber loss (Google it!), negative gradient obviously performs better than residual.</em></p>
+<h3 id="model-structure">1.3 Model Structure</h3>
+<p>After knowing the intuition behind GBM, we then cover the detailed algorithm of gradient boosting model based on regression tree:</p>
+<ol>
+<li>First we initialize $f_0(x)$ which means we generate a complete regression tree to minimize our loss function.</li>
+<li>Then for $1:M$ boosting tree model:
+<ul>
+<li>Calculate the negative gradient for each of the data point: $r_{im}= -(\frac{\partial L(y_i,f_{n-1}(x_i))}{\partial f_{n-1}(x_i)})$</li>
+<li>Fit a new regression tree model to these negative gradient values, which results in $J$ terminal nodes. Then in each of the terminal region, we try to find the value to minimize the whole loss and at the same time represent the value in this region: $\gamma_{im} = \arg\min_{\gamma}\sum_{x_i \in R_{jm}}L(y_i, f_{m-1}(x_i)+\gamma)$. Which basically is the mean value in that region.</li>
+<li>Update $f_m(x)=f_{m-1}(x) + \sum_{j=1}^{J_m}\gamma_{jm}I\{x \in R_{jm}\}$</li>
+</ul></li>
+<li>Output $f(x) = f_M(x)$</li>
+</ol>
+<p>We could see that there are two basic tuning parameters in this algorithm: The number of iterations $M$ and the size of each constituent tree $J_m$. The reason I talk about these tuning parameters is that we could see boosting method is easy to overfit. So, next let me talk about how to prevent overfitting.</p>
+<h3 id="shrinkage-and-subsampling">1.4 Shrinkage and Subsampling</h3>
+<h4 id="shrinkage">1.4.1 Shrinkage</h4>
+<p>There are two general ways to prevent overfitting for GBM. First is shrinkage. The simplest implementation of shrinkage in the context of boosting is to scale the contribution of each tree by a factor $0 &lt; v &lt; 1$ when it is added to the current approximation. That is, our updated procedure looks like this:
+$$f_m(x)=f_{m-1}(x) + v \cdot \sum_{j=1}^{J_m}\gamma_{jm}I\{x \in R_{jm}\}$$
+The parameter $v$ can be regarded as controlling the learning rate of the boosting procedure. It is natural that smaller values of $v$ lead to larger values of $M$. But empirically it has been found that <strong>smaller values of v favor best test error, and require correspondingly larger values of M</strong>. And we always use <strong>early stopping</strong> to choose $M$.</p>
+<p>For $J_m$, since it is a weak leaner, we still use either stumps or six terminal-node trees.</p>
+<h4 id="subsampling">1.4.2 Subsampling</h4>
+<p>With <strong>stochastic gradient boosting</strong>, at each iteration, we sample only a fraction of the training observations (without replacement) and grow the next tree using that subsample. Not only this method reduce time, but also improve the accuracy.</p>
+<h2 id="gradient-boosting-for-classification">2. Gradient Boosting for Classification</h2>
+<p>The intuitive behind GBM for classification is very similar to regression. Basically, we still generate regression tree for classification problem, and then we transform the score of each label to probabilities (softmax).</p>
+<p>Basically, here are what we do to deal with classification problem:</p>
+<ul>
+<li>We first one-hot encode our label to make it like a distribution</li>
+<li>We then use our normal GBM regression method to train our data, but we use <strong>KL-divergence</strong> as our loss function (since now our output is a distribution) and transform the output score to probability by using softmax function.</li>
+</ul>
+<h2 id="implementation">3. Implementation</h2>
+<p>Since GBM is a little bit complex to write from scratch, and its basic technique contains regression tree and gradient descent which I have already written before, so I will only implement it by using <code>sklearn.ensemble.GradientBoostingClassifier</code>.</p>
+<p>Here is the link of <a href = "./GBM.html">Jupyter Notebook for GBM </a></p>
+<h2 id="summary">4. Summary</h2>
+<p>Here is the summary for GBM:</p>
+<ul>
+<li>Fit an additive model in a forward stage-wise manner</li>
+<li>In each stage, introduce a new regression tree $h(x)$ to compensate the shortcomings of existing model</li>
+<li>The &quot;shortcomings&quot; are identified by negative gradients</li>
+<li>For any loss function, we can derive a gradient boosting algorithm</li>
+<li>Absolute loss and Huber loss are more robust to outliers than square loss</li>
+</ul>
+<br><br>
+<blockquote class="blockquote"> Reference:
+http://www.ccs.neu.edu/home/vip/teach/MLcourse/4_boosting/slides/gradient_boosting.pdf
+https://towardsdatascience.com/boosting-algorithm-xgboost-4d9ec0207d
+</blockquote>
+
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
