@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('../../img/spark.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Spark Learning Notes (2) - Spark SQL</h1>
+              <h2 class="subheading">Play With Big Data</h2>
+              <span class="meta">Posted by
+                <a href="../../about.index">Fan Gong</a>
+                on February 23, 2018</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+<p>Spark SQL is a Spark module for structured data processing. One most important feature of SparkSql is that it extends RDD to DataFrame, which could:</p>
+<ul>
+<li>Contain row objects</li>
+<li>Can run SQL queries</li>
+<li>Has a schema (leading to more efficient storage)</li>
+<li>Read and write to JSON</li>
+</ul>
+<p>Before I go deeper into Spark SQL module, Let us talk about some terms I used last time: <code>SparkContext</code> is the entry gate of Apache Spark functionality. It allows your Spark Application to access Spark Cluster with the help of resource manager (Spark Standalone/YARN/Mesos)<br />
+To create <code>SparkContext</code>, first <code>SparkConf</code> should be made. The SparkConf has a configuration parameter that our Spark driver application will pass to SparkContext.</p>
+<p>SPARK 2.0.0 onwards, <code>SparkSession</code> provides a single point of entry to interact with underlying Spark functionality and allows programming Spark with DataFrame and Dataset APIs. All the functionality available with sparkContext are also available in sparkSession. So, in order to use APIs of SQL, HIVE, and Streaming, no need to create separate contexts as sparkSession includes all the APIs.</p>
+<h2 id="create-dataframe">1. Create DataFrame</h2>
+<p>First, let us have a brief overview of what is Dataset and DataFrame:<br>
+<strong>Datasets</strong>: Dataframe full of structure data <br>
+<strong>DataFrame</strong> is a dataset of row objects. It is conceptually equivalent to a table in a relational database or a data frame in Python</p>
+In this post, I will mainly use DataFrame, since <code>pyspark</code> now still doesn't complete its usage of DataSet.
+<p>There are three ways to create DataFrames</p>
+<ol>
+<li>From existing RDD</li>
+<li>From a Hive table</li>
+<li>From Spark supported data sources</li>
+</ol>
+<p>Here is an example:</p>
+<pre><code>from pyspark.sql import SparkSession
+from pyspark.sql import Row
+
+spark = SparkSession.builder.master(&quot;local&quot;).appName(&quot;try&quot;).getOrCreate()
+
+# Create from existing RDD
+rdd = spark.sparkContext.textFile(&#39;../fakefriends.csv&#39;)
+rdd = rdd.map(lambda x: x.split(&#39;,&#39;)) # --&gt; [[&#39;0&#39;,&#39;will&#39;,&#39;33&#39;,&#39;385&#39;]]
+df_row = rdd.map(lambda x: Row(ID = int(x[0]), name = x[1], age = int(x[2]), numFriends = int(x[3])))
+df = spark.createDataFrame(df_row)
+df.show()
+
+# Create from pandas.DataFrame
+fake_dic = {&#39;id&#39;:[1,2,3], &#39;age&#39; : [2,3,3], &#39;class&#39; : [1,1,2]}
+fake_df = pd.DataFrame(fake_dic)
+df = spark.createDataFrame(fake_df)
+df.show()
+
+# Load from data sources
+df_csv = spark.read.load(&#39;../fakefriends.csv&#39;, format = &#39;csv&#39;)
+</code></pre>
+<h2 id="dataframes-operations">2. DataFrame's Operations</h2>
+<p>After we have the spark DataFrame, we could then use an sql-like function to manipulate the data (very similar to the <code>dplyr</code> package in R).</p>
+<p>At the same time, we could also write raw SQL queries.</p>
+<p>Here is the example:</p>
+<pre><code># Target: find the person who has the most friends with the age smaller than 20
+
+## Use operator first
+df.filter(df[&#39;age&#39;]&lt;=20).select(&#39;name&#39;).orderBy(&#39;numFriends&#39;, ascending = False).show()
+
+## Use SQL query
+# need to register the DataFrame as a sql temp view
+df.createOrReplaceTempView(&#39;people&#39;) # need to register the DataFrame as a sql temp view
+sqlDF = spark.sql(&quot;SELECT name FROM people WHERE age &lt;= 20 ORDER BY numFriends DESC&quot;)
+sqlDF.show()</code></pre>
+<p>We can also create global temporary view if we want to have a view shared among all sessions and keep alive until the spark application terminates.</p>
+<h2 id="parquet-files">3. Parquet Files</h2>
+<p>Parquet is a columnar format, supported by many data processing systems. The advantages of having a columnar storage are as follows:</p>
+<ul>
+<li>Columnar storage limits IO operations</li>
+<li>Columnar storage can fetch specific columns that you need to access</li>
+<li>Columnar storage consumes less space</li>
+<li>Columnar storage gives better-summarized data and follows type-specific encoding.</li>
+</ul>
+<p>Spark SQL provides support for both reading and writing parquet files that automatically capture the schema of the original data. Like JSON datasets, parquet files follow the same procedure.</p>
+<p>Here is an example:</p>
+<pre><code>## write parquet file
+df.write.parquet(&#39;people.parquet&#39;)
+
+## read parquet file
+p_file = spark.read.parquet(&#39;./people.parquet&#39;) #--&gt; output a DataFrame</code></pre>
+<h2 id="summary">4. Summary</h2>
+<p>There are also some data files that I am not going to talk about here such as JSON datasets and HIVE table. The reasons are as follows:</p>
+<ul>
+<li>In pyspark API the DataFrame is untyped so it is hard to understand the difference between Datasets and DataFrame</li>
+<li>Also, the data process method is very similar to these different data formats</li>
+</ul>
+<p>So I will get back to datasets later when python API is complete or when I start to learn Scala. In the next post let us see how MLlib works in pyspark.</p>
+
+
+
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
