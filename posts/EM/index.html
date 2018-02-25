@@ -111,7 +111,7 @@
             <p>EM algorithm is an efficient iterative procedure to compute the <strong>Maximum Likelihood Estimate</strong> in the process of missing or hidden data.</p>
             <p>Normally, EM algorithm is used to solve the Finite Mixture Model parameter estimation problems. A <strong>finite mixture model</strong> is a distribution with density of the form:
             $$\pi(x) = \sum_{k=1}^{K}c_{k}p(x|\theta_{k})$$ where $c_k$ represents the relative cluster proportion, $\sum_{k=1}^{K}c_{k}=1$; $\theta_k$ is the model parameter in the $k^{th}$ cluster.</p>
-            <p>Since it is a parametric problem, we naturally think to use MLE to obtain the parameter $c_k$ and $\theta_k$. However, easily can be shown that it is analytically infeasible. (And also MLE will not tell us which cluster generates the data)Then it comes EM algorithm.</p>
+            <p>Since it is a parametric problem, we naturally think to use MLE to obtain the parameter $c_k$ and $\theta_k$. However, easily can be shown that it is analytically infeasible (And also MLE will not tell us which cluster generates the data). <br>Then it comes EM algorithm.</p>
             <h3 id="overview">1.1 Overview</h3>
             <p>After knowing why we need EM algorithm, let us again explicit our goal: <strong>Estimate $c_k$ and $\theta_k$ without using MLE directly, at the same time knowing which cluster each data belongs to</strong>.</p>
             <p>We solve this question by tactfully create a <strong>latent variable</strong> called <strong>(hard) assignment variable</strong> $M_{i}$. Basically, $M_{i}$ is like a one-hot encoding label that labels 1 if the data belongs to that cluster, 0 otherwise. If we know this variable, our problem can then be easily solved:</p>
@@ -121,34 +121,34 @@
             </ol>
             <p>Ok, now we know our ultimate goal: estimating the <strong>assignment variable</strong>.</p>
             <h3 id="model-structure">1.2 Model Structure</h3>
-            <p>There are two steps of EM algorithm. Basically, we assign the data point to the cluster that has a highest density value; and then re-calculate the parameter in each cluster.</p>
+            <p>There are two steps within EM algorithm. Basically, we assign the data point to the cluster that has a highest density value; and then re-calculate the parameter in each cluster.</p>
             <h4 id="e-step">E-step:</h4>
-            <p>Based on what we now know about $c_k$ and $\theta_k$ (need to be initialize), calculate the likelihood of this data belongs to each cluster:<br />
+            <p>Based on what we now know about $c_k$ and $\theta_k$ (need to be initialized), calculate the likelihood of this data belongs to each cluster:<br />
             $$\begin{align*}
             a_{ik} &= P(M_{i} = k|x_i) = \frac{p(M_i = k, x_i)}{p(x_i)} \\ &= \frac{p(x_i|M_i = k)p(M_i=k)}{p(x_i)} \\ &= \frac{p(x_i|\theta_k)c_k}{\sum_{l=1}^{K}p(x|\theta_{l})c_{l}}<br />
             \end{align*}$$
             We call $a_i$ <strong>soft assignment variable</strong>, since it give us the probability of the data belongs to each cluster. and:<br />
             $$m_i := \arg \max_k a_{ik}$$</p>
-            <p>In a word, in E-step, we calculate the posterior probability of the data belongs to each cluster.</p>
+            <p>In a word, we calculate the posterior probability of the data belongs to each cluster in E-step.</p>
             <h4 id="m-step">M-step:</h4>
-            <p>After we have re-assign the data point, we then perform MLE to re-estimate $c_k$ and $\theta_k$, where
+            <p>After re-assign the data point, we then perform MLE to re-estimate $c_k$ and $\theta_k$, where
             $$c_k = \frac{\sum_{i=1}^{n}a_{ik}}{n}$$
             and then use soft assignment to calculate $\theta_k$ (weighted mean and covariance)</p>
             <p>These two steps are iterated repeatedly, until the likelihood or some parameter not even change. The convergence is assured since the algorithm is guaranteed to increase the likelihood at each iteration.</p>
             <h3 id="some-notice">1.3 Some Notice</h3>
             <ul>
             <li>EM algorithm can only find the local maximum, so we should restart EM with different initial values.</li>
-            <li>We could calculate log-likelihood to compare the goodness of two EM output $\sum_i log \pi(x_i|c,\theta)$</li>
+            <li>We could calculate log-likelihood $\sum_i log \pi(x_i|c,\theta)$ to compare the goodness of two EM algorithms' output </li>
           </ul><br>
             <h2 id="k-means">2. K-means Clustering</h2><br>
             <h3 id="relation-between-em-and-k-means">2.1 Relation between EM and K-means</h3>
             <p>Then let us talk about k-means. How it relates to EM algorithm?<br>
-            Suppose each cluster belongs to Gaussian density with the unit covariance: $p(x|\mu_k,I)$.</p>
+            First let me make an assumptinn: suppose each cluster belongs to Gaussian density with the unit covariance: $p(x|\mu_k,I)$.</p>
             <h4 id="for-e-step">For E-step</h4>
             <p>Remember, k-means tries to minimize the total within cluster's variance:
             $$\sum_{k=1}^{K}\sum_{i \in C_k}(x_i-\mu_k)^2$$
             which means, at each iteration, it tries to assign the data to the nearest centroid's cluster.</p>
-            <p>By comparison, EM assigns $x_i$ to the cluster that has the highest density value. Since <em>the Gaussians have identical covariance (spherical), then the density $P(x_i|\mu_k,I)$is largest for the mean $\mu_k$ which is closest to $x_i$ in Euclidean distance</em>. So, in E-step, they are identical.</p>
+            <p>By comparison, EM assigns $x_i$ to the cluster that has the highest density value. Since <em>the Gaussians have identical covariance (spherical), then the density $P(x_i|\mu_k,I)$ is largest for the mean $\mu_k$ which is closest to $x_i$ in Euclidean distance</em>. So, in E-step, they are identical.</p>
             <h4 id="for-m-step">For M-step</h4>
             <p>It is very clear these two methods are also identical. They both use MLE to calculate:<br />
             $$\hat{\mu_k} = \frac{1}{|i \in C_k|}\sum_{i \in C_k}x_i$$</p>
@@ -160,7 +160,7 @@
             <li>The prior probability for all k clusters are the same (each cluster has roughly equal number of observations)</li>
             <li>The variance of the distribution of each variable is spherical (proportionate to the identity)</li>
             </ol>
-            <p>So, we could see these assumptions can be easily violated. (Notice to scale the data before using k-means)<br />
+            <p>Thus, there is no doubt that these assumptions can be easily violated. (Notice to scale the data before using k-means)<br />
             <div style="text-align: center;"><br />
             <img class="img-fluid" src="1.jpg" alt="" align='middle'><br />
             </div></p>
