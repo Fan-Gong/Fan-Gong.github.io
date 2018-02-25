@@ -111,7 +111,7 @@
             <p>EM algorithm is an efficient iterative procedure to compute the <strong>Maximum Likelihood Estimate</strong> in the process of missing or hidden data.</p>
             <p>Normally, EM algorithm is used to solve the Finite Mixture Model parameter estimation problems. A <strong>finite mixture model</strong> is a distribution with density of the form:
             $$\pi(x) = \sum_{k=1}^{K}c_{k}p(x|\theta_{k})$$ where $c_k$ represents the relative cluster proportion, $\sum_{k=1}^{K}c_{k}=1$; $\theta_k$ is the model parameter in the $k^{th}$ cluster.</p>
-            <p>Since it is a parametric problem, we naturally think to use MLE to obtain the parameter $c_k$ and $\theta_k$. However, it is easy to show that it is analytically infeasible. (And also MLE will not tell us which cluster generate the data)Then it comes EM algorithm.</p>
+            <p>Since it is a parametric problem, we naturally think to use MLE to obtain the parameter $c_k$ and $\theta_k$. However, easily can be shown that it is analytically infeasible. (And also MLE will not tell us which cluster generates the data)Then it comes EM algorithm.</p>
             <h3 id="overview">1.1 Overview</h3>
             <p>After knowing why we need EM algorithm, let us again explicit our goal: <strong>Estimate $c_k$ and $\theta_k$ without using MLE directly, at the same time knowing which cluster each data belongs to</strong>.</p>
             <p>We solve this question by tactfully create a <strong>latent variable</strong> called <strong>(hard) assignment variable</strong> $M_{i}$. Basically, $M_{i}$ is like a one-hot encoding label that labels 1 if the data belongs to that cluster, 0 otherwise. We could see that if we have this variable, we could then:</p>
