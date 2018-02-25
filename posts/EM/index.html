@@ -119,7 +119,7 @@
             <li>calculate $c_k = \frac{\# \ data \ in \ C_k}{n}$ since we know which cluster the data belongs to</li>
             <li>Use MLE to calculate $\theta_k$ in each cluster. For example, we will calculate $\mu_k$ and $\Sigma_k$ by using MLE if the cluster belongs to Gaussian Distribution.</li>
             </ol>
-            <p>Ok, now we know what kind of problem we want to solve: estimating the assignment variable.</p>
+            <p>Ok, now we know our ultimate goal: estimating the <strong>assignment variable</strong>.</p>
             <h3 id="model-structure">1.2 Model Structure</h3>
             <p>There are two steps of EM algorithm. Basically, we assign the data point to the cluster that has a highest density value; and then re-calculate the parameter in each cluster.</p>
             <h4 id="e-step">E-step:</h4>
