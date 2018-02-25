@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('./background.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>EM Algorithm</h1>
+              <h2 class="subheading">Unsupervised Learning Method (2)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.index">Fan Gong</a>
+                on February 24, 2018</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p>For everyone who is familiar with Machine Learning, <strong>k-means</strong> must be one of his first several algorithms that have learned. However, do you know k-means actually is just a special case of <strong>EM Algorithm</strong>? So, in this post, let me talk about EM algorithm and how it relates to k-means clustering.</p>
+            <h2 id="em-algorithm">1. EM Algorithm</h2>
+            <p>EM algorithm is an efficient iterative procedure to compute the <strong>Maximum Likelihood Estimate</strong> in the process of missing or hidden data.</p>
+            <p>Normally, EM algorithm is used to solve the Finite Mixture Model parameter estimation problems. A <strong>finite mixture model</strong> is a distribution with density of the form:
+            $$\pi(x) = \sum_{k=1}^{K}c_{k}p(x|\theta_{k})$$ where $c_k$ represents the relative cluster proportion, $\sum_{k=1}^{K}c_{k}=1$; $\theta_k$ is the model parameter in the $k^{th}$ cluster.</p>
+            <p>Since it is a parametric problem, we naturally think to use MLE to estimate the parameter $c_k$ and $\theta_k$. However, it is easy to show that it is analytically infeasible. (And also MLE will not tell us which cluster generate the data)Then it comes EM algorithm.</p>
+            <h3 id="overview">1.1 Overview</h3>
+            <p>After knowing why we need EM algorithm, let us again explicit our goal: <strong>Estimate $c_k$ and $\theta_k$ without using MLE directly, at the same time knowing which cluster each data belongs to</strong>.</p>
+            <p>We solve this question by tactfully create a <strong>latent variable</strong> called <strong>(hard) assignment variable</strong> $M_{i}$. Basically, $M_{i}$ is like a one-hot encoding label that labels 1 if the data belongs to that cluster, 0 otherwise. We could see that if we have this variable, we could then:</p>
+            <ol>
+            <li>calculate $c_k = \frac{\# \ data \ in \ C_k}{n}$ since we know which cluster the data belongs to</li>
+            <li>Use MLE to calculate $\theta_k$ in each cluster. For example, we will calculate $\mu_k$ and $\Sigma_k$ by using MLE if the cluster belongs to Gaussian Distribution.</li>
+            </ol>
+            <p>Ok, now we know what kind of problem we want to solve: estimating the assignment variable.</p>
+            <h3 id="model-structure">1.2 Model Structure</h3>
+            <p>There are two steps of EM algorithm. Basically, we assign the data point to the cluster that has a highest density value; and then re-calculate the parameter in each cluster.</p>
+            <h4 id="e-step">E-step:</h4>
+            <p>Based on what we now know about $c_k$ and $\theta_k$ (need to be initialize), calculate the likelihood of this data belongs to each cluster:<br />
+            $$\begin{align*}
+            a_{ik} &= P(M_{i} = k|x_i) = \frac{p(M_i = k, x_i)}{p(x_i)} \\ &= \frac{p(x_i|M_i = k)p(M_i=k)}{p(x_i)} \\ &= \frac{p(x_i|\theta_k)c_k}{\sum_{l=1}^{K}p(x|\theta_{l})c_{l}}<br />
+            \end{align*}$$
+            We call $a_i$ <strong>soft assignment variable</strong>, since it give us the probability of the data belongs to each cluster. and:<br />
+            $$m_i := \arg \max_k a_{ik}$$</p>
+            <p>In a word, in E-step, we calculate the posterior probability of the data belongs to each cluster.</p>
+            <h4 id="m-step">M-step:</h4>
+            <p>After we have re-assign the data point, we then perform MLE to re-estimate $c_k$ and $\theta_k$, where
+            $$c_k = \frac{\sum_{i=1}^{n}a_{ik}}{n}$$
+            and then use soft assignment to calculate $\theta_k$ (weighted mean and covariance)</p>
+            <p>These two steps are iterated repeatedly, until the likelihood or some parameter not even change. The convergence is assured since the algorithm is guaranteed to increase the likelihood at each iteration.</p>
+            <h3 id="some-notice">1.3 Some Notice</h3>
+            <ul>
+            <li>EM algorithm can only find the local maximum, so we should restart EM with different initial values.</li>
+            <li>We could calculate log-likelihood to compare the goodness of two EM output $\sum_i log \pi(x_i|c,\theta)$</li>
+            </ul>
+            <h2 id="k-means">2. K-means</h2>
+            <h3 id="relation-between-em-and-k-means">2.1 Relation between EM and K-means</h3>
+            <p>Then let us talk about k-means. How it relates to EM algorithm?</p>
+            <p>Suppose each cluster belongs to Gaussian density with the unit covariance: $p(x|\mu_k,I)$.</p>
+            <h4 id="for-e-step">For E-step</h4>
+            <p>Remember, k-means tries to minimize the total within cluster's variance:
+            $$\sum_{k=1}^{K}\sum_{i \in C_k}(x_i-\mu_k)^2$$
+            which means, at each iteration, it tries to assign the data to the nearest centroid's cluster.</p>
+            <p>By comparison, EM assigns $x_i$ to the cluster that has the highest density value. Since <em>the Gaussians have identical covariance (spherical), then the density $P(x_i|\mu_k,I)$is largest for the mean $\mu_k$ which is closest to $x_i$ in Euclidean distance</em>. So, in E-step, they are identical.</p>
+            <h4 id="for-m-step">For M-step</h4>
+            <p>It is very clear these two methods are also identical. They both use MLE to calculate:<br />
+            $$\hat{\mu_k} = \frac{1}{|i \in C_k|}\sum_{i \in C_k}x_i$$</p>
+            <p>So, now we could say that k-means is a special case of EM algorithm if we make some assumptions. But how these assumptions influence k-means?</p>
+            <h3 id="assumptions-for-k-means">2.2 Assumptions for K-means</h3>
+            <p>K-means do make some very strong assumptions to simplify the EM algorithm. Here are the assumptions:</p>
+            <ol>
+            <li>All variables have the same variance</li>
+            <li>The prior probability for all k clusters are the same (each cluster has roughly equal number of observations)</li>
+            <li>The variance of the distribution of each variable is spherical (proportionate to the identity)</li>
+            </ol>
+            <p>So, we could see these assumptions can be easily violated. (Notice to scale the data before using k-means)<br />
+            <div style="text-align: center;"><br />
+            <img class="img-fluid" src="1.jpg" alt="" align='middle'><br />
+            </div></p>
+            <h2 id="k-medoids">3. K-medoids</h2>
+            <p>There is another method that is very similar to k-means. The difference is that we will choose the <strong>observation</strong> to work as the centroid to minimize the pairwise distance. Here are the comparisons:</p>
+            <ul>
+            <li>K-medoids is more flexible. Since we can use different similarity measure.</li>
+            <li>K-medoids is more robust. Since the median is more robust to outliers than the arithmetic mean</li>
+            <li>K-medoids is more expensive. Since we need to calculate the pairwise distance everytime to find the centroid.</li>
+            </ul>
+            <h2 id="model-implementation">4. Model Implementation</h2>
+            <p>Then let me construct K-means model from scratch. As normal, I will compare my result with <code>sklearn.cluster.KMeans</code> in the end. Here is the plot of my model:<br />
+            <div style="text-align: center;"><br />
+            <img class="img-fluid" src="2.jpg" alt="" align='middle'><br />
+            </div><br />
+            And here is the link of <a href=”./kmeans.html”>Jupyter Notebook For K-means</a></p>
+            <blockquote class="blockquote"> Reference: <br><br />
+            Book: <a href = "http://www-bcf.usc.edu/~gareth/ISL/">An Introduction to Statistical Learning <br>
+            <a href="https://www.cs.utah.edu/~piyush/teaching/EM_algorithm.pdf" class="uri">https://www.cs.utah.edu/~piyush/teaching/EM_algorithm.pdf</a><br>
+             <a href="https://stackoverflow.com/questions/21619794/what-makes-the-distance-measure-in-k-medoid-better-than-k-means"> https://stackoverflow.com/questions/21619794/what-makes-the-distance-measure-in-k-medoid-better-than-k-means</a>
+            <a href = "https://stats.stackexchange.com/questions/133656/how-to-understand-the-drawbacks-of-k-means">https://stats.stackexchange.com/questions/133656/how-to-understand-the-drawbacks-of-k-means</a>
+            </blockquote>
+
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
