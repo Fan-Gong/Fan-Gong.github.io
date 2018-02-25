@@ -139,11 +139,11 @@
             <ul>
             <li>EM algorithm can only find the local maximum, so we should restart EM with different initial values.</li>
             <li>We could calculate log-likelihood to compare the goodness of two EM output $\sum_i log \pi(x_i|c,\theta)$</li>
-            </ul>
-            <h2 id="k-means">2. K-means</h2>
+          </ul><br>
+            <h2 id="k-means">2. K-means Clustering</h2><br>
             <h3 id="relation-between-em-and-k-means">2.1 Relation between EM and K-means</h3>
-            <p>Then let us talk about k-means. How it relates to EM algorithm?</p>
-            <p>Suppose each cluster belongs to Gaussian density with the unit covariance: $p(x|\mu_k,I)$.</p>
+            <p>Then let us talk about k-means. How it relates to EM algorithm?<br>
+            Suppose each cluster belongs to Gaussian density with the unit covariance: $p(x|\mu_k,I)$.</p>
             <h4 id="for-e-step">For E-step</h4>
             <p>Remember, k-means tries to minimize the total within cluster's variance:
             $$\sum_{k=1}^{K}\sum_{i \in C_k}(x_i-\mu_k)^2$$
@@ -176,7 +176,7 @@
             <div style="text-align: center;"><br />
             <img class="img-fluid" src="2.jpg" alt="" align='middle'><br />
             </div><br />
-            And here is the link of <a href=”./kmeans.html”>Jupyter Notebook For K-means</a></p>
+            And here is the link of <a href="./kmeans.html">Jupyter Notebook For K-means</a></p>
             <blockquote class="blockquote"> Reference: <br><br />
             Book: <a href = "http://www-bcf.usc.edu/~gareth/ISL/">An Introduction to Statistical Learning <br>
             <a href="https://www.cs.utah.edu/~piyush/teaching/EM_algorithm.pdf" class="uri">https://www.cs.utah.edu/~piyush/teaching/EM_algorithm.pdf</a><br>
