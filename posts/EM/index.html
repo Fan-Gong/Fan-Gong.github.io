@@ -114,7 +114,7 @@
             <p>Since it is a parametric problem, we naturally think to use MLE to obtain the parameter $c_k$ and $\theta_k$. However, easily can be shown that it is analytically infeasible. (And also MLE will not tell us which cluster generates the data)Then it comes EM algorithm.</p>
             <h3 id="overview">1.1 Overview</h3>
             <p>After knowing why we need EM algorithm, let us again explicit our goal: <strong>Estimate $c_k$ and $\theta_k$ without using MLE directly, at the same time knowing which cluster each data belongs to</strong>.</p>
-            <p>We solve this question by tactfully create a <strong>latent variable</strong> called <strong>(hard) assignment variable</strong> $M_{i}$. Basically, $M_{i}$ is like a one-hot encoding label that labels 1 if the data belongs to that cluster, 0 otherwise. We could see that if we have this variable, we could then:</p>
+            <p>We solve this question by tactfully create a <strong>latent variable</strong> called <strong>(hard) assignment variable</strong> $M_{i}$. Basically, $M_{i}$ is like a one-hot encoding label that labels 1 if the data belongs to that cluster, 0 otherwise. If we know this variable, our problem can then be easily solved:</p>
             <ol>
             <li>calculate $c_k = \frac{\# \ data \ in \ C_k}{n}$ since we know which cluster the data belongs to</li>
             <li>Use MLE to calculate $\theta_k$ in each cluster. For example, we will calculate $\mu_k$ and $\Sigma_k$ by using MLE if the cluster belongs to Gaussian Distribution.</li>
