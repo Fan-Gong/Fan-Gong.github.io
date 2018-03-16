@@ -112,13 +112,13 @@
 <h2 id="data-types">1. Data Types</h2>
 <p>Even though we will use DataFrame as our main input for performing machine learning; I think it is still very necessary to know the basic RDD-based data types.</p>
 <h3 id="local-vectors-and-labeled-point">1.1 Local Vectors and Labeled Point</h3>
-<p>Local vector is the basic composition of the RDD data. There are two types:</p>
+<p>Local vector is the basic composition of the RDD data. There are two types:
 <ul>
 <li>Dense Vector: double array</li>
 <li>Sparse Vector: indices and values</li>
 </ul>
-<p>A labeled point is a local vector associated with a label</p>
-<p>Let us see one example:</p>
+A labeled point is a local vector associated with a label.<br><br>
+Let us see one example:</p>
 <pre><code>from pyspark.mllib.linalg import Vectors
 from pyspark.mllib.regression import LabeledPoint
 
@@ -140,16 +140,17 @@ Matrices.dense(3,2,[1,2,3,4,5,6])
 # Create a sparse matrix
 Matrices.sparse(3,2,[0,1,3],[0,2,1],[9,6,8]) </code></pre>
 <h2 id="machine-learning">2. Machine Learning</h2>
-<p>After knowing the basic data type and also our previous knowledge about Spark DataFrame, we could then perform machine learning. I think there are several things that are different from our original way in python:</p>
+<p>Now we have the prerequisite knowledge of performing machine learning on Spark: basic RDD data type and Spark Dataframe (On last Spark post). Then can we use these data directly to perform a ML algorithm? <br><br>
+  The answer is No. That is the difference between performing ML on Spark and on sklearn. Here are some detailed differences:</p>
 <ol>
 <li>Spark DataFrame is not mutable, so always we need to use some transformer to transform our DataFrame</li>
 <li>The DataFrame should have <strong>features</strong> and <strong>label</strong> column for supervised learning where features contain all the independent information and label contains the dependent information.</li>
 <li>There are several ways to construct Spark Dateframe, depending on the format of our source data (Detailed information is in my last spark post)</li>
 </ol>
-<p>Except for the things above, the procedures are quite similar to normal sklearn machine learning. I will not list all the ML algorithms here, but I want to use Logistics Regression and Random Forest to illustrate two ways to deal with DataFrame</p>
+<p>Except for the things above, the procedures are quite similar to normal sklearn machine learning. I will not list all the ML algorithms here, but I want to use Logistics Regression and Random Forest to illustrate two ways to deal with the ML problems.</p>
 <h3 id="logistic-regression">2.1 Logistic Regression</h3>
 <p>I will use the classic iris data set to perform this classification. This time I would like to use pandas to manipulate the dataframe first and transform to Spark DataFrame.</p>
-<p>First I use pandas to create a two class datasets</p>
+<p>First using pandas to create a two class datasets</p>
 <pre><code>import pandas as pd
 from pyspark.sql import SparkSession
 
@@ -175,7 +176,7 @@ df.rdd.map(lambda x: (Vectors.dense(x[0:-1]), x[-1])).toDF([&quot;features&quot;
 |[4.9,3.0,1.4,0.2]|    0|
 |[4.7,3.2,1.3,0.2]|    0|
 +-----------------+-----+</code></pre>
-<p>Then the next several steps are quite similar to sklearn:</p>
+<p>Next is model training, which are quite similar to sklearn:</p>
 <pre><code>from pyspark.ml.classification import LogisticRegression
 
 # train test split
@@ -197,7 +198,7 @@ predict.predictions.show(3)
 |[4.4,3.0,1.3,0.2]|    0|[0.97002544348423...|[0.72512456918688...|       0.0|
 |[4.4,3.2,1.3,0.2]|    0|[0.98632612358187...|[0.72836165252631...|       0.0|
 +-----------------+-----+--------------------+--------------------+----------+</code></pre>
-<p>We can then transform the evaluation results back to pandas and make plots:</p>
+<p>Finally for model evaluation, We can transform the evaluation results back to pandas and make plots:</p>
 <pre><code>roc = predict.roc.toPandas()
 plt.plot(roc[&#39;FPR&#39;], roc[&#39;TPR&#39;], marker = &#39;.&#39;)
 plt.plot([0,1], [0,1], linestyle = &#39;-&#39;, marker = &#39;.&#39;)
@@ -208,9 +209,11 @@ plt.show()</code></pre>
 <div style="text-align: center;">
             <img class="img-fluid" src="./1.jpg" alt="" align='middle'>
             </div>
-<p>We could see the first method is quite restrictive since we perform most our data wrangling on pandas; still, the speed will be very slow on big data. So this method is only available for dealing with middle size complicated data. For big data, we need to use the next method which is pure Spark.</p>
+<p>Conclusion: It seems like the first method is quite restrictive since we perform our data wrangling on pandas; still, the speed will be very slow on big data. So this method is only available for dealing with middle size complicated data. For big data, we need to use the next method which is pure Spark.</p>
 <h3 id="random-forest-model">2.2 Random Forest Model</h3>
-<p>To perform feature extraction and feature manipulation in Spark DataFrame, we need several more functions:</p>
+<p>
+  Then let us use a pure Spark way to make classification.
+  To perform data manipulation in Spark DataFrame, we need several more functions:</p>
 <ol>
 <li><strong>StringIndexer</strong>: <code>pyspark.ml.feature.StringIndexer(inputCol=None, outputCol=None, handleInvalid='error', stringOrderType='frequencyDesc')</code> A label indexer that maps a string column of labels to an ML column of label indices (numerical).</li>
 <li><strong>OneHotEncoder</strong>: <code>pyspark.ml.feature.OneHotEncoder(dropLast=True, inputCol=None, outputCol=None)</code>maps a column of label indices to a column of binary vectors, with at most a single one-value</li>
