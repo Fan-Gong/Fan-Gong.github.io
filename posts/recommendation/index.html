@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('./background.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Recommendation Engine</h1>
+              <h2 class="subheading">How does Amazon recommend items?</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on March 29, 2018</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p>Recommendation engine or recommendation systems are among the most popular applications of data science today. Almost every major tech company has applied them in some forms. Thus, there is no doubt that a good recommendation engine can bring substantial profit to the company. So the goal of this post is to try to talk about my understanding of constructing a good recommendation engine.</p>
+            <h1 id="contents">Contents</h1>
+            <p>First, let’s look at the structure of this post.</p>
+            <ol>
+<li>Overview</li>
+<li>Business Analysis
+<ul>
+<li>2.1 Analytical Framework</li>
+<li>2.2 Deep Dive into Amazon.com</li>
+<li>2.3 Conclusions</li>
+</ul></li>
+<li>Data Science Analysis
+<ul>
+<li>3.1 Introduction</li>
+<li>3.2 Model Construction</li>
+<li>3.3 Conclusions</li>
+</ul></li>
+<li>Combination</li>
+</ol>
+            <p>I divide my presentation into four parts, first I will give a brief introduction about recommendation engine, and then I will take a general business analysis about recommendation systems in Amazon; Next, I will take a pure data science analysis about recommendation systems; Finally I will combine these two analyses together.</p>
+            <h2 id="overview">1. Overview</h2>
+            <p>When I met the word &quot;Recommendation Engine&quot;, the first question came to my mind was: why we need it?</p>
+            <p>Briefly speaking, it is all because of money. For example, Amazon and Netflix recommend items and movies to attract the user to buy directly; YouTube and Facebook are not selling anything but with your stay in its website, they can show more ads and also increase the income.</p>
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="./brand.jpg" alt="" align='middle'>
+            </div>
+            <p>So, now we know why we need a recommendation system, actually it is said that 30% of Amazon’s income was due to its recommendation. Then how the recommendations look like? Can we analyze them from a business perspective? Then the next step, I will try to deep dive into Amazon.com to have a general business analysis of these recommendation engines.</p>
+            <h2 id="business-analysis">2. Business Analysis</h2>
+            <h3 id="analytical-framework">2.1 Analytical Framework</h3>
+            <p>To make my analysis more structured, I referred to one of the recommendation analysis framework raised by Joseph from University of Minnesota and then revised a little bit.<br />
+            <div style="text-align: center;"><br />
+            <img class="img-fluid" src="./af.jpg" alt="" align='middle'><br />
+            </div><br />
+            By following this framework, we could make it very clear about each of the recommendation engine. Let’s then use this analytical framework while we deep dive into Amazon.com.</p>
+            <h3 id="deep-dive-into-amazon.com">2.2 Deep Dive into Amazon.com</h3>
+            <p>Here are the things Amazon recommended to me.</p>
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="./np.jpg" alt="" align='middle'>
+            </div>
+            <p>At the top is an advertisement of Amazon Echo and other staffs. As far as I know, these ads are not highly personalized, and they will choose to show some recent popular items.</p>
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="./dr.jpg" alt="" align='middle'>
+            </div>
+            <p>Next, we notice that Amazon put its deals recommendation at the most obvious location. That makes sense because personalized and cheap items are very easy to catch customer’s eyes, so it has a more probability to be clicked on.</p>
+            <p>For me, the bike and some magazines do attract me a lot since I like cycling and reading and once bought a bicycle lock from Amazon. So it seems like these recommendations aim to recommend me similar items I bought before and now have discounts.</p>
+            <h3 id="conclusion">2.3 Conclusion</h3>
+            <p>Based on my tour on Amazon pages, I found that:</p>
+            <ul>
+            <li>For different recommendation purposes, we may need to generate different recommendation results</li>
+            <li>Different recommendations may need to be put in different web locations.</li>
+            </ul>
+            <p>So, <strong>it is very important to define our recommendation’s business goal before creating any models.</strong></p>
+            <h2 id="data-science-analysis">3. Data Science Analysis</h2>
+            <p>Now let’s look at the recommendation system in a data science perspective.</p>
+            <h3 id="introduction">3.1 Introduction</h3>
+            <p>Typically, we have two types of recommendation engines.</p>
+            <p><strong>Collaborate Filtering</strong></p>
+            <p>This type of model tries to find the similarities between each user and predict user’s behavior based on other similar users’ behavior. So for example, if we want to predict the fifth user’s preference for watching TV, we could see other two users preferences since they are very similar to the fifth user.<br />
+            <div style="text-align: center;"><br />
+            <img class="img-fluid" src="./cf.jpg" alt="" align='middle'><br />
+            </div></p>
+            <p><strong>Content-based Filtering</strong></p>
+            <p>Another type of recommendation engine is called content-based filtering. It tries to use keywords or other description to construct a profile for user and item. And then recommend similar one.</p>
+            <p>For example, we could use the overview description for each item to construct TF-IDF matrix and find a similar item with it or use some keywords to generalize these products such as category, material, function and so on.<br />
+            <div style="text-align: center;"><br />
+            <img class="img-fluid" src="./cb.jpg" alt="" align='middle'><br />
+            </div></p>
+            <p><strong>Collection of Data</strong><br />
+            Except for the model, the data from recommendation engines are different from our normal data set. It can be either explicit or implicit.</p>
+            <p><strong>Explicit Data</strong>: Data inputted by users such as ratings and comments <br><br />
+            <strong>Implicit Data</strong>: Order history/return history, Cart events, Click thru and search log.</p>
+            <p>For my later model, I suppose we have enough explicit data which is the rating information from each user.<br />
+            Here is how the ideal data frame looks like: each entry represents the rating one user gave to the item.</p>
+            <table>
+            <thead>
+            <tr class="header">
+            <th align="left">ID</th>
+            <th align="left">user1</th>
+            <th align="left">user2</th>
+            <th align="left">user3</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="odd">
+            <td align="left">item1</td>
+            <td align="left">1</td>
+            <td align="left">5</td>
+            <td align="left">3</td>
+            </tr>
+            <tr class="even">
+            <td align="left">item2</td>
+            <td align="left">2</td>
+            <td align="left"></td>
+            <td align="left">2</td>
+            </tr>
+            <tr class="odd">
+            <td align="left">item3</td>
+            <td align="left">2</td>
+            <td align="left">5</td>
+            <td align="left"></td>
+            </tr>
+            </tbody>
+            </table>
+            <p>Here Each entry $r(i,u)$ represents the rating of this $u$ user for the $i$ item.</p>
+            <h3 id="model-construction">3.2 Model Construction</h3>
+            <p><strong>Memory-based Model</strong></p>
+            <p>Now it is time to construct a real recommendation engine. The first method I used is the traditional CF memory-based model, what it does is that:</p>
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="./mc1.jpg" alt="" align='middle'>
+            </div>
+            <ol>
+            <li>We first find a similarity measure between each user. There are several ways we can do, here I choose to use cosine similarity. This similarity measure is very intuitive since if we deem two users' rating as two vectors, Cosine is just the measure of the intersection angle between these two vectors. The smaller the angle, the more similar of the users.</li>
+            <li>Then we make predictions based our average rating plus other similar users rating.</li>
+            <li>Finally, we evaluate our model by calculating the mean absolute differences between our rating prediction and the real rating.</li>
+            </ol>
+            <p>Here is the summary information for this model:</p>
+            <ul>
+            <li>Advantages:
+            <ul>
+            <li>Intuitive: Very easy to understand</li>
+            <li>Simple: Easy to operate</li>
+            </ul></li>
+            <li>Drawbacks:
+            <ul>
+            <li>Scalability: Computation cost grows as data getting larger</li>
+            <li>Sparsity: Commonly rated items for two users are quite few</li>
+            </ul></li>
+            </ul>
+            <p><strong>Model-based Model</strong></p>
+            <p>So here comes to a more advanced model that perfectly solves the above two problems and it actually won the Netflix Recommendation Competition in 2009. This model is called <strong>latent factor model</strong>. Essentially, we want to turn the recommendation problem into a machine learning optimization problem.</p>
+            <p>But, how we transform it? Basically, we view our problem in a different way. Suppose we use squared error as our metric, now our problem is viewed as how good we are in predicting the rating for items, so our goal now is to try to minimize our loss instead of finding the most similar user.</p>
+            <p>Let us see the image illustration to understand how it works. Where Q matrix represents the item information per row and the P matrix represents the user information per column. K is the factor parameter we will choose; The latent factor K is a broad idea which describes a property or concept that a user or an item has. For instance, if the items are music, so the latent factor can refer to the genre that music belongs to. In a word, this method tries to map our original data matrix into two low dimensional matrices by only using the existing data. So now we can see how this model perfectly solves two previous problems.<br />
+            <div style="text-align: center;">
+            <img class="img-fluid" src="./mc2.jpg" alt="" align='middle'>
+            </div></p>
+            <p>But how this model solves our previous problems?</p>
+            <ol>
+            <li>For sparsity, this model only uses the data that we already have, do not need to fill the NA or suppose them to be zero.</li>
+            <li>For scalability, this model maps our user-item matrix to two low dimensional ones, and the dimension is controlled by the number of factors you choose.</li>
+            </ol>
+            <p>Finally, to achieve this mapping, we always use SVD technique. Briefly sparking, SVD is a matrix decomposition techniques that decompose our original matrix into some low dimensional matrices and also keep the minimum reconstruction error, which is perfectly matching our goal, right?</p>
+            <p>Then let’s see how we construct this model:</p>
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="./mc21.jpg" alt="" align='middle'>
+            </div>
+            <ol>
+            <li>First we need to solve this optimization equation, basically, it means we try to find the matrix p and q that minimizing the square error by using our existing data (the yellow region). This optimization problem can be achieved by using gradient descent.</li>
+            <li>We need to choose the best factor number for performing cross-validation.</li>
+            <li>Next, we can make a prediction by multiple p and q matrix.</li>
+            <li>Finally, we also use mean absolute error to check the goodness of our prediction.</li>
+            </ol>
+            <p>Here is the summary information for this model:</p>
+            <ul>
+            <li>Advantages:
+            <ul>
+            <li>Ignore sparsity: No need to fill value into the empty entry</li>
+            <li>Efficient: Commutation cost is not that heavy</li>
+            </ul></li>
+            <li>Drawbacks:
+            <ul>
+            <li>Not Intuitive: Hard to explain the reason that we recommend the item</li>
+            </ul></li>
+            </ul>
+            <h3 id="conclusion-1">3.3 Conclusion</h3>
+            <p>From this part, I performed two collaborate filtering models. Actually, there are so many other models we can use, such as content-based model or clustering model.</p>
+            <p>But I find that each of them has their own drawback, for collaborate filtering model, it suffers cold start, which means we are not able to make a good recommendation if we have little rating information for this user. For content-based model, it is hard to recommend different categories items; and clustering has difficulties with sparsity.</p>
+            <p>So to make a good prediction, it is more reasonable to <strong>have a hybrid model</strong>: what I think is that, at the beginning if we have little data, we could use content-based model first, and then, using clustering algorithm such as EM algorithm to segment our user, and finally use the target cluster’s user data to perform latent factor model.</p>
+            <h2 id="combination">4. Combination</h2>
+            <p>In the end, let me combine my two parts analysis together.<br />
+            I think at the beginning; you may wonder why I have a such a structure that starts with business analysis and then technology-based analysis. The reason is that <strong>I think a good data science application should always be the combination of business plus data science analysis.</strong></p>
+            <p>Based on my previous analysis, a good recommendation should always start with a clear business goal: where to put the recommendation, what type of items to recommend, personalized or not. After that, we are able to collect the targeted data to achieve the goal. Finally, always keep in mind each model’s drawback, a hybrid model may be a better choice.<br />
+            <div style="text-align: center;">
+            <img class="img-fluid" src="./pl.jpg" alt="" align='middle'>
+            </div></p>
+            <p>Following this pipeline, I also summarized what technology stack I will use in each step. We may first use some BI tools to perform our business analysis such as A/B test, and the data normally will be stored in the cloud database, so I will use Spark SQL to connect to a cloud SQL instance and then load data into Spark DataFrame or RDD format. Spark Streaming is used to update our dataset in real time. Finally, we can either use Spark MLlib recommendation module or use Python Surprise library to construct our recommendation model. At the same time, We can also use AWS or google cloud to help us quickly get results.<br />
+            <div style="text-align: center;">
+            <img class="img-fluid" src="./ts.jpg" alt="" align='middle'>
+            </div></p>
+            <p>Hope this post could give you my understanding of constructing a good recommendation engine!</p>
+<blockquote class="blockquote"> Reference:
+https://hackernoon.com/introduction-to-recommender-system-part-1-collaborative-filtering-singular-value-decomposition-44c9659c5e75
+https://github.com/rounakbanik/movies/blob/master/movies_recommender.ipynb
+https://www.youtube.com/watch?v=E8aMcwmqsTg&list=PLLssT5z_DsK9JDLcT8T62VtzwyW9LNepV&index=55
+https://www.coursera.org/specializations/recommender-systems
+</blockquote>
+
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
