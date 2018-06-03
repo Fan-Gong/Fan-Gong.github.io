@@ -143,7 +143,7 @@
             </ul>
             <p>Finally, we often call this formula <strong>logit</strong>. If the logit larger than zero, we assign the data to class one; If smaller than zero, we assign the data to class two.</p>
             <h3 id="parameter-estimation-and-loss-function">2.2 Parameter Estimation and Loss Function</h3>
-            <p>Now we would like to estimate the coefficients $\beta$. We will use MLE here. Based on 2.1, we could easily write down the likelihood function (likelihood function is a function of the parameter of a statistical given data) of this model:<br />
+            <p>Now we would like to estimate the coefficients $\beta$. We will use MLE here. Based on 2.1, we could easily write down the likelihood function (likelihood function is a function of the parameter of a statistics given data) of this model:<br />
 
               $$L(\mathbf{y},\mathbf{X}|\beta) = \prod_{i=1}^{n}L(y{_i},x_i|\beta) = \prod_{i=1}^{n}
   (\frac{1}{1+e^{-x_i \beta}})^{y{_i}} \cdot (\frac{e^{-x_i \beta }}{1+e^{-x_i \beta}})^{1-y_i}$$
