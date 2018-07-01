@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('svm.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Support Vector Machine (1) </h1>
+              <h2 class="subheading">Classification Model (4)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on June 30, 2018</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p>I am back again :D</p>
+            <p>I have just started my new job, so recently had little time to update my blog (Too Lazy…). </p>
+
+            <p>Here are the plans for my next several posts. First I will review SVM to finish the writing of fundamental ML algorithms part. Then I will move forward to deep learning. Start from this week, I will stick to writing at least one post per week to let myself keep learning and reviewing.  </p>
+
+            <p>All right, today let me talk about what is SVM. I decide to divide this topic into two posts: the first one aims to have an introduction about what is the relationship between SVM and Logistic Regression, what optimization problem it needs to solve; the second post will talk about kernel trick, slack variable and the loss function of SVM.</p>
+
+            <p>Need to notice that this time I will ignore introducing the basic concepts of SVM like hyperplane and margin.</p>
+
+            <h2 id="toc_0">1. Introduction</h2>
+
+            <p>SVM is one of the most popular algorithms among decades. Even if its name is quite obscure, the idea behind it is quite easy to understand. Essentially, we aim to find a good classifier that maximizes the margin.</p>
+
+            <h3 id="toc_1">1.1 Relationship with Logistic Regression</h3>
+
+            <p>Based on our previous post, we know logistic regression uses sigmoid function to map feature combination to \((0,1)\) and we can use logit to decide which class the new data point belongs to:
+            \[ln(\frac{P(y=1|X)}{P(y=0|X)}) = ln(\frac{1}{e^{-\theta^T X}})=ln(e^{\theta^TX})=\theta^TX\]
+            If \(\theta^TX&gt;0\), we assign \(y=1\), otherwise we assign \(y = 0\).</p>
+
+            <p>Let me do some transformation about the logit:
+            \[\theta^Tx_i = \theta_0+\theta_1x_{i1}+\theta_2x_{i2}+\cdots + \theta_px_{p1}\]
+            We define \(\theta_0 = B\), \([\theta_1,\theta_2,\cdots,\theta_p ]=w^T\), then we have:
+            \[\begin{align*}
+            \theta^Tx_i &amp;= \theta_0+\theta_1x_{i1}+\theta_2x_{i2}+\cdots + \theta_px_{p1} \\ &amp;=B + w^Tx_i
+            \end{align*}\]
+            It is just the expression of a hyperplane. In the end, we just change the final mapping a little bit:</p>
+
+            <p>if \(B + w^Tx_i &gt; 0\), we assign \(y = 1\); otherwise we assign \(y = -1\) </p>
+
+            <p>So, we can see that logistic regression and SVM use almost the same discriminant approach, and they both are linear classifier. So, not need to say sometimes they can obtain quite similar results. However, their differences are also very obvious, I will list here for now, hopefully we can understanding them clearly after reading this post. </p>
+
+            <ul>
+            <li>Loss function is different</li>
+            <li>SVM only use SV to decide its decision boundary whereas LR will use all the data</li>
+            <li>In most cases, SVM will use kernel trick but LR not. </li>
+            <li>SVM need normalized data whereas LR doesn&#39;t need </li>
+            <li>SVM has the function called Structural Risk Minimization (SRM) since its cost function contains regularization term. But LR&#39;s doesn&#39;t.<br></li>
+            </ul>
+
+            <h2 id="toc_2">2. Model Structure</h2>
+
+            <p>Next let us talk about the key part of SVM. Basically, the target of SVM is to find a hyperplane linearly separates two classes. Thus, to solve this problem, we need to figure out two things:</p>
+
+            <ol>
+            <li>How to define the goodness of a hyperplane<br></li>
+            <li>How to find the best hyperplane based on the metric from question 1</li>
+            </ol>
+
+            <h3 id="toc_3">2.1 Maximal Margine Metric</h3>
+
+            <p>The most intuitional measure of the goodness of a hyperplane is to maximize the margin. But how to define it? Here, we use geometric margin as our distance measure. Suppose our hyperplane is \(w^Tx + b = 0\), then the geometric margin is:
+            \[\hat{r} = \frac{y(w^Tx + b)}{||w||}\]
+            To make it more clear, the distance between a point and a hyperplane has the fomular:
+            \[dist = \frac{|w^Tx_i+b|}{||w||}\]
+            Here we use \(y(w^T+b)\) to replace \(|w^T+b|\) because:
+            \[if \ (w^T+b)&gt;0 \ y=1 \\ if \ (w^T+b)&lt;=0 \ y=-1\] so \(y(w^T+b)\) not only gives us the distance between point and hyperplane, but also have some benefits when we introduce slack variable. </p>
+
+            <h3 id="toc_4">2.2 Optimization</h3>
+
+            <h4 id="toc_5">2.2.1 Objective Function</h4>
+
+            <p>After defining our metric, we can then summarize our goal as below in a more mathematic way:
+            \[Max \ \hat{r} \\
+            s.t. \hat{r_i} \ge \hat{r} \ \ for \ i=1,..,n\]
+            Where
+            \[\hat{r_i} = \frac{y_i(w^Tx_i + b)}{||w||} \ge \frac{y_p(w^Tx_p + b)}{||w||}=\hat{r} \\=&gt; y_i(w^Tx_i + b) \ge y_p(w^Tx_p + b)\]
+            Here \(x_p\) represents the support vectors.</p>
+
+            <p>Since \((w^Tx + b)=0\) and \(c(w^Tx + b)=0\) define the same plane, so we have the freedom to choose the normalization of \(w\). In order for the convenience, we choose \(y_p(w^Tx_p + b)=1\), which means \(\hat{r}=\frac{1}{||w||}\).
+
+            The following is a good illustration about this:
+            <div style="text-align: center;">
+            <img class="img-fluid" src="1.jpg" alt="" align='middle'>
+            </div>
+
+            <br>
+            Then our optimization problem changes to:
+            \[
+            Max \ \frac{1}{||w||} \\
+            s.t. y_i(w^Tx_i + b) \ge 1 \ \ for \ i=1,..,n \]</p>
+
+            <h4 id="toc_6">2.2.2 Optimization Method</h4>
+
+            <p>After knowing our objective function, next we need to figure out how to solve this optimization problem. I will not have a whole mathematical proof here, but knowing the whole process is a necessity for better understanding what the kernel trick is. </p>
+
+            <p>Let us first further transform our objective function a little bit:
+            \[
+            Min \ \frac{1}{2}||w||^2 \\
+            s.t. y_i(w^Tx_i + b) \ge 1 \ \ for \ i=1,..,n
+            \]
+            Which is equivalent to our previous objective function. So, now our objective function is a quadratic function and at the same time the constraint is linear. The purpose is that we can then use <a href = "https://en.wikipedia.org/wiki/Duality_(optimization)"> Lagrange Duality</a> and transform our problem to a dual problem. </p>
+
+            <p>I know it sounds very complicated, but basically, we add a Lagrange multiplier \(\alpha\) to our constraint and define the Lagrange function that describe our optimization problem by itself:
+            \[L(w,b,\alpha)=\frac{1}{2}||w||^2-\sum_{i=1}^{n}\alpha_i(y_i(w^Tx_i + b)-1)\]
+            And
+            \[\theta(w)=max_{\alpha_i \ge 0}L(w,b,\alpha)=\lbrace^{\frac{1}{2}||w||^2 \ when \ y_i(w^Tx_i + b)-1 \ge 0} _{+ \infty \ when \ y_i(w^Tx_i + b)-1 &lt; 0}\]</p>
+
+            <p>So our final objective function changes to:
+            \[min_{w,b}\theta(w)\]
+            I ignore all the steps for solving this optimization problem, and here are the results:</p>
+
+            <ul>
+            <li>\(w^{*} =\sum_{i=1}^{n}\alpha_iy_ix_i\)</li>
+            <li>\(b^{*} = -\frac{max_{i,y_i=-1}w^{*T}x_i+min_{i,y_i=1}w^{*T}x_i}{2}\)</li>
+            </ul>
+
+            <p>So, we substitute these optimal value into our original function:
+            \[f(x) = (\sum_{i=1}^{n}\alpha_iy_ix_i)^Tx+b^* =\sum_{i=1}^{n}\alpha_iy_i\langle x_i,x \rangle + b^*\]
+            Notice that \(x_i\) is our training data, and \(x\) is the new data point. Based on our previous discussion, if \(f(x) &gt; 0\), then we will assign it to class 1. So we could see the only part that decides the classification result is \(\langle x_i,x \rangle\), the inner prodution. This finding is one of the most important result for SVM. </p>
+
+            <p>It can be said that the reason kernel trick is used easily in SVM is because of this result. So what kernel trick is? and how does SVM deals with data that cannot be classified perfectly? Let us see in the next post.</p>
+
+            <p><blockquote class="blockquote"> Reference: <br></p>
+
+            <p><a href="http://www.robots.ox.ac.uk/~az/lectures/ml/lect2.pdf">http://www.robots.ox.ac.uk/~az/lectures/ml/lect2.pdf</a><br>
+            <a href="http://www.robots.ox.ac.uk/~az/lectures/ml/lect3.pdf">http://www.robots.ox.ac.uk/~az/lectures/ml/lect3.pdf</a><br>
+             <a href="https://blog.csdn.net/v_july_v/article/details/7624837"> 支持向量机通俗导论</a>
+             <a href="https://www.zhihu.com/question/26768865/answer/34078149"> https://www.zhihu.com/question/26768865/answer/34078149</a></p>
+
+
+
+
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
