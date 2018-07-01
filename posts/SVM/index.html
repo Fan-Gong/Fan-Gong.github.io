@@ -157,11 +157,11 @@
             <h3 id="toc_3">2.1 Maximal Margine Metric</h3>
 
             <p>The most intuitional measure of the goodness of a hyperplane is to maximize the margin. But how to define it? Here, we use geometric margin as our distance measure. Suppose our hyperplane is \(w^Tx + b = 0\), then the geometric margin is:
-            \[\hat{r} = \frac{y(w^Tx + b)}{||w||}\]
+            \[\hat{r} = \frac{y_p(w^Tx_p + b)}{||w||}\]
             To make it more clear, the distance between a point and a hyperplane has the fomular:
             \[dist = \frac{|w^Tx_i+b|}{||w||}\]
             Here we use \(y(w^T+b)\) to replace \(|w^T+b|\) because:
-            \[if \ (w^T+b)&gt;0 \ y=1 \\ if \ (w^T+b)&lt;=0 \ y=-1\] so \(y(w^T+b)\) not only gives us the distance between point and hyperplane, but also have some benefits when we introduce slack variable. </p>
+            \[if \ (w^T+b)&gt;0 \ y=1 \\ if \ (w^T+b)&lt;=0 \ y=-1\] so \(y(w^T+b)\) will always larger than or equal to zero, it not only gives us the distance between point and hyperplane, but also have some benefits when we introduce slack variable. </p>
 
             <h3 id="toc_4">2.2 Optimization</h3>
 
@@ -196,7 +196,7 @@
             Min \ \frac{1}{2}||w||^2 \\
             s.t. y_i(w^Tx_i + b) \ge 1 \ \ for \ i=1,..,n
             \]
-            Which is equivalent to our previous objective function. So, now our objective function is a quadratic function and at the same time the constraint is linear. The purpose is that we can then use <a href = "https://en.wikipedia.org/wiki/Duality_(optimization)"> Lagrange Duality</a> and transform our problem to a dual problem. </p>
+            Which is equivalent to our previous objective function. Now our objective function is a quadratic function and at the same time the constraint is linear. The purpose is that we can then use <a href = "https://en.wikipedia.org/wiki/Duality_(optimization)"> Lagrange Duality</a> and transform our problem to a dual problem. </p>
 
             <p>I know it sounds very complicated, but basically, we add a Lagrange multiplier \(\alpha\) to our constraint and define the Lagrange function that describe our optimization problem by itself:
             \[L(w,b,\alpha)=\frac{1}{2}||w||^2-\sum_{i=1}^{n}\alpha_i(y_i(w^Tx_i + b)-1)\]
