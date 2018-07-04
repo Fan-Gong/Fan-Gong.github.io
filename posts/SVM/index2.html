@@ -156,7 +156,7 @@ So even if we cannot find a hyperplane perfectly classify this data in original 
 </ol>
 
 <p>But what kernel trick does is that we find:
-\((\langle X,X_P \rangle +1)^2 = 2x_1x_{p1}+x_1^2x_{p1}^2+2x_2x_{p2}+x_2^2x_{p2}^2+2x_1x_2x_{p1}x_{p2}+1\) has the exactly same results <strong>but without really maps our data into the high dimensional space!</strong>. Here \((\langle X,X_P \rangle +1)^2\) is called <strong>Kernel Function</strong>. Here is the definition from <a href = "https://en.wikipedia.org/wiki/Kernel_method">Wikipedia</a>: Kernel Functions enable them to operate in a high-dimensional, implicit feature space without ever computing the coordinates of the data in that space, but rather by simply computing the inner products between the images of all pairs of data in the feature space.</p>
+\((\langle X,X_P \rangle +1)^2 = 2x_1x_{p1}+x_1^2x_{p1}^2+2x_2x_{p2}+x_2^2x_{p2}^2+2x_1x_2x_{p1}x_{p2}+1\) has the exactly same results <strong>but without really mapping our data into the high dimensional space!</strong>. Here \((\langle X,X_P \rangle +1)^2\) is called <strong>Kernel Function</strong>. Here is the definition from <a href = "https://en.wikipedia.org/wiki/Kernel_method">Wikipedia</a>: Kernel Functions enable them to operate in a high-dimensional, implicit feature space without ever computing the coordinates of the data in that space, but rather by simply computing the inner products between the images of all pairs of data in the feature space.</p>
 
 <p>So, in a word, <strong>kernel function can simplify the inner product calculation for feature space mapping</strong> and the coincidence is that the determinant part of SVM is decided by inner product! That is why kernel trick can be used in SVM conveniently and successfully! </p>
 
