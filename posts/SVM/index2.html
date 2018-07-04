@@ -180,9 +180,7 @@ So even if we cannot find a hyperplane perfectly classify this data in original 
 \[s.t. \ y_i(w^Tx_i+b)\ge 1-\epsilon_i,\ for \ \epsilon_i \ge 0, i=1,...,n\]
 To explain it a little bit, \(min\frac{1}{2}||w||^2\) is for maximizing the margin; \(min \ C\sum_{i=1}^n \epsilon_i\) is for controlling \(\epsilon_i\) not to be so large, since in that case all data points can pass through the decision boundary. C is a hyperparameter we need to tune. If \(C \rightarrow +\infty\), then \(\epsilon_i \rightarrow 0\), no data is allowed to pass the boundary; Or if \(C \rightarrow 0\),  \(\epsilon_i \rightarrow +\infty\), every data is allowed to pass through the boundary.</p>
 
-<p>In addition to this, we can find that if \(\epsilon_i\) is from \([0,1)\)</p>
-
-<p>And the solution for this optimization problem is quite similar to the original one. The only difference is that we have a upper limit for the dual variable \(\alpha\) this time. So, we can still use kernel trick into our algorithm.</p>
+<p>The solution for this optimization problem is quite similar to the original one. The only difference is that we have a upper limit for the dual variable \(\alpha\) this time. So, we can still use kernel trick into our algorithm.</p>
 
 <h2 id="toc_5">3. Cost Function</h2>
 
