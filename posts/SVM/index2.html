@@ -90,11 +90,11 @@
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
             <div class="post-heading">
-              <h1>Support Vector Machine (1) </h1>
+              <h1>Support Vector Machine (2) </h1>
               <h2 class="subheading">Classification Model (4)</h2>
               <span class="meta">Posted by
                 <a href="../../about.html">Fan Gong</a>
-                on June 30, 2018</span>
+                on July 3, 2018</span>
             </div>
           </div>
         </div>
@@ -106,125 +106,135 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
-            <p>I am back again :D</p>
-            <p>I have just started my new job, so recently had little time to update my blog (Too Lazy…). </p>
+<p>From last article, we have talked about the relationship between SVM and logistic regression; What optimization problem SVM wants to solve and how it is solved. However, all these results are under one premise: <strong>our data needs to be linearly separable</strong>. But in fact, this condition is very hard to be satisfied. So in today&#39;s article let us talk about how SVM deals with linearly inseparable data.</p>
 
-            <p>Here are the plans for my next several posts. First I will review SVM to finish the writing of fundamental ML algorithms part. Then I will move forward to deep learning. Start from this week, I will stick to writing at least one post per week to let myself keep learning and reviewing.  </p>
+<h2 id="toc_0">1. Kernel Trick</h2>
 
-            <p>All right, today let me talk about what is SVM. I decide to divide this topic into two posts: the first one aims to have an introduction about what is the relationship between SVM and Logistic Regression, what optimization problem it needs to solve; the second post will talk about kernel trick, slack variable and the loss function of SVM.</p>
+<p>It can be said that it is because kernel trick that makes SVM a very flexible and popular algorithm. And also, kernel trick is the most confusing part when I first tried to understand SVM. So what is kernel trick and what does it do?</p>
 
-            <p>Need to notice that this time I will ignore introducing the basic concepts of SVM like hyperplane and margin.</p>
+<h3 id="toc_1">1.1 Linearly Inseparable Condition</h3>
 
-            <h2 id="toc_0">1. Introduction</h2>
+<p>To explain that, we need to go back to our original problem a little bit: we want to use SVM to deal with linearly inseparable data. </p>
 
-            <p>SVM is one of the most popular algorithms among decades. Even if its name is quite obscure, the idea behind it is quite easy to understand. Essentially, we aim to find a good classifier that maximizes the margin.</p>
-
-            <h3 id="toc_1">1.1 Relationship with Logistic Regression</h3>
-
-            <p>Based on our previous post, we know logistic regression uses sigmoid function to map feature combination to \((0,1)\) and we can use logit to decide which class the new data point belongs to:
-            \[ln(\frac{P(y=1|X)}{P(y=0|X)}) = ln(\frac{1}{e^{-\theta^T X}})=ln(e^{\theta^TX})=\theta^TX\]
-            If \(\theta^TX&gt;0\), we assign \(y=1\), otherwise we assign \(y = 0\).</p>
-
-            <p>Let me do some transformation about the logit:
-            \[\theta^Tx_i = \theta_0+\theta_1x_{i1}+\theta_2x_{i2}+\cdots + \theta_px_{p1}\]
-            We define \(\theta_0 = B\), \([\theta_1,\theta_2,\cdots,\theta_p ]=w^T\), then we have:
-            \[\begin{align*}
-            \theta^Tx_i &amp;= \theta_0+\theta_1x_{i1}+\theta_2x_{i2}+\cdots + \theta_px_{p1} \\ &amp;=B + w^Tx_i
-            \end{align*}\]
-            It is just the expression of a hyperplane. In the end, we just change the final mapping a little bit:</p>
-
-            <p>if \(B + w^Tx_i &gt; 0\), we assign \(y = 1\); otherwise we assign \(y = -1\) </p>
-
-            <p>So, we can see that logistic regression and SVM use almost the same discriminant approach, and they both are linear classifier. So, not need to say sometimes they can obtain quite similar results. However, their differences are also very obvious, I will list here for now, hopefully we can understanding them clearly after reading this post. </p>
-
-            <ul>
-            <li>Loss function is different</li>
-            <li>SVM only use SV to decide its decision boundary whereas LR will use all the data</li>
-            <li>In most cases, SVM will use kernel trick but LR not. </li>
-            <li>SVM need normalized data whereas LR doesn&#39;t need </li>
-            <li>SVM has the function called Structural Risk Minimization (SRM) since its cost function contains regularization term. But LR&#39;s doesn&#39;t.<br></li>
-            </ul>
-
-            <h2 id="toc_2">2. Model Structure</h2>
-
-            <p>Next let us talk about the key part of SVM. Basically, the target of SVM is to find a hyperplane linearly separates two classes. Thus, to solve this problem, we need to figure out two things:</p>
-
-            <ol>
-            <li>How to define the goodness of a hyperplane<br></li>
-            <li>How to find the best hyperplane based on the metric from question 1</li>
-            </ol>
-
-            <h3 id="toc_3">2.1 Maximal Margine Metric</h3>
-
-            <p>The most intuitional measure of the goodness of a hyperplane is to maximize the margin. But how to define it? Here, we use geometric margin as our distance measure. Suppose our hyperplane is \(w^Tx + b = 0\), then the geometric margin is:
-            \[\hat{r} = \frac{y(w^Tx + b)}{||w||}\]
-            To make it more clear, the distance between a point and a hyperplane has the fomular:
-            \[dist = \frac{|w^Tx_i+b|}{||w||}\]
-            Here we use \(y(w^T+b)\) to replace \(|w^T+b|\) because:
-            \[if \ (w^T+b)&gt;0 \ y=1 \\ if \ (w^T+b)&lt;=0 \ y=-1\] so \(y(w^T+b)\) not only gives us the distance between point and hyperplane, but also have some benefits when we introduce slack variable. </p>
-
-            <h3 id="toc_4">2.2 Optimization</h3>
-
-            <h4 id="toc_5">2.2.1 Objective Function</h4>
-
-            <p>After defining our metric, we can then summarize our goal as below in a more mathematic way:
-            \[Max \ \hat{r} \\
-            s.t. \hat{r_i} \ge \hat{r} \ \ for \ i=1,..,n\]
-            Where
-            \[\hat{r_i} = \frac{y_i(w^Tx_i + b)}{||w||} \ge \frac{y_p(w^Tx_p + b)}{||w||}=\hat{r} \\=&gt; y_i(w^Tx_i + b) \ge y_p(w^Tx_p + b)\]
-            Here \(x_p\) represents the support vectors.</p>
-
-            <p>Since \((w^Tx + b)=0\) and \(c(w^Tx + b)=0\) define the same plane, so we have the freedom to choose the normalization of \(w\). In order for the convenience, we choose \(y_p(w^Tx_p + b)=1\), which means \(\hat{r}=\frac{1}{||w||}\).
-
-            The following is a good illustration about this:
-            <div style="text-align: center;">
-            <img class="img-fluid" src="1.jpg" alt="" align='middle'>
+<p>One solution is that we can <strong>map our original feature space to a higher dimensional space</strong>. If you know SVM a little bit, you must have seen this intuitive picture before:
+<div style="text-align: center;">
+            <img class="img-fluid" src="3.jpg" alt="" align='middle'>
+            <a href = "https://people.eecs.berkeley.edu/~jordan/courses/281B-spring04/lectures/lec3.pdf"> <br>Image is from UC Berkeley Class CS281B</a>
             </div>
+So even if we cannot find a hyperplane perfectly classify this data in original feature space, after the mapping to three dimensional space, we can easily find that perfect hyperplane. Basically, that is the idea how SVM solve this issue. But the question is: how to do this mapping? </p>
 
-            <br>
-            Then our optimization problem changes to:
-            \[
-            Max \ \frac{1}{||w||} \\
-            s.t. y_i(w^Tx_i + b) \ge 1 \ \ for \ i=1,..,n \]</p>
+<p>The most natural thought is to：</p>
 
-            <h4 id="toc_6">2.2.2 Optimization Method</h4>
+<ol>
+<li><p>Find a nonlinear mapping function \(\phi(x)\): \(\phi: \chi \to \digamma \) where \(\digamma\) is a higher feature space than \(\chi\). Then use this function to map our data. </p></li>
+<li><p>Use SVM to find appropriate hyperplane in our new feature space:
+\[f(x) = \sum_{I=1}^{n}\alpha_i y_i \langle \phi (x_i),\phi(x) \rangle\]
+(remember our most important results from the last article?)</p></li>
+</ol>
 
-            <p>After knowing our objective function, next we need to figure out how to solve this optimization problem. I will not have a whole mathematical proof here, but knowing the whole process is a necessity for better understanding what the kernel trick is. </p>
+<p>Awesome! It seems that our problem has been perfectly solved. However, actually it can face with big problems: <strong>The mapping cost is very heavy</strong>. If we want to map our feature space into a very high dimension, both the mapping and the later calculation will be computational expensive. </p>
 
-            <p>Let us first further transform our objective function a little bit:
-            \[
-            Min \ \frac{1}{2}||w||^2 \\
-            s.t. y_i(w^Tx_i + b) \ge 1 \ \ for \ i=1,..,n
-            \]
-            Which is equivalent to our previous objective function. So, now our objective function is a quadratic function and at the same time the constraint is linear. The purpose is that we can then use <a href = "https://en.wikipedia.org/wiki/Duality_(optimization)"> Lagrange Duality</a> and transform our problem to a dual problem. </p>
+<p>Here comes our hero: The Kernel Trick.</p>
 
-            <p>I know it sounds very complicated, but basically, we add a Lagrange multiplier \(\alpha\) to our constraint and define the Lagrange function that describe our optimization problem by itself:
-            \[L(w,b,\alpha)=\frac{1}{2}||w||^2-\sum_{i=1}^{n}\alpha_i(y_i(w^Tx_i + b)-1)\]
-            And
-            \[\theta(w)=max_{\alpha_i \ge 0}L(w,b,\alpha)=\lbrace^{\frac{1}{2}||w||^2 \ when \ y_i(w^Tx_i + b)-1 \ge 0} _{+ \infty \ when \ y_i(w^Tx_i + b)-1 &lt; 0}\]</p>
+<h3 id="toc_2">1.2 Kernel Trick</h3>
 
-            <p>So our final objective function changes to:
-            \[min_{w,b}\theta(w)\]
-            I ignore all the steps for solving this optimization problem, and here are the results:</p>
+<p>Here is a very good example to illustrate how kernel trick solves this problem:</p>
 
-            <ul>
-            <li>\(w^{*} =\sum_{i=1}^{n}\alpha_iy_ix_i\)</li>
-            <li>\(b^{*} = -\frac{max_{i,y_i=-1}w^{*T}x_i+min_{i,y_i=1}w^{*T}x_i}{2}\)</li>
-            </ul>
+<ul>
+<li>Suppose \(X \ (x_1,x_2)\) is a test data point in a two dimensional space. </li>
+<li>We want to map it to a 6-dimensional space by using this mapping function: 
+\[\phi(x) = (\sqrt{2}x_1, x_1^2,\sqrt{2}x_2,x_2^2,\sqrt{2}x_1x_2,1)\]</li>
+<li>Suppose one of our training data \(X_p\) is \((x_{p1},x_{p2})\) </li>
+</ul>
 
-            <p>So, we substitute these optimal value into our original function:
-            \[f(x) = (\sum_{i=1}^{n}\alpha_iy_ix_i)^Tx+b^* =\sum_{i=1}^{n}\alpha_iy_i\langle x_i,x \rangle + b^*\]
-            Notice that \(x_i\) is our training data, and \(x\) is the new data point. Based on our previous discussion, if \(f(x) &gt; 0\), then we will assign it to class 1. So we could see the only part that decides the classification result is \(\langle x_i,x \rangle\), the inner prodution. This finding is one of the most important result for SVM. </p>
+<p>So, first, if we use our previous method to finish this mapping, here is what we will do:</p>
 
-            <p>It can be said that the reason kernel trick is used easily in SVM is because of this result. So what kernel trick is? and how does SVM deals with data that cannot be classified perfectly? Let us see in the next post.</p>
+<ol>
+<li>Calculate \(\phi(X) = (\sqrt{2}x_1, x_1^2,\sqrt{2}x_2,x_2^2,\sqrt{2}x_1x_2,1)\)</li>
+<li>Calculate \(\phi(X_p) = (\sqrt{2}x_{p1}, x_{p1}^2,\sqrt{2}x_{p2},x_{p2}^2,\sqrt{2}x_{p1}x_{p2},1)\)</li>
+<li>Calculate \(\langle \phi (x_i),\phi(x) \rangle = 2x_1x_{p1}+x_1^2x_{p1}^2+2x_2x_{p2}+x_2^2x_{p2}^2+2x_1x_2x_{p1}x_{p2}+1\) </li>
+</ol>
 
-            <p><blockquote class="blockquote"> Reference: <br></p>
+<p>But what kernel trick does is that we find:
+\((\langle X,X_P \rangle +1)^2 = 2x_1x_{p1}+x_1^2x_{p1}^2+2x_2x_{p2}+x_2^2x_{p2}^2+2x_1x_2x_{p1}x_{p2}+1\) has the exactly same results <strong>but without really maps our data into the high dimensional space!</strong>. Here \((\langle X,X_P \rangle +1)^2\) is called <strong>Kernel Function</strong>. Here is the definition from <a href = "https://en.wikipedia.org/wiki/Kernel_method">Wikipedia</a>: Kernel Functions enable them to operate in a high-dimensional, implicit feature space without ever computing the coordinates of the data in that space, but rather by simply computing the inner products between the images of all pairs of data in the feature space.</p>
 
-            <p><a href="http://www.robots.ox.ac.uk/~az/lectures/ml/lect2.pdf">http://www.robots.ox.ac.uk/~az/lectures/ml/lect2.pdf</a><br>
-            <a href="http://www.robots.ox.ac.uk/~az/lectures/ml/lect3.pdf">http://www.robots.ox.ac.uk/~az/lectures/ml/lect3.pdf</a><br>
-             <a href="https://blog.csdn.net/v_july_v/article/details/7624837"> 支持向量机通俗导论</a>
-             <a href="https://www.zhihu.com/question/26768865/answer/34078149"> https://www.zhihu.com/question/26768865/answer/34078149</a></p>
+<p>So, in a word, <strong>kernel function can simplify the inner product calculation for feature space mapping</strong> and the coincidence is that the determinant part of SVM is decided by inner product! That is why kernel trick can be used in SVM conveniently and successfully! </p>
 
+<h3 id="toc_3">1.3 Some Kernel Functions</h3>
+
+<ol>
+<li>Polynomial kernels:  \(k(x_1, x_2) = (\langle x_1,x_2 \rangle+R)^d\). It equals to map our data to a \(C_{m+d}^{d}\) space, where m is out original dimension.</li>
+<li>Gaussian kernels \(k(x_1, x_2) = exp(−||x_1 − x_2||^2/2\sigma^2)\) for \(\sigma &gt;0\). It can map the data to and infinite dimensional feature space. So here \(\sigma\) is one of the hyperparameter that we need to tune for a better kernel. </li>
+</ol>
+
+<h2 id="toc_4">2. Slack Variable</h2>
+
+<p>After being aware of kernel trick, we then move our model even further a little: how about our data cannot be separated perfectly by a (generalized) hyperplane even in a high dimension? </p>
+
+<p>This could definitely happen when our outlier works as support vectors. To solve this problem, we introduce slack variable.</p>
+
+<p>The idea for slack variable is that we <strong>allow some of the points come through our decision boundary and even pass through the hyperplane</strong>. And the variable which controls the allowable deviation from the hyperplane is called <strong>Slack Variable</strong>. Normally, we use \(\epsilon\) to represent it.  </p>
+
+<p>Here is the new optimization problem we want to solve after introducing slack variable:
+\[min \frac{1}{2}||w||^2 + C\sum_{i=1}^n \epsilon_i\]
+\[s.t. \ y_i(w^Tx_i+b)\ge 1-\epsilon_i,\ for \ \epsilon_i \ge 0, i=1,...,n\]
+To explain it a little bit, \(min\frac{1}{2}||w||^2\) is for maximizing the margin; \(min \ C\sum_{i=1}^n \epsilon_i\) is for controlling \(\epsilon_i\) not to be so large, since in that case all data points can pass through the decision boundary. C is a hyperparameter we need to tune. If \(C \rightarrow +\infty\), then \(\epsilon_i \rightarrow 0\), no data is allowed to pass the boundary; Or if \(C \rightarrow 0\),  \(\epsilon_i \rightarrow +\infty\), every data is allowed to pass through the boundary.</p>
+
+<p>In addition to this, we can find that if \(\epsilon_i\) is from \([0,1)\)</p>
+
+<p>And the solution for this optimization problem is quite similar to the original one. The only difference is that we have a upper limit for the dual variable \(\alpha\) this time. So, we can still use kernel trick into our algorithm.</p>
+
+<h2 id="toc_5">3. Cost Function</h2>
+
+<p>It seems abnormal that I put cost function at the end of talking an ML algorithm. The reason is that before introducing slack variable, we assume all our cases can be separated completely, in other words, there is even no loss in our model. Seems ridiculous right? but from learning SVM we then have a good idea about how one mutual ML algorithm develops from being full of loopholes to adapting for most conditions. </p>
+
+<p>Let us re-look at our optimization problem:
+\[min \frac{1}{2}||w||^2 + C\sum_{i=1}^n \epsilon_i\]
+\[s.t. \ y_i(w^Tx_i+b)\ge 1-\epsilon_i,\ for \ \epsilon_i \ge 0, i=1,...,n\]
+The constraint \(y_i(w^Tx_i+b)\ge 1-\epsilon_i\) can be written more concisely as \(y_if(x_i) \ge 1-\epsilon_i\),
+Which, together with \(\epsilon \ge 0\), is equivalent to:
+\[\epsilon_i = max(0, 1-y_if(x_i))\]</p>
+
+<p>Hence the learning problem is equivalent to the unconstrained optimization problem over \(w\):
+\[min\frac{1}{2}||w||^2 + C\sum_{i=1}^{n}max(0, 1-y_if(x_i))\]</p>
+
+<p>So this function is the cost function for SVM. It consists of two parts: </p>
+
+<ol>
+<li>The first part is \(max(0, 1-y_if(x_i))\) which is the loss function for SVM, and we call it <strong>Hinge Loss</strong>, here is what it looks like:
+<div style="text-align: center;">
+        <img class="img-fluid" src="2.jpg" alt="" align='middle'>
+        <a href = "https://people.eecs.berkeley.edu/~jordan/courses/281B-spring04/lectures/lec3.pdf"> <br>Image is from UC Berkeley Class CS281B </a>
+</div>
+So if we correctly classify the data, our loss is 0; but if we classify it falsely, the farther it is away from the boundary, the more loss we will get.</li>
+<li>The second part is \(\frac{1}{2}||w||^2\), which is the regularization term in the cost function. Minimizing the loss will always narrow the margin, so the regularization is required to prevent overfitting. This part tell us why SVM is called Structural Risk Minimization algorithm.</li>
+</ol>
+
+<h2 id="toc_6">4.Model Implementation</h2>
+
+<p>To be continue...</p>
+
+<h2 id="toc_7">5. Summary</h2>
+
+<p>Finally, let us make a brief summary.</p>
+
+<ol>
+<li>SVM tries to construct a hyperplane \(w^Tx+b =0\) to make classification</li>
+<li>we define maximal margin metric to decide the goodness of the hyperplane, then transform the original problem to a optimization problem</li>
+<li>By add Lagrange multiplier \(\alpha\), finding the solution of \(w\) and \(b\) equal to find the solution of \(\alpha\)</li>
+<li>In order to deal with linearly inseparable condition, we introduce kernel trick to map our data into high dimension but calculate still in a low dimension space</li>
+</ol>
+
+<blockquote class="blockquote"> Reference: <br>
+
+<a href="https://www-bcf.usc.edu/~gareth/ISL/ISLR%20First%20Printing.pdf">An Introduction to Statistical Learning</a><br>
+<a href = "https://people.eecs.berkeley.edu/~jordan/courses/281B-spring04/lectures/lec3.pdf">https://people.eecs.berkeley.edu/~jordan/courses/281B-spring04/lectures/lec3.pdf </a>
+<a href = "http://www.eric-kim.net/eric-kim-net/posts/1/kernel_trick.html"> http://www.eric-kim.net/eric-kim-net/posts/1/kernel_trick.html </a><br>
+<a href="http://www.robots.ox.ac.uk/~az/lectures/ml/lect2.pdf">http://www.robots.ox.ac.uk/~az/lectures/ml/lect2.pdf</a><br>
+<a href="http://www.robots.ox.ac.uk/~az/lectures/ml/lect3.pdf">http://www.robots.ox.ac.uk/~az/lectures/ml/lect3.pdf</a><br>
+<a href="https://www.zhihu.com/question/26768865/answer/34078149"> https://www.zhihu.com/question/26768865/answer/34078149</a><br>
+<a href="https://blog.csdn.net/v_july_v/article/details/7624837"> https://blog.csdn.net/v_july_v/article/details/7624837 </a>
+</blockquote>
 
 
 
