@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Git Learning Notes </h1>
+              <h2 class="subheading">Version Control System</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on Sep 23, 2018</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p>I have been using Git for at least one year. To make it easy, I always used Github Desktop application to help me handle everything in order not to remember all the commands. </p>
+
+            <p>But as the project getting larger and larger than before, people from different functionality are joining and revising the scripts for one project, it is very necessary for me to review the git theory under the hood and make sure what I did is correct. (Especially it is said yesterday that someone was killed by his colleagues since he always type <code>git push --force</code>)</p>
+
+            <p>The book that I&#39;ve read to review is Git&#39;s official book <strong>&quot;Pro Git&quot;</strong>. This is really good git tutorial book. So this post will not cover detailed information, instead it will summarize Git&#39;s theory.</p>
+
+            <h2 id="toc_1">1. Git Basics</h2>
+
+            <p><a href = "https://en.wikipedia.org/wiki/Git"> <em>Git</a> is a version-control system for tracking changes in computer files and coordinating work on those files among multiple people</em></a></p>
+
+            <p>I would like to explain how does git work in one graph:
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="1.jpg" alt="" align='middle'></div></p>
+
+            <p>The Upper part gives us a structure view of a git project. We had remotes, branches and different stages while we manage the files within each branch.</p>
+
+            <p>From top to bottom:</p>
+
+            <ul>
+            <li><strong>Remote</strong> repositories are versions of our project that are hosted on the internet or network somewhere. One repository can have several branches. </li>
+            <li><strong>Branch</strong> in Git is simply a lightweight movable pointer to one of these commits. The default branch name in Git is master. </li>
+            <li>Three main sections of a git local branch:
+
+            <ul>
+            <li><strong>Working Directory</strong>: A single checkout of one version of the project. </li>
+            <li><strong>Staging Area</strong>: What will go into your next commit. </li>
+            <li><strong>Git Directory</strong>: Where git stores the metadata and object database for our project</li>
+            </ul></li>
+            </ul>
+
+            <p>The most works we do are under our local folder tracked with one remote branch, to zoom in this whole process, let&#39;s see the lower part of the graph:</p>
+
+            <p>This part tells us the states that our files can reside in:</p>
+
+            <ul>
+            <li><strong>Untracked Files</strong>: The files that Git doesn&#39;t take it into account. In another word, the files that in the working directory but neither in staging area not .git directory.</li>
+            <li><strong>Tracked Fils</strong>: Other files that have been tracked by Git. Within the tracked files, it includes modified or unmodified files. </li>
+            <li><strong>Unmodified</strong>: Just as its name implies, it is the original tracked files from .git directory. </li>
+            <li><strong>Modified</strong>: The tracked files that has been edited. We can then decide to move it into the staging area or not.</li>
+            <li><strong>Upstaged</strong>: The Modified files but not want to be committed for this change. </li>
+            <li><strong>Staged</strong>: The modified files that will go into our next commit. </li>
+            </ul>
+
+            <p>So the whole work flow is:</p>
+
+            <ol>
+            <li>We add the untracked files into out .git directory to make them trackable.</li>
+            <li>We modify the files that make them to modified stage.</li>
+            <li>We choose the modified file that want to commit this time into staged state. </li>
+            <li>We commit the changes and record it in .git directory; and then transform the staged files into unmodified tracked files. </li>
+            </ol>
+
+            <h2 id="toc_2">2. Git Branching</h2>
+
+            <p>Git branching is very easy to understand. Basically, it means we can use different branch to diverge from main line of development and continue to do work without messing with the main line. </p>
+
+            <p>Among all the procedures of Git Branching, one thing needs to be noticed is the process of branching merging.</p>
+
+            <p>I will also use one graph to explain it:
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="2.jpg" alt="" align='middle'></div></p>
+
+            <p>Git uses a method called three-way merge, essentially it uses the two snapshots pointed to by the branch tips and the common ancestor of the two, and then creates a new snapshot. </p>
+
+            <h2 id="toc_3">3. Git Commands</h2>
+
+            <p>I will not list all the basic commands here, instead I will list some command that is very useful but may not that common.</p>
+
+            <ol>
+            <li><p><strong>Restore from previous version</strong>: There are two ways to restore from a specific version.  </p>
+
+            <ul>
+            <li>Use git reset: <code>git reset --hard &lt;commit hash&gt;</code> One thing needs to be noticed that after using this command, all commits that come after this version are effectively undone...So, in most cases I recommend to use the next method.</li>
+            <li>Use git checkout: <code>git checkout -b &lt;new branch name&gt; &lt;commit hash&gt;</code>. We know git checkout normally used to change branch but it can also create new branch in certain version.</li>
+            </ul></li>
+            <li><p><strong>Useful Extension of git log</strong>: we know git log will show all the logging information for git commits. But sometimes it looks very redundant, so here I provides several extensions for clear versions of logging information.</p>
+
+            <ul>
+            <li>Use <code>git log --stat</code>. It will tell us how many files and lines did we change</li>
+            <li>Use <code>git log --pretty=oneline</code> It will only show each commit in one line with commits comment.</li>
+            <li>Use <code>git log --since(or after)=&quot;yyyy-mm-dd&quot;</code>. Logging information before or after some specific date.</li>
+            </ul></li>
+            <li><p><strong>Difference between git pull and git fetch</strong></p>
+
+            <ul>
+            <li><code>git fetch</code> will only fetch down all the changes on the server, but it doesn&#39;t modify the working directory.</li>
+            <li><code>git pull</code> will fetch the data and then merge that remote branch into your current branch. </li>
+            </ul></li>
+            </ol>
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
