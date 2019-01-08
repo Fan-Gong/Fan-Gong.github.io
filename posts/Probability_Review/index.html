@@ -157,7 +157,7 @@
 
               <p><b>Further application</b></p>
               <p>Based on these thoughts, bayes formula is widely used in machine learning field; The most famous one is the <b>naive bayes classifier</b>.</p>
-              <p>For example we want to decide people's gender based on $h$(height) and $w$(weight) two factors. What we need to do is to compare these two probabilities: $$P(male|h,w)\qquad P(female|h,w)$$ Based on bayes formula, $$P(gender|h,w)=\frac{P(gender)P(h,w|gender)}{P(male)P(h,w|male)+P(female)P(h,w|female)}$$ Since the denominator is $P(h,w)$ will be a constant, we could just ignore it. Then the problem goes to like this:$$gender = argmax_{gender}P(h,w|gender)P(gender)$$</p>
+              <p>For example we want to decide people's gender based on $h$(height) and $w$(weight) two factors. What we need to do is to compare these two probabilities: $$P(male|h,w)\qquad P(female|h,w)$$ Based on bayes formula, $$P(gender|h,w)=\frac{P(gender)P(h,w|gender)}{P(male)P(h,w|male)+P(female)P(h,w|female)}$$ Since the denominator is $P(h,w)$ will be a constant (The reason is because this probability can be obtained from some statistical website), we could just ignore it. Then the problem goes to like this:$$gender = argmax_{gender}P(h,w|gender)P(gender)$$</p>
 
               <p>We suppose $p(h|gender)$,$p(w|gender)$ is iid normal distribution. Then we have:$$gender = argmax_{gender}P(h|gender)P(w|gender)P(gender)$$ and based on their distribution we could calcualte the final results. This is how to use bayes formula in ML field.</p>
 
