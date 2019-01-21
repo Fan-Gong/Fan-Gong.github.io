@@ -142,7 +142,7 @@ It looks like this:
 We could see that $\alpha_m$ grows exponentially as the error approach 0; and grows exponentially negative as the error approaches 1; Finally, it equals to 0 when the error rate is 0.5.</p>
 <h4 id="step-3-update-the-data-point-weight">Step 3: Update the Data Point Weight</h4>
 <p>After getting the goodness of one weak learner, we then update the training data weights by using this formula:
-$$\omega_{i+1} = \frac{\omega_i \cdot exp(-\alpha_m\cdot y_i G_m(x_i)))}{\sum_{i=1}^n \omega_{i+1}}$$
+$$\omega_{i+1} = \frac{\omega_i \cdot exp(-\alpha_m\cdot y_i G_m(x_i))}{\sum_{i=1}^n \omega_i \cdot exp(-\alpha_m\cdot y_i G_m(x_i))}$$
 The intuition here is that:<br><br>
 if we incorrectly classify the $i^{th}$ data point, the weight will change depending on the goodness of this classifier:</p>
 <ul>
