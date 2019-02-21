@@ -118,8 +118,10 @@
             In fact, if you look at this process schematically, you can see why the crucial assumption is just that the original sample is representative of the population. The bootstrapped samples
             are drawn from the original sample (just like the original sample was drawn from the population), and hence for the bootstrap to be reliable, the original sample has to be representative of the population. That is why bootstrapping works.</blockquote>
             <p>If you still want to know more information about why bootstrapping works, here is a good answer: <a href = "https://stats.stackexchange.com/questions/26088/explaining-to-laypeople-why-bootstrapping-works">Cross Validated Answer of Why Bootstrapping Works </a></p>
+            <p>One more good example of using Bootstrap is that: For example we want to train a linear regression model with two factors. Most of the points are lying in one line but two outlier points locate far away from that line. In that case, bootstrapping could lower the variance of this model cause the bootstrapped training data has low probability to get these two outlier values.</p>
             <h3 id="bootstrap-aggregation-or-bagging">1.2 Bootstrap aggregation or bagging</h3>
             <p>After understanding bootstrapping, it is much easier to know how bagging works. Basically, we know</p>
+   
             <ul>
             <li>Average a set of observations reduces variance. Suppose $X_1,...,X_n$ have variance $\sigma^2$, then the mean $\bar{X}$ only has variance $\sigma^2/n$. So, if we have $B$ seperate training sets, we could calculate $\hat{f^1}(x),...,\hat{f^B}(x)$ and average them in order to obtain a single low-variance statistical learning model. $\hat{f}_{avg}(x) = \frac{1}{B}\sum_{b=1}^{B}\hat{f^B}(x)$</li>
             <li>Use bootstrpping could generate different bootstrapped training data sets.</li>
