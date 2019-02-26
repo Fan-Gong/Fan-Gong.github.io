@@ -150,7 +150,7 @@ The parameter $v$ can be regarded as controlling the learning rate of the boosti
 <h4 id="subsampling">1.4.2 Subsampling</h4>
 <p>With <strong>stochastic gradient boosting</strong>, at each iteration, we sample only a fraction of the training observations (without replacement) and grow the next tree using that subsample. Not only this method reduce time, but also improve the accuracy.</p>
 <h2 id="gradient-boosting-for-classification">2. Gradient Boosting for Classification</h2>
-<p>The intuitive behind GBM for classification is very similar to regression. Basically, we still generate regression tree for classification problem, and then we transform the score of each label to probabilities (softmax).</p>
+<p>The intuition behind GBM for classification is very similar to regression. Basically, we still generate regression tree for classification problem, and then we transform the score of each label to probabilities (softmax).</p>
 <p>Basically, here are what we do to deal with classification problem:</p>
 <ul>
 <li>We first one-hot encode our label to make it like a distribution</li>
