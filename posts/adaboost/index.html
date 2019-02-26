@@ -144,7 +144,7 @@ We could see that $\alpha_m$ grows exponentially as the error approach 0; and gr
 <p>After getting the goodness of one weak learner, we then update the training data weights by using this formula:
 $$\omega_{i+1} = \frac{\omega_i \cdot exp(-\alpha_m\cdot y_i G_m(x_i))}{\sum_{i=1}^n \omega_i \cdot exp(-\alpha_m\cdot y_i G_m(x_i))}$$
 The intuition here is that:<br><br>
-if we incorrectly classify the $i^{th}$ data point, the weight will change depending on the goodness of this classifier:</p>
+if we incorrectly classify the $i^{th}$ data point ($y_i G_m(x_i)$ < 0), the weight will change depending on the goodness of this classifier:</p>
 <ul>
 <li>If this classifier is good (accuracy &gt; 50%), we will get a high positive $\alpha$ value, so this data point will have larger weights, which means it will be included with a higher probability in the next training dataset</li>
 <li>If this classifier is bad (accuracy &lt; 50%), we will get high negative $\alpha$ value, so this data point will have lower weights, which means it will be included with a lower probability in the next training dataset. The reason is that this classifier is bad, the opposite is right. So we think the data that it classified incorrectly is actually correct.</li>
