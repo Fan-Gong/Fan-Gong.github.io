@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Loss Function in ML </h1>
+              <h2 class="subheading"></h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on March 8, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+
+            <p>For the next four articles, I am going to review some basic but important topics such as Loss function, evaluation method, regularization and so on. After that I will move to review Deep learning and start to learn NLP.</p>
+
+            <p>Started from my first machine learning article, I have emphasized loss function&#39;s importance. So after covering most of basic ML models, it is time to summarize all these loss functions. </p>
+
+            <h2 id="toc_1">1. What is loss function</h2>
+
+            <h3 id="toc_2">1.1 Definition</h3>
+
+            <p>A loss function is a function that maps an event or values of one or more variables onto a real number intuitively representing some &quot;cost&quot; associated with the event. Basically, it is a measure of how good a prediction model does in terms of being able to predict the expected outcome. Thus it is very natural to always minimize a loss function for a machine learning model.</p>
+
+            <h3 id="toc_3">1.2 Terms Comparison</h3>
+
+            <p>I believe you must have also seen some terms like <strong>Cost Function</strong> or <strong>Objective Function</strong> when you are reading some machine learning articles and books. But what are theirs differences comparing with loss function?</p>
+
+            <p>Basically, they are not very strict terms and highly related. However:
+            <blockquote class="blockquote">
+            <strong>Loss function</strong> is usually a function defined on a data point, prediction and label, and measures the penalty. For example:
+            * square loss \(l(f(x_i|\theta),y_i) = (f(x_i|\theta)-y_i)^2\)</p>
+
+            <p><strong>Cost function</strong> is usually more general. It might be a sum of loss functions over your training set plus some model complexity penalty (regularization). For example:
+            * Mean Squared Error \(MSE(\theta) = \frac{1}{N}\sum_{i=1}^N(f(x_i|\theta)-y_i)^2\)</p>
+
+            <p><strong>Objective function</strong> is the most general term for any function that you optimize during training. For example, when you perform MLE, the likelihood function will be the objective function you are going to maximize. </p>
+
+            <p>To make long story short, a loss function is a part of cost function which is a type of an objective function.
+            <p>
+            <a href = "https://stats.stackexchange.com/questions/179026/objective-function-cost-function-loss-function-are-they-the-same-thing"> Explanation is from Cross Validated </a></p>
+            </blockquote></p>
+
+            <h2 id="toc_4">2. Different type of Loss Function</h2>
+
+            <p>After understanding what is loss function, then let&#39;s talk about each of loss function one by one in detail. Generally speaking, Loss functions can be broadly categorized into 2 types: Regression Loss and Classification Loss.  </p>
+
+            <h3 id="toc_5">2.1 Regression Loss Function</h3>
+
+            <p>Regression model aims to return a continuous target value. Mathematically, a regression model can be formulated as:
+            \[min_{f(x)}\sum_{I=1}^nl(y_i-f(x_i)) + R_{\lambda}(f)\]
+            Where \(f(x_i)\) is the regression model, \(y_i-f(x_i)\) represents the deviation between \(f(x_i)\) and target value, \(l(r)\) represents a loss function that measures the loss generated by deviation, \(R_{\lambda}(f)\) is the regularization term for reducing the risk of overfitting.</p>
+
+            <h4 id="toc_6">2.1.1 Mean Squared Error/L2 Loss</h4>
+
+            <ul>
+            <li>\(MSE = \frac{1}{n}\sum_{i=1}^{n}(y_i-f(x_i))^2\)</li>
+            <li>Is the most common loss function for regression problem. </li>
+            <li>Easy to calculate gradients</li>
+            <li>Penalized heavily for far away values</li>
+            </ul>
+
+            <h4 id="toc_7">2.1.2 Mean Absolute Error/L1 Loss</h4>
+
+            <ul>
+            <li>\(MAE = \frac{1}{n}\sum_{i=1}^{n}|y_i-f(x_i)|\)</li>
+            <li>Unlike MSE, MAE&#39;s derivatives are not continuous, and the gradient is large, making it inefficient and difficult to find the solution. (Can use dynamic learning rate)</li>
+            <li>More robust to outlier since it does not use of square</li>
+            </ul>
+
+            <h4 id="toc_8">2.1.3 Huber Loss/Smooth Mean Absolute Error</h4>
+
+            <ul>
+            <li>\(L_{\delta}(y,f(x)) = \lbrace^{\frac{1}{2}(y-f(x))^2 \ \ for \ |y-f(x)|\le \delta}_{\delta|y-f(x)|-\frac{1}{2}\delta^2 \ \ otherwise}\)</li>
+            <li>The combination of MAE and MSE to learn theirs advantages:
+
+            <ul>
+            <li>Differentiable at 0</li>
+            <li>Less sensitive to outlier</li>
+            </ul></li>
+            <li>\(\delta\) is the tuning parameter that determines what you&#39;re willing to consider as an outlier</li>
+            </ul>
+
+            <h4 id="toc_9">2.1.4 Quantile Loss</h4>
+
+            <ul>
+            <li>\(L_{\gamma}(y,f(x))= \sum_{I=f(x_i)&lt;y_i}(\gamma -1)|f(x_i) - y_i| + \sum_{I=f(x_i) \ge y_i}(\gamma)|f(x_i) - y_i|\) where \(\gamma\) is the required quantile and has value between 0 and 1</li>
+            <li>It is very obvious that \(\gamma\) controls which part of data we want to penalize on. If \(\gamma\) equals to 0.5, then quantile loss equals to MAE. </li>
+            <li>From practical perspective, sometimes we want to know about the range of predictions as opposed to only point estimates</li>
+            </ul>
+
+            <h3 id="toc_10">2.2 Classification Loss Function</h3>
+
+            <p>Classification model aims to return a discrete value.
+            A binary classification model can be formulated as:
+            \[min_{f(x)}\sum_{I=1}^{n}l(y_if(x_i))+R_{\lambda}(f)\]
+            Where \(y_i\) is the label of \(x_i\) and \(y_if(x_i)\) (margin) represents the deviation between \(f(x_i)\) and hyperplane. \(f(x_i)\) = 0 is the hyperplane.</p>
+
+            <p>The classification rule is that: with positive margin \(y_if(x_i)&gt;0\), it is classified correctly; whereas margin \(y_if(x_i)&lt;0\) means misclassified. The goal of the classification algorithm is to produce positive margins as frequently as possible.</p>
+
+            <h4 id="toc_11">2.2.1 0-1 Loss/Misclassification Error</h4>
+
+            <ul>
+            <li><p>\(\sum_{i=1}^{n}I(y_if(x_i)&lt;0)\) or \(\sum_{i=1}^{n}I(y_i \neq f(x_i))\)</p></li>
+            <li><p>Non-convex, Non differentiable </p></li>
+            <li><p>Gives unit penalty for negative margin values, and no penalty at all for positive ones</p></li>
+            </ul>
+
+            <h4 id="toc_12">2.2.2 Logistic loss/Binomial Deviance</h4>
+
+            <p>From my previous post, Logloss is deduced by using the notation \(y\in\{0,1\}\). This is the most natural one cause it derives from Bernoulli probability model. But this notation make it hard for logloss to compare with other loss functions. Actually, logloss has another formula. <a href="http://www.hongliangjie.com/wp-content/uploads/2011/10/logistic.pdf"> This article</a> has a very good explanation. Basically, by using notation \(y\in \{-1,1\}\), we integrate the label and the prediction together into the probability function. And then get the loss function by MLE. </p>
+
+            <ul>
+            <li>\(BD = log(1+e^{-y_if(x_i)})\) </li>
+            <li>Differentiable </li>
+            <li>Will always have loss </li>
+            </ul>
+
+            <h4 id="toc_13">2.2.3 Cross Entropy Loss/Log Loss</h4>
+
+            <p>Use the alternative label convention we get the logloss for Logistic Regression:</p>
+
+            <ul>
+            <li>\(Logloss = -y_iln(f(x_i))-(1-y)ln(1-f(x_i))\)</li>
+            <li>Logloss is just the special case of Cross Entropy </li>
+            <li>Related to information theory and multi-classification problem which I will cover later on</li>
+            </ul>
+
+            <h4 id="toc_14">2.2.4 Exponential Loss</h4>
+
+            <ul>
+            <li>\(Exp\ Loss = e^{-y_if(x_i)}\)</li>
+            <li>Penalize incorrect predictions more and has a larger gradient </li>
+            </ul>
+
+            <h4 id="toc_15">2.2.5 Hinge Loss</h4>
+
+            <ul>
+            <li>\(Hinge = max\{1-y_if(x_i),0\}\)</li>
+            <li>Convex, upper bound on 0-1 loss. Not differentiate at 1</li>
+            <li>Only have &#39;margin error&#39; when \(y_if(x_i)&lt;1\) </li>
+            </ul>
+
+            <p><strong>Notice:</strong> Here I have only listed the loss function related to binary classification. </p>
+
+            <h2 id="toc_16">3. Loss Function Comparison</h2>
+
+            <p>So after reviewing all these loss functions, I think we are able to see the differences among them. Basically, they have two major differences:</p>
+
+            <ol>
+            <li>Differentiable or not</li>
+            <li>Robust to outlier or not </li>
+            </ol>
+
+            <p>Then Let&#39;s compare them in detail. </p>
+
+            <h3 id="toc_17">3.1 Regression Loss Function Comparison</h3>
+
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="1.jpg" alt="" align='middle'>
+                        </div>
+
+            <p>Above is the graph for comparing all the regression losses.
+            Here are some summaries:</p>
+
+            <ol>
+            <li>MSE is sensitive to outliers but gives a stable and closed for solution </li>
+            <li>MAE is useful for data is corrupted with outliers, but difficult to learn </li>
+            <li>Huber Loss is the combination of MAE and MSE, but the choice of \(\delta\) is critical. And we need to tune this parameter which increase the computation cost. </li>
+            <li>Quintile Loss is mainly used when you want an interval prediction. It is still mainly MAE, with different quantile value, it will decide to panelize on the upper bound value or lower bound.<br></li>
+            </ol>
+
+            <h3 id="toc_18">3.2 Classification Loss Function Comparison</h3>
+
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="2.jpg" alt="" align='middle'></div>
+
+            <p>Here are the summaries for classification loss functions:</p>
+
+            <ol>
+            <li>0-1 loss is not that sensitive to outlier since it gives unit penalty to all the misclassified data. But in another word, it is not sensitive to the data changes as well. So for tree growing model we may use other loss function like cross entropy.</li>
+            <li>Both the exponential and deviance loss can be viewed as monotone continuous approximations
+            to misclassification loss. They continuously penalize increasingly negative margin values more heavily than they reward increasingly positive ones.
+            The difference between them is in degree. The penalty associated with binomial deviance increases linearly, whereas the exponential criterion increases the influence of such observations
+            exponentially. Not to say that exponential loss will be more sensitive to outliers.<br></li>
+            </ol>
+
+            <h3 id="toc_19">3.3 Summary</h3>
+            <strong>
+            <ol>
+
+            <li>The loss function \(l(r)\) with an appropriate upper bound when \(r\) takes a large value is generally robust to the outliers.</li>
+            <li>There is not a single loss function that works for all kind of data </b></li>
+          </ol></strong>
+
+            <p>Here is the link of <a href=”./loss_function.html”>Jupyter Notebook for loss function</a></p>
+
+            <p><blockquote class="blockquote"> Reference: <br></p>
+
+            <p><a href="https://web.stanford.edu/~hastie/Papers/ESLII.pdf"> The Element of Statistical Learning</a><br>
+              <a href="https://rohanvarma.me/Loss-Functions/"> https://rohanvarma.me/Loss-Functions/</a><br>
+                <a href="https://davidrosenberg.github.io/ml2015/docs/3a.loss-functions.pdf"> https://davidrosenberg.github.io/ml2015/docs/3a.loss-functions.pdf</a><br>
+                <a href="https://www.researchgate.net/publication/325634317_An_investigation_for_loss_functions_widely_used_in_machine_learning?enrichId=rgreq-694e1b08d38a2cd4099801e62f25ed87-XXX&enrichSource=Y292ZXJQYWdlOzMyNTYzNDMxNztBUzo2NzgyMTMyOTg3MDg0ODBAMTUzODcxMDA1OTQ3OQ%3D%3D&el=1_x_2&_esc=publicationCoverPdf"> An investigation for loss functions widely used in machine learning</a><br>
+             <a href="https://heartbeat.fritz.ai/5-regression-loss-functions-all-machine-learners-should-know-4fb140e9d4b0">https://heartbeat.fritz.ai/5-regression-loss-functions-all-machine-learners-should-know-4fb140e9d4b0</a><br>
+            <a href="https://towardsdatascience.com/common-loss-functions-in-machine-learning-46af0ffc4d23">https://towardsdatascience.com/common-loss-functions-in-machine-learning-46af0ffc4d23</a><br></p>
+
+          </blockquote>
+
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
