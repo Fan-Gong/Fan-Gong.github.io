@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Neural Network Learning notes (1) </h1>
+              <h2 class="subheading"></h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on March 13, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+            <p>I have finished the course <a href = "https://www.coursera.org/specializations/deep-learning?action=enroll&authMode=login&specialization=deep-learning"> Deeplearning.ai </a>  long time ago but haven&#39;t summarized what I have learned before. Recently I realized that lots of knowledge can be easily forgotten if you will not use them very often. Thus one of the best way is to write them down in order to help you recap everything later on. </p>
+
+            <p>For this deep learning review series, I am planing to divide it into four articles:</p>
+
+            <ol>
+            <li>Basic Neural Network Structure </li>
+            <li>How to improve Neural Networks</li>
+            <li>Convolutional Neural Network (CNN)</li>
+            <li>Recurrent Neural Network (RNN)</li>
+            </ol>
+
+            <p>One notebook will be attached that tries to construct the network using the knowledge from each of the article. </p>
+
+            <p>Without further ado, let&#39;s start to look at the basic Neural Network Structure.</p>
+
+            <h2 id="toc_1">1. Introduction to Neural Network</h2>
+
+            <p>Deep learning is a class of machine learning algorithms that:(From <a href="https://en.wikipedia.org/wiki/Deep_learning">wikipedia</a>)</p>
+
+            <ul>
+            <li>Use a cascade of multiple layers of nonlinear processing units for feature extraction and transformation. </li>
+            <li>learn in supervised (e.g., classification) and/or unsupervised (e.g., pattern analysis) manners.</li>
+            <li>learn multiple levels of representations that correspond to different levels of abstraction</li>
+            </ul>
+
+            <p>From my point of view, one of the important breakthrough of deep learning is that it <strong>overcomes the challenge of the often tedious feature engineering task</strong> and <strong>helps with parameterizing traditional neural networks with many layers</strong>.</p>
+
+            <h2 id="toc_2">2. Neural Network Structure</h2>
+
+            <h3 id="toc_3">2.1 Basic units</h3>
+
+            <p>The basic unit of a neural network is the neuron, often called a <strong>node</strong> or <strong>unit</strong>. It receives input from some other nodes, or from an external source and computes an output. Each input has an associated <strong>weight</strong> \(\omega\), which is assigned on the basis of its relative importance to other inputs. The node applies a activation function \(g(z)\) to the weighted sum of its inputs as shown in Figure below:
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="1.jpg" alt="" align='middle'>
+            </div>
+            where:
+            \(Z = \omega_1X_1+\omega_2X_2+b\) and \(g\) can be one of the activation function like:
+            \(g(Z) = \frac{1}{1+e^{-z}}\).</p>
+
+            <p>In summary:</p>
+
+            <ol>
+            <li>\(Z\) controls the linear transformation of the inputs</li>
+            <li>\(g(Z)\) controls the nonlinear transformation of the inputs<br></li>
+            </ol>
+
+            <p>So we could see that even for a unit it tries to use both linear and non-linear transformation to grab the information from the input data. So no need to say why a deep neural network with hundreds of unit can have very good prediction performance.  </p>
+
+            <h3 id="toc_4">2.2 Feedforward Neural Networks</h3>
+
+            <p>Then let&#39;s see a complete feedforward neural networks. It contains multiple <strong>neurons</strong> (nodes) arranged in <strong>layers</strong>. Nodes from adjacent layers have connections or <strong>edges</strong> between them. All these connections have <strong>weights</strong> associated with them. Let me make a specific example to further explain it: </p>
+
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="2.jpg" alt="" align='middle'>
+            </div>
+
+            <p>This is a feedforward NN with two layers (one hidden layer; one output layer). Input layer is not counted when calculating the total layers of one NN. </p>
+
+            <p>Since each NN will have lots of nodes and parameters. So it is very important to vectorize it. Here is the notation and dimension for each of the component of this NN:(suppose we have \(n\) sample data)
+            \[X = [x^{(1)}, x^{(2)},x^{(3)}]_{(n,3)}\]
+            Where \(x^{(i)}_{(n,1)}\) is the column vector contains all \(n\) samples&#39; value for feature \(i\).
+            \[Z^{[1]}_{(n,4)}=Z^{[0]}_{(n,3)}\omega^{[1]}_{(3,4)} + b^{[1]}_{(1,4)}\]
+            \[g(Z^{[1]})_{(n,4)}=g(Z^{[0]}_{(n,3)}\omega^{[1]}_{(3,4)} + b^{[1]}_{(1,4)})\]
+            Where \([i]\) tells us which layer does this variable belongs to; \((n,m)\) tells us the dimension for that variable</p>
+
+            <p>So the intuition to quickly come up with the dimension for the weights \(\omega\) is that weights are the connections to quantify last layer&#39;s influence to this new layer. So \(w_i^{[1]}\) should be a column vector with the number of rows equaling to the number of features from last layer. Then to stack all the \(\omega^{[1]}\) from this new layer, we get its dimension (#of nodes in last layer, # of nodes in this layer). For \(Z^{[i]}\) it is more easy to get its dimension. Since we can always think it as the input, its dimension will be like (# of samples, # of features(nodes) in this layer)</p>
+
+            <p>Finally:
+            \[Z^{[2]}_{(n,1)}=Z^{[1]}_{(n,4)}\omega^{[2]}_{(4,1)}+b^{[2]}_{(1,1)}\]
+            \[g(Z^{[2]}_{(n,1)})=g(Z^{[1]}_{(n,4)}\omega^{[2]}_{(4,1)}+b^{[2]}_{(1,1)})\]</p>
+
+            <h3 id="toc_5">2.3 Forward and Backward Propagation</h3>
+
+            <ul>
+            <li>Forward propagation propagates the inputs forward through the network. The whole process above is just the example of forward propagation.</li>
+            <li>Backward propagation propagates from the output to input. After forward propagation, we can choose one loss function to evaluate the output. Then each parameter can be updated by using gradient decent to minimize the loss. </li>
+            </ul>
+
+            <h2 id="toc_6">3. Activation Functions</h2>
+
+            <p>Activation functions are just functions that you use to get the output of a node. It calculates a “weighted sum” of its input, adds a bias and then decides <strong>whether it should be “fired” or not</strong>. </p>
+
+            <h3 id="toc_7">3.1 Why we need it</h3>
+
+            <p>Activation functions normally have two properties:</p>
+
+            <ol>
+            <li>Non-linear </li>
+            <li>Having activations bound in a range, say \((0,1)\) or \((-1,1)\)</li>
+            </ol>
+
+            <p>The reason it has these two properties can help us understand why we need it:</p>
+
+            <ol>
+            <li>Each node is simply a weighted sum of inputs (linear), and activation function can add non-linearity to the model</li>
+            <li>Mapping the bound to a range can make clear distinctions on prediction </li>
+            </ol>
+
+            <h3 id="toc_8">3.2 Different Type of AF</h3>
+
+            <h4 id="toc_9">3.2.1 Tanh Function</h4>
+
+            <p>\[A = \frac{e^{z}-e^{-z}}{e^{z}+e^{-z}}\]
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="3.jpg" alt="" align='middle'>
+            </div></p>
+
+            <ul>
+            <li>Pros: similar to sigmoid but derivatives are steeper, bound to range (0,1) so won&#39;t blow up the activations. <strong>Centering data</strong> can make the learning of next layer simple. </li>
+            <li>Cons: when z values are large, gradient is very small and then learning speed is very slow =&gt; gradient vanishing</li>
+            </ul>
+
+            <h4 id="toc_10">3.2.2 Relu Function</h4>
+
+            <p>\[A = max(0,z)\]
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="4.jpg" alt="" align='middle'>
+            </div></p>
+
+            <ul>
+            <li>Pros: Sparse activation: all inputs smaller than zero will be firing and the network is lighter. Also, relu is a good approximator. Any function can be approximated with combinations of ReLu</li>
+            <li>Cons: It is not bound. The range of ReLu is \([0, inf)\). This means it can blow up the activation. Also, it faced with <strong>dying relu problem</strong>, which means for activation smaller than zero, gradient will be zero and the parameter will not be updated any more. To solve this problem, we introduce leaky Relu</li>
+            </ul>
+
+            <h4 id="toc_11">3.2.3 Leaky Relu</h4>
+
+            <p>\[A = max(0.01z, z)\]</p>
+
+            <p>Basically it just make it a slightly inclined line rather than horizontal line when z &lt; 0. </p>
+
+            <h2 id="toc_12">4. Steps to construct a DNN</h2>
+
+            <ol>
+            <li>Make sure the layers&#39; dimension to initialize weights</li>
+            <li>Forward propagation including linear forward and activation forward</li>
+            <li>Define cost function </li>
+            <li>Backward propagation </li>
+            <li>Update parameter </li>
+            <li>Make final prediction</li>
+            </ol>
+
+            <p>Finally let&#39;s create a <a href="#">feed forward Neural Network</a> by using Tensorflow. </p>
+
+            <p><blockquote class="blockquote"> Reference: <br>
+             <a href="https://www.coursera.org/specializations/deep-learningaction=enroll&authMode=login&specialization=deep-learning"> DeepLearning.ai</a><br>
+             <a href="https://ujjwalkarn.me/2016/08/09/quick-intro-neural-networks/"> https://ujjwalkarn.me/2016/08/09/quick-intro-neural-networks/</a><br>
+             <a href="https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0"> https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0</a><br>
+             </blockquote class="blockquote"></p>
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
