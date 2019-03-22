@@ -127,14 +127,14 @@
             <div style="text-align: center;">
                     <img class="img-fluid" src="2.1.jpg" alt="" align='middle'>
             </div>
-            <strong>It prevents the cost function to be an elongated bowl, which makes gradient descent inefficient</strong></li>
+            <strong>Intuition: It prevents the cost function to be an elongated bowl, which makes gradient descent inefficient</strong></li>
             </ul>
 
             <h3 id="toc_3">1.2 Weight Initialization</h3>
 
             <p>The necessity of weight initialization is due to the problem called <strong>Vanishing/Exploding Gradients</strong></p>
 
-            <p>Suppose all initial weights of \(\omega &gt; 1\), and we use a linear activation function, then the gradient will be larger and larger which makes it difficult to find the local minimum. Same cases if \(\omega &lt; 1\), the gradient will become smaller and smaller and almost stop the weights update.</p>
+            <p>Suppose all initial weights of \(\omega &gt; 1\), and we use a linear activation function, then the gradient will be larger and larger which makes it difficult to find the local minimum ==> Gradient Exploding. Same cases if \(\omega &lt; 1\), the gradient will become smaller and smaller and almost stop the weights update ==> Gradient Vanishing</p>
 
             <p>In that case we need to random initialize the weight (symmetry breaking).  Normally, we will sample weight from standard normal distribution but with \(Var(\omega_i) = \frac{1}{m}\) where m is the number of features of last layer. <strong>Intuition here is that as the feature number increasing, we decrease the weights --&gt; slight regularization</strong></p>
 
