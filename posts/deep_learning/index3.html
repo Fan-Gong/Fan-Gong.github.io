@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background2.2.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>How to Improve Neural Networks (2)</h1>
+              <h2 class="subheading">Neural Network Learning notes (3)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on March 24, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+
+            <p>From last post, we have talked about some good ways to prevent overfitting and improve the performance of the neural network. One of them is to normalize data to speed up gradient descent. In this article, I am going to talk about some other ways to improve the performance of gradient descent for DNN.</p>
+
+            <p>Gradient descent must be the most common way to optimize neural network by far. It goes without saying how important it is to influence the performance of the neural network. So this post aims to summarize it by mainly referring to the course from Deeplearning.ai and also this <a href = "https://arxiv.org/abs/1609.04747">paper</a>. Notice this post will ignore basic explanation of gradient descent.</p>
+
+            <h2 id="toc_1">1. Basic Gradient Descent</h2>
+
+            <h3 id="toc_2">1.1 Batch Gradient Descent</h3>
+
+            <p>\[\theta = \theta - \alpha\cdot \nabla J(\theta;x,y)\]</p>
+
+            <p>It is the most straight forward method, we will update the parameter once per iteration of the whole training set (Average gradients for all training data point). </p>
+
+            <ul>
+            <li>It is guarenteed to converge to global minimum for convex error surface or local minimum otherwise</li>
+            <li>But if the training set is too large, the whole process will be very slow. Also hard to deal with streaming data </li>
+            </ul>
+
+            <h3 id="toc_3">1.2 Stochastic Gradient Descent</h3>
+
+            <p>\[\theta = \theta - \alpha \cdot \nabla J(\theta;x^{(i)},y^{(i)})\]
+            SGD solve the problem of Batch GD to update the parameter for everything training example. </p>
+
+            <ul>
+            <li>Much faster and can also be used to learn online</li>
+            <li>Performs frequent updates with a high variance that cause the objective function to fluctuate heavily. The large fluctuations can be useful in getting to better local minimum but not exact minimum </li>
+            </ul>
+
+            <h3 id="toc_4">1.3 Mini-Batch Gradient Descent</h3>
+
+            <p>\[\theta = \theta - \alpha \cdot \nabla J(\theta;x^{(i:i+n)},y^{(i:i+n)})\]
+            Mini-Batch works in between SGD and BGD. </p>
+
+            <ul>
+            <li>This will reduce the variance of the parameter update</li>
+            <li>Can avoid redundant computations and makes use of highly optimized matrix optimizations </li>
+            <li>Commonly SGD is also referred as mini-batch GD </li>
+            </ul>
+            <br>
+            <h2 id="toc_5">2. Gradient Descent Optimizations</h2>
+
+            <p>To improve the gradient descent, it has two directions. First is to adaptively change the gradient direction, which we will introduce momentum; another direction is to adaptively change the learning rate (The magnitude of the gradient), which we will introduce some adaptive learning-rate algorithms.  </p>
+
+            <h3 id="toc_6">2.1 GD with Momentum</h3>
+
+            <p>\[v_t = \gamma v_{t-1} + \alpha \cdot \nabla J(\theta) \]
+            \[\theta = \theta - v_t\]</p>
+
+            <p>The theory used behind it is <em>exponentially weighted average</em>, the <strong>intuition is that we give the gradients memory to increase for dimensions whose gradients point in the same directions and decrease for the dimension that changes direction. (The parameter vector will build up velocity in any direction that has consistent gradient.)</strong> </p>
+
+            <ul>
+            <li>\(\gamma\) is the momentum term which controls how much you will depend on your previous gradients (mostly 0.9) </li>
+            <li>Leads to faster convergence and less fluctuation</li>
+            <li>Need to use Bias correction at the beginning </li>
+            </ul>
+
+            <h3 id="toc_7">2.2 NAG</h3>
+
+            <p>There is also a better type of momentum method called <strong>Nesterov Accelerated Gradient (NAG)</strong>, the only difference is the gradient is computed of the predicted next parameter values:
+            \[v_t = \gamma v_{t-1} + \alpha \cdot  \nabla J(\theta - \gamma v_{t-1}) \]
+            \[\theta = \theta - v_t\]</p>
+
+            <ul>
+            <li>It can prevent us from going too fast and results in significant increase in performance of RNNs</li>
+            <li>The intuition is that since \(\theta - \gamma v_{t-1}\) can give us a future approximation of the gradient, it makes sense to use it instead of the old gradient</li>
+            </ul>
+
+            <h3 id="toc_8">2.3 RMS Prop</h3>
+
+            <p>\[v_t= \gamma v_{t-1}+(1-\gamma)\nabla J(\theta)^2\]
+            \[\theta = \theta - \alpha\cdot  \frac{\nabla J(\theta)}{\sqrt{v_t}+ \epsilon}\]</p>
+
+            <ul>
+            <li>RMSprop and Adadelta have both been developed for the need to resolve Adagrad’s radically diminishing learning rates problem </li>
+            <li>Modulates the learning rate of each weight based on the magnitudes of its gradients. <strong>Intuition here is that he weights that receive high gradients will be scaled to small while weights that receive small gradients will be scaled to be bigger --&gt; performing larger updates for infrequent and smaller updates for frequent
+            parameters</strong></li>
+            <li>Good to deal with sparse data </li>
+            </ul>
+            <br>
+            <h3 id="toc_9">2.4 Adaptive Moment Estimation (Adam)</h3>
+
+            <p>\[m_t = \beta_1 m_{t-1} + (1-\beta_1) \nabla J(\theta)\]
+            \[v_t = \beta_2 v_{t-1} + (1-\beta_2) \nabla J(\theta)^2\]
+            So \(m_t\) and \(v_t\) are estimates of the first moment and the second moment of the gradients respectively. Since they are both initialized as 0, so we need to do bias correction:
+            \[\hat{m_t} = \frac{m_t}{1-\beta_1^t}\]
+            \[\hat{v_t} = \frac{v_t}{1-\beta_2^t}\]
+            Finally:
+            \[\theta = \theta - \frac{\alpha}{\sqrt{\hat{v_t}}+ \epsilon}\hat{m_t}\]</p>
+
+            <ul>
+            <li>Combination of momentum and RMS prop. Which means we have adaptive learning rates and also keeping an exponentially decaying average of past gradients</li>
+            <li>Suggested default values of 0.9 for \(\beta_1\), 0.999 for \(\beta_2\)</li>
+            </ul>
+
+            <h2 id="toc_10">3. Other Techniques</h2>
+
+            <p>Except for innovations of gradient decent algorithms, there are also several techniques can help improve its performance. </p>
+
+            <h3 id="toc_11">3.1 Learning Rate Decay</h3>
+
+            <p>Ideally, at the initial step of learning, we want to have big learning rate to take big step; later taking smaller step which is good for convergence. In that case, we have several method to decay the rate:</p>
+
+            <ul>
+            <li>Step decay:Reduce the learning rate by some factor every few epochs </li>
+            <li>Exponential decay: \(\alpha = \alpha_0 e^{-kt}\) where \(a_0,k\) are hyperparameters and \(t\) is the iteration number</li>
+            </ul>
+
+            <h3 id="toc_12">3.2 Shuffle and Partition</h3>
+
+            <p>When using mini-batch gradient descent, we need to shuffle and repartition the data, since:</p>
+
+            <ul>
+            <li>It prevents the model from learning the order of the training data </li>
+            <li>it prevents any bias during the training </li>
+            <li>Helps to converge faster</li>
+            </ul>
+
+            <h3 id="toc_13">3.3 Epoch</h3>
+
+            <p>Actually Epoch is not a technique which means an entire dataset passed forward and backward through the neural network once. But I still want to talk about here because first it is a hupyerparameter for gradient descent but also confused me at first.</p>
+
+            <p>My confusion was: <strong>Why we use more than one Epoch?</strong></p>
+
+            <p><strong>Intuition:</strong> That is because gradient descent is an iterating process. There may be enough information in these training samples, but the gradient descent algorithm takes time to extract it. Each epoch finds the approximate direction based on the parameters we have now; But after update, we will extract new information based on current parameters. </p>
+
+            <h3 id="toc_14">3.4 Batch Normalization</h3>
+
+            <p>We have already know that feature normalization is useful to speed up the optimization. But we will lose the normalization in each layer. So to solve this problem, we introduce batch normalization:
+            \[Z^{[l]}_{new} = \gamma Z_{norm}^{[l]}+ B\]
+            Where \(\gamma\) and \(B\) are learnable from gradient descent. So we will use BN to replace \(Z^{[l]}\) and then use backprop to compute \(dw,dB,d\gamma\) with \(Z^{[l]}_{new}\)</p>
+
+            <p>The reason here we don&#39;t want the new layer to have \(\mu=0\) and \(\sigma = 1\) is because if all layers start with these value that closed to 0, the activation will work as a linear function (remember sigmoid or tanh similar to linear function when value close to 0) </p>
+
+            <p><strong>Why Batch Normalization will work</strong>:</p>
+
+            <ul>
+            <li>Reduce the problem of input values changing (called covariant shift), and so it allows each layer of the network to learn by itself --&gt; make each layer little bit independent with other layers. In other words, it makes the wrights of the deeper layer relatively less dependent on the weights learned on the shallow layer.</li>
+            <li>Each mini-batch is scaled by the mean/var on that batch, so it adds some noise --&gt; forcing the next layer not to rely too much on any previous hidden layer (slight regularization)</li>
+            <li>Similar to feature normalization, it makes the cost function in each layer more symmetric</li>
+            </ul>
+
+            <p><blockquote class="blockquote"> Reference: <br>
+             <a href="https://www.coursera.org/specializations/deep-learningaction=enroll&authMode=login&specialization=deep-learning"> DeepLearning.ai</a><br>
+              <a href="https://towardsdatascience.com/epoch-vs-iterations-vs-batch-size-4dfb9c7ce9c9"> https://towardsdatascience.com/epoch-vs-iterations-vs-batch-size-4dfb9c7ce9c9</a><br>
+             <a href="https://arxiv.org/abs/1609.04747"> An overview of gradient descent optimization algorithms</a><br>
+             <a href="http://cs231n.github.io/neural-networks-3/#gradcheck"> http://cs231n.github.io/neural-networks-3/#gradcheck</a><br>
+             </blockquote class="blockquote"></p>
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
