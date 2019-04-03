@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background3.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Convolution Neural Network</h1>
+              <h2 class="subheading">Neural Network Learning notes (4)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on Apr 2, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+
+            <p>From previous articles we have already know what is feedforward neural networks and how to improve its performance. But is this architecture works for all type of data?</p>
+
+            <p>The answer is no. Suppose we have a fairly small image with size 32x32x3 (32 wide, 32 high, 3 color channels), that means we will have 32x32x3 = 3072 features for our input data, and there is no doubt that we will get a huge number of weights need to be trained as for even deeper hidden layers. Now it comes to Convolution Neural Networks. Convolutional Neural Networks take advantage of the fact that the input consists of images and they constrain the architecture in a more sensible way. </p>
+
+            <p>We use three main types of layers to build ConvNet architectures: Convolutional Layer, Pooling Layer, and Fully-Connected Layer.</p>
+
+            <h2 id="toc_1">1. Convolution Layer</h2>
+
+            <p>Convolution operation is one of the most important breakthrough for deep learning. Basically, it uses a filter with smaller width and height but extends through the full depth of the input volume. We slide (more precisely, convolve) each filter across the width and height of the input volume and compute dot products between the entries of the filter and the input at any position.</p>
+
+            <h3 id="toc_2">1.1 Local Connecting</h3>
+
+            <p>You see everytime we will connect each neuron to only a local region of the input volume. IThe spatial extent of this connectivity is a hyperparameter called the <strong>receptive field</strong> of the neuron (equivalently this is the filter size)</p>
+
+            <h4 id="toc_3">How does filter works</h4>
+
+            <p><strong>Intuition</strong>: Each filter can be seen as one type of visual feature of the image such as an edge of some orientation or a blotch of some color on the first layer, or eventually entire honeycomb or wheel-like patterns on higher layers of the network. It works as detector to grab this feature information after convolution. </p>
+
+            <h4 id="toc_4">Parameter Sharing</h4>
+
+            <p>The reason CNN has much smaller number of parameters is because the parameter sharing scheme. It turns out that we can make one reasonable assumption: The feature detector that is useful in one spatial position is also useful in another part.</p>
+
+            <h3 id="toc_5">1.2 Spatial Arrangement</h3>
+
+            <h4 id="toc_6">Padding</h4>
+
+            <strong>Why we need it</strong>: <em>we don&#39;t want the image to shrink and also the convolution operation will use the data from corner only once.</em>
+
+            So the nice feature of zero padding is that it will allow us to control the spatial size of the output volumes (most commonly as we’ll see soon we will use it to exactly preserve the spatial size of the input volume so the input and output width and height are the same).<br>
+
+            <h4 id="toc_7">Stride</h4>
+
+            Stride is another hyperparameter to control the spatial size. When the stride is 1 then we move the filters one pixel at a time. When the stride is 2, it will produce smaller output volumes spatially.<br>
+
+            <h4 id="toc_8">Depth</h4>
+
+            It corresponds to the number of filters we would like to use<br></br>
+
+            <h2 id="toc_9">2. Pooling Layer</h2>
+
+            <p>Pooling layer works similar to Conv layer, but instead of learning the filters, this time we only provide the <strong>size of the filter</strong>, <strong>the stride</strong> and it works as an operater to grab the maximum (average and so on) value for each position. </p>
+
+            <p><strong>Functionality of Pooling Layer:</strong></p>
+
+            <ul>
+            <li>Makes the feature dimension smaller and smaller</li>
+            <li>Reduces the number of parameter and computation in the network, therefore control overfitting</li>
+            <li>Makes the network invariant to small transformations, distortions and translations in the input images </li>
+            </ul>
+
+            <h2 id="toc_10">3. Layer Patterns</h2>
+
+            <p>The most common form of a ConvNet architecture is like below:
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="3.1.jpg" alt="" align='middle'>
+                        <a href = "http://cs231n.github.io/convolutional-networks/"> Image is from Stanford Class CS231n </a>
+            </div></p>
+
+            <p>We stack a few CONV-RELU layers, follows them with pooling layers, and repeats this pattern until the image has been merged spatially to a small size. At some point, it is common to transition to fully-connected layers. The last fully-connected layer holds the output, such as the class scores. </p>
+
+            <h2 id="toc_11">4. Classic CNN Model</h2>
+
+            <p>Now let&#39;s look at some classical CNN models</p>
+
+            <ul>
+            <li><strong>LeNet-5</strong>: The oldest CNN</li>
+            <li><strong>AlexNet</strong>: Similar to LeNet but much bigger; and it started to use Relu</li>
+            <li><strong>VGG-16</strong>: use same 3x3 filter and same max pooling all the time</li>
+            <li><strong>ResNet</strong>: it skip the connection and create a shot cut: \[a^{[l+2]} = g(z^{[l+2]}+a^{[l]})\] so if \(w^{[l+2]}=0\) and \(b^{[l+2]}=0\) which means this layer doesn&#39;t learn any new things, then we still get \[a^{[l+2]}=g(a^{[l]})\] so it helps with vanishing and exploding gradient problems and then works well for deep NN.</li>
+            <li><strong>Inception Net</strong>: Instead choosing what filter size you want use or even do you want a cone layer or pooling layer, it stacks them all in one layer. To minimize the number of parameters, they use <strong>1x1 convolution</strong> (shrink the depth but keep the height and weight the same; Empirically, it will save time and not hurt performance):
+            <div style="text-align: center;">
+                    <img class="img-fluid" src="3.2.jpg" alt="" align='middle'>
+                    <a href = "https://www.coursera.org/specializations/deep-learningaction=enroll&authMode=login&specialization=deep-learning"> Image is from deeplearning.ai</a>
+            </div></li>
+            </ul>
+
+            <p>Next article let&#39;s look at some real cases CNN has been used and try to implement it by hands-on examples. </p>
+
+            <p><blockquote class="blockquote"> Reference: <br>
+             <a href="https://www.coursera.org/specializations/deep-learningaction=enroll&authMode=login&specialization=deep-learning"> DeepLearning.ai</a><br>
+             <a href="http://cs231n.github.io/convolutional-networks/"> http://cs231n.github.io/convolutional-networks/</a><br></p>
+
+            <p></blockquote class="blockquote"></p>
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2019</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
