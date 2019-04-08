@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background4.1.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Neural Style Transfer</h1>
+              <h2 class="subheading">CNN Application (1)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on Apr 5, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+
+            <p>Now let&#39;s look at some applications of CNN. First one is Neural Style Transfer. Generally speaking, it merges a content image and a style image to create a new image. So this generated image will have the same content with the content image but use the style same with the style image. </p>
+
+            <p>The key to achieve this goal is to make clear the following two questions:</p>
+
+            <ol>
+            <li>How to get the content of an image</li>
+            <li>How to get the style of an image </li>
+            </ol>
+
+            <h2 id="toc_1">1. Image Content</h2>
+
+            <h3 id="toc_2">1.1 How to get the content of an image</h3>
+
+            <p>So the idea to know the content of an image is that: suppose we have a pre-trained good CNN like VGG-19, then in some deep layer, we are reasonable to believe that the activation of that layer (The output tensor) is enough to grab the most features of an image. (Encoding of this image)</p>
+
+            <p>For example if we pass two images of cats through an CNN, even if the initial images look very different, after being passed through many internal layers, their representations will be very close in raw value.</p>
+
+            <p>I think which layer to use is a hyperparameter that need to be decided in different cases. Empirically, we will choose a layer in the middle. </p>
+
+            <h3 id="toc_3">1.2 Content Cost</h3>
+
+            <p>So the activation value&#39;s difference of that layer would be the content cost. Mathematically speaking:
+            \[J_{content}(C,G) =  \frac{1}{4 \times n_H \times n_W \times n_C}\sum _{ \text{all entries}} (a^{(C)} - a^{(G)})^2 \]</p>
+
+            <p>Here, \(C\) represents the content image and \(G\) represents the image we are generating (We will randomly initialize it first) \(n_H, n_W\) and \(n_C\) are the height, width and number of channels of the hidden layer you have chosen, and appear in a normalization term in the cost. For clarity, note that \(a^{(C)}\) and \(a^{(G)}\) are the volumes corresponding to a hidden layer&#39;s activations. </p>
+
+            <h2 id="toc_4">2. Image Style</h2>
+
+            <h3 id="toc_5">2.1 How to get the style of an image</h3>
+
+            <p>The style of an image is a little bit tricky to understand than image content, first let&#39;s have a high level definition of the <strong>image style:</strong></p>
+
+            <p><em>the style of an image means some kind of features will always appear together</em>. And if we think that the kernels work as feature extractors, then the activation of each channel is just the result of that high level feature! So to get the style of it, we can simply calculate the <strong>correlations</strong> for the activations in each channel. We use &#39;Gram Matrix&#39; to quantify that correlation:</p>
+
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="4.2.jpg" alt="" align='middle'>
+                        <a href = "https://www.coursera.org/learn/convolutional-neural-networks/lecture/GboGx/what-are-deep-convnets-learning"> Image is from Deeplearning.ai</a>
+            </div>
+
+            <p>The value \(G_{ij}\) measures how similar the activations of filter \(i\) are to the activations of filter \(j\). </p>
+
+            <h3 id="toc_6">2.2 Style Cost</h3>
+
+            <p>So the style difference between two images will be the difference between two style matrix:</p>
+
+            <p>\[J_{style}^{[l]}(S,G) = \frac{1}{4 \times {n_C}^2 \times (n_H \times n_W)^2} \sum _{i=1}^{n_C}\sum_{j=1}^{n_C}(G^{(S)}_{ij} - G^{(G)}_{ij})^2\]</p>
+
+            <p>where \(G^{(S)}\) and \(G^{(G)}\) are respectively the Gram matrices of the &quot;style&quot; image and the &quot;generated&quot; image</p>
+
+            <h2 id="toc_7">3. Summary</h2>
+
+            <p>So to make a summary about how to create a neural style transferred images, here is the steps:</p>
+
+            <ol>
+            <li>Initialize the generated image</li>
+            <li>Find a pre-trained CNN</li>
+            <li>Feed the content image to one layer of this CNN and get the activation value </li>
+            <li>Feed the Style image to one layer of this CNN and get the style matrix value </li>
+            <li>Updating generated image to minimize the linear combination cost of Content cost and Style cost </li>
+            </ol>
+
+            <p>Let&#39;s look at some results of my trained model:</p>
+
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="4.1.1.jpg" alt="" align='middle'> </div>
+
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="4.1.2.jpg" alt="" align='middle'> </div>
+
+            <p><blockquote class="blockquote"> Reference: <br></p>
+
+            <p><a href="https://www.coursera.org/specializations/deep-learningaction=enroll&authMode=login&specialization=deep-learning"> DeepLearning.ai</a><br>
+              </blockquote class="blockquote"></p>
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2019</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>

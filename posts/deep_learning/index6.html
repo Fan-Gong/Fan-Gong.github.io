@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background4.2.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Face Verification and Recognition</h1>
+              <h2 class="subheading">CNN Application (2)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on Apr 7, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+
+            <p>Another important application for CNN is face verification and recognition. </p>
+
+            <p>Basically, face verification is a binary classification problem: aiming to verify whether this face is the targeted person or not; whereas face recognition is a multi-class classification problem: aiming to recognize if this face is any of the K persons or not. Let&#39;s then look at it in detail</p>
+
+            <h2 id="toc_1">1. Siamese Network</h2>
+
+            <p>The difference between face verification and normal image classification is that for each class (person here) we will not have many training data, which we call it <strong>one-shot learning problem</strong>. That is, in which we must correctly make predictions given only a single example of each new class. Thus normal network may not be able to give good predictions. </p>
+
+            <p>Siamese Network then was created to fill this gap. The idea behind it is quite intuitive: we will train a NN to give us an encoding of the image, instead of trying to let the network extract the feature of each of the image and then classify, <strong>we now let the network to learn the similarities between each class.</strong> In another work, we only want to compare the similarities and differences among the people from our database, no need to let the network to learn more general things.</p>
+
+            <p>For example (picture below), we have an encoding for image \(x^{(1)}\), then we use the same network and parameter to get the encoding of \(x^{(2)}\). If they are same persons, then output encoding differences are small, otherwise it is big. Our network will follow this logic to minimize the loss and learn the parameters.</p>
+
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="4.3.jpg" alt="" align='middle'>
+                        <a href = "https://www.coursera.org/learn/convolutional-neural-networks/lecture/bjhmj/siamese-network"> Image is from Deeplearning.ai</a>
+            </div>
+
+            <p>Then how to define this loss?</p>
+
+            <h2 id="toc_2">2. Triplet Loss</h2>
+
+            <p>Triplet loss was then introduced to fit into the siamese network. The logic we are following is: if \(x^{(1)},x^{(2)}\) are same persons, we want their loss to be small (encoding difference to be small; here we use distance to quantify the similarities); otherwise we want their loss to be big. To achieve this goal, we need three images at a time as training example \((A^{(i)},P^{(i)},N^{(i)})\)</p>
+
+            <ul>
+            <li>A is an &quot;Anchor&quot; image--a picture of a person. </li>
+            <li>P is a &quot;Positive&quot; image--a picture of the same person as the Anchor image.</li>
+            <li>N is a &quot;Negative&quot; image--a picture of a different person than the Anchor image.</li>
+            </ul>
+
+            <p>We&#39;d like to make sure that an image \(A^{(i)}\) of an individual is closer to the Positive \(P^{(i)}\) than to the Negative image \(N^{(i)}\)) by at least a margin \(\alpha\):</p>
+
+            <p>\[\mid \mid f(A^{(i)}) - f(P^{(i)}) \mid \mid_2^2 + \alpha &lt; \mid \mid f(A^{(i)}) - f(N^{(i)}) \mid \mid_2^2\]</p>
+
+            <p>We would thus like to minimize the following &quot;triplet cost&quot;:</p>
+
+            <p>\[\mathcal{J} = \sum^{m}_{i=1} max\large[ \small {\mid \mid f(A^{(i)}) - f(P^{(i)}) \mid \mid_2^2} - {\mid \mid f(A^{(i)}) - f(N^{(i)}) \mid \mid_2^2} + \alpha , 0\large]\]</p>
+
+            <h1 id="toc_3">3. Summary</h1>
+
+            <p>The key idea behind face verification and recognition are two techniques: Encoding and triplet loss. Remember from last article that Neural Style Transfer also uses encoding to get both the content and style information from an image. So first I want to make a small summary about why encoding is very important for CNN applications. </p>
+
+            <h2 id="toc_4">3.1 Encoding</h2>
+
+            <p>Encoding is the key strategy to deal with image related problems. Reason: <strong>We cannot use pixel values directly cause it changes dramatically due to the variations in lighting, orientation and others.</strong></p>
+
+            <p>Before Neural Networks, people use different techniques to do encoding or feature extraction and then follow by some classification models like SVM; Now due to the powerful feature extraction ability of CNN, we can use the output of a good pre-trained CNN (usually use a large number of images as training set) as the encoding output, and make comparison between them instead of the raw pixel values. </p>
+
+            <h2 id="toc_5">3.2 Aplication Pipeline</h2>
+
+            <ul>
+            <li>Create Training data \((A^{(i)},P^{(i)},N^{(i)})\)</li>
+            <li>Train CNN model to minimize triplet loss. Notice the actual input data is only the anchor image but to minimize the loss we then need \(P^{(i)}\) and \(N^{(i)}\) </li>
+            <li>After training the model:
+
+            <ul>
+            <li>Face verification: Calculate the distance between the encoding of this new image and the matched image encoding. Then compare it with the threshold to make decision.</li>
+            <li>Face Recognition: calculate the distance between the encoding of this new image and all other image encoding (all people we have for training). Then find the one with smallest distance. Finally compare this distance with the threshold to make a decision. </li>
+            </ul></li>
+            </ul>
+
+            <p><blockquote class="blockquote"> Reference: <br></p>
+
+            <p><a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf">https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf</a><br>
+             <a href="https://www.coursera.org/specializations/deep-learningaction=enroll&authMode=login&specialization=deep-learning"> DeepLearning.ai</a><br>
+              </blockquote class="blockquote"></p>
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2019</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
