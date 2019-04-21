@@ -802,8 +802,8 @@ std      0.828066</code></pre>
   </tbody>
 </table>
 </div>
-<p>We could see the results is a <code>MultiIndex</code> in the columns which can be a bit awkward to work with (We can drop a level with <code>df.columns.droplevel()</code>). That is the reason that <code>agg</code> is not that good here.</p>
-<p>So, sometimes I will choose to generate summary attributes and then join them together. (Example in <code>join</code> part)</p>
+<p>We could see the results is a <code>MultiIndex</code> in the columns which can be useful when dealing with some complicated datasets. If you want to still use the normal index, remember to add <code>as_index  = False</code> within <code>groupby</code> function.</p>
+
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">iris.groupby(<span class="st">&#39;target&#39;</span>).mean()</code></pre></div>
 <div>
 <style scoped>
