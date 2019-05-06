@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background2.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Metropolis-Hastings Sampling</h1>
+              <h2 class="subheading">MCMC Review (2)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on Apr 28, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+
+            <p>Recap: Now we have the background knowledge about Markov Chain and Monte Carlo method; at the same time we have agreed that finding the transition matrix \(P\) is the final goal to make everything work. Therefore, this article is to tell how we finally make this happen. </p>
+
+            <h2 id="toc_1">1. MCMC Sampling</h2>
+
+            <h3 id="toc_2">1.1 Intuition</h3>
+
+            <p>Suppose we randomly choose a transition matrix \(Q(i \to j)\),then the detailed balance stationary will not be satisfied. However, we are thinking to introduce one \(\alpha(i \to j)\) that makes:
+            \[\pi(i)Q(i \to j)\alpha(i \to j) = \pi(j)Q(j \to i)\alpha(j \to i) \]
+            Based on the symmetry, it is easy to find \(\alpha\):
+            \[\alpha(i \to j) = \pi(j)Q(j \to i)\]
+            \[\alpha(j \to i) = \pi(i)Q(i \to j)\]</p>
+
+            <p>This is to say, our transition matrix can be obtained through any random transition matrix \(Q\). Here we call \(\alpha(i \to j)\) acceptance rate, the value will between [0,1]. The <strong>intuition behind it is that when we move from state \(i\) to \(j\) with probability \(Q(i \to j)\), we accept it with rate \(\alpha\)</strong>. Therefore we have the complete MCMC algorithm:</p>
+
+            <h3 id="toc_3">1.2 MCMC Sampling Algorithm:</h3>
+
+            <ol>
+            <li>Input our selected transition matrix \(Q\), stationary distribution \(\pi(x)\), stationary threshold number \(n_1\), wanted sampling number \(n_2\):</li>
+            <li>Initialize the sample \(x_0\) from simple distribution</li>
+            <li>for t = 0 to \(n_2+n_1-1\):
+
+            <ul>
+            <li>Sample \(x_*\) from \(Q(x|x_t)\)</li>
+            <li>Sample \(u\) from Uniform[0,1]</li>
+            <li>if \(u &lt; \alpha(x_t \to x_*) = \pi(x_*)Q(x_* \to x_t)\), then we accept this transition: \(x_{t+1} = x_*\)</li>
+            <li>Otherwise we reject the transition: \(x_{t+1} = x_t\)</li>
+            </ul></li>
+            </ol>
+
+            <p>Then data points \((x_{n_1},x_{n_1+1},...,x_{n_1+n_2-1})\) will be the samples from our targeted distribution \(\pi(x)\)</p>
+
+            <p>To make a small summary about the whole process:
+            <strong>We tried to find a Markov Chain that has its stationary distribution same with our targeted distribution \(\to\) To find that Markov Chain we only need the transition matrix to satisfy detailed balance stationary \(\to\) to get that transition matrix we use Monte Carlo method to sample from proposal distribution</strong> </p>
+
+            <h3 id="toc_4">1.3 My Confusion</h3>
+
+            <p>Here I would like to talk about all the confusions I had during this learning. I think before the appearance of the acceptance rate, the whole logic of this algorithm is quite clear, but things are getting messier and messier afterwards. </p>
+
+            <h4 id="toc_5">1) Why not sample from \(P(i \to j)\) directly since we have both the value of \(\alpha\) and \(Q\), where \(P = \alpha \odot Q\) ?</h4>
+
+            <p>This is the most confusing question I have had for understanding this algorithm. Actually, the real question behind the scene is <em>why we are using Monte Carlo method here</em>. Then by thinking about the intuition of Monte Carlo method, the answer becomes obvious: </p>
+
+            <ul>
+            <li>For real cases (mostly continuous condition), the transition matrix \(P\) will be a high-dimensional complicated matrix, the computation and storage cost will be large; </li>
+            <li>At the same time, most of the transition probability will be very small; but with using acceptance rate, if we enlarge it with certain factor, detailed balance stationary is still satisfied. (That&#39;s the key idea for MH algorithm), and in that case we can force our chain move forward</li>
+            </ul>
+
+            <h4 id="toc_6">2) The acceptance rate here is different with the one in reject-sampling method</h4>
+
+            <p>The special part of \(\alpha\) here is that, if it is being rejected, we will not drop that data point, instead; we keep our state static and still store this data. Because here rejection means transiting from \(i \to i\). But still we want to have high acceptance rate because:</p>
+
+            <ul>
+            <li>At first our distribution is not stationary yet, by moving forward we could speed up the convergence.</li>
+            <li>We want sampler to visit higher probability areas under the full joint density</li>
+            </ul>
+
+            <h4 id="toc_7">3) Why we need MCMC if we already know the specific target distribution?</h4>
+
+            <p>This question is fundamental but very confusing when I first know the goal of MCMC is to sample from a <strong>known</strong> distribution. Actually MCMC is used to deal with the <a href = "https://en.wikipedia.org/wiki/Curse_of_dimensionality">curse of dimensionality</a>. Think about it, if we have a one-dimensional distribution, it is easy for us to sample a data sequence with 0.1 distance with each other. And they roughly can describe what the distribution looks like. However, for high-dimensional distributions, it is almost impossible to use this equidistance sampling method: suppose we have 10 dimensions and sample 100 data points from each dimension, in total we need to sample 10^100 data points.  That is a huge number which needs lots of computation power. In addition to this, it is very likely that the data points we sampled are not representative enough, meaning they have low density. With using MCMC we can see it perfectly solved this two problems.  </p>
+
+            <h3 id="toc_8">1.4 Toy Example</h3>
+
+            <p>Since I had a hard time to understand the whole process, I also created a discrete example to help better understand MCMC:</p>
+
+            <ul>
+            <li>Suppose we have \(\pi(x) = [\frac{2}{3}, \frac{1}{3}]\), which means we only have two states, \(p(x=1) = \frac{2}{3}\) and  \(p(x=2) = \frac{1}{3}\)</li>
+            <li>And suppose our unknown transition matrix P is
+            \[P =
+            \left(\begin{array}{cc}
+            \frac{2}{3} &amp; \frac{1}{3}\\
+            \frac{2}{3} &amp; \frac{1}{3}
+            \end{array}\right)
+            \] </li>
+            <li>Finally suppose our random transition matrix is:
+            \[Q =
+            \left(\begin{array}{cc}
+            \frac{1}{2} &amp; \frac{1}{2}\\
+            \frac{1}{2} &amp; \frac{1}{2}
+            \end{array}\right)
+            \] </li>
+            </ul>
+
+            <p>So based on \[\alpha(i \to j) = \pi(j)Q(j \to i)\]
+            We get:
+            \[\alpha =
+            \left(\begin{array}{cc}
+            \frac{1}{3} &amp; \frac{1}{6}\\
+            \frac{1}{3} &amp; \frac{1}{6}
+            \end{array}\right)
+            \]
+            Since this is a simple discrete example, we can directly calculate \(P&#39;\)
+            \[P&#39; = \alpha \odot Q =
+            \left(\begin{array}{cc}
+            \frac{1}{6} &amp; \frac{1}{12}\\
+            \frac{1}{6} &amp; \frac{1}{12}
+            \end{array}\right)\]
+            We see this is actually the unnormalized \(P\), after normalization, it will be the same with \(P\). </p>
+
+            <p>Since we can do normalization, we can also enlarge \(\alpha\) even more. For MH algorithm:
+            \[\alpha(i \to j) = min(\frac{\pi(j)Q(j \to i)}{\pi(i)Q(i \to j)}, 1) \]
+            This time \[\alpha = \left(\begin{array}{cc}
+            1 &amp; \frac{1}{2}\\
+            1 &amp; 1
+            \end{array}\right)\]
+            and
+            \[P&#39; = \alpha \odot Q =
+            \left(\begin{array}{cc}
+            \frac{3}{4} &amp; \frac{1}{4}\\
+            \frac{1}{2} &amp; \frac{1}{2}
+            \end{array}\right)\]
+            And still satisfy \(\pi P&#39; = \pi\). Notice here \(\alpha_{ii}\) can be any number, so \(P_{ii}\) can only be calculated through:
+            \[p_{ii} = 1 - \sum_{i\neq g}{\alpha_{ij}q_{ij}}\]</p>
+
+            <p>So this example help us:</p>
+
+            <ul>
+            <li>Intuitively understand that sampling using acceptance rate equals to sample from real transition matrix P</li>
+            <li>understand why we can enlarge acceptance rate but still achieve our goal.</li>
+            </ul>
+
+            <h2 id="toc_9">2. Metropolis-Hastings Sampling</h2>
+
+            <p>MH sampling makes improvement on top of original MCMC method. We have already seen that:</p>
+
+            <ol>
+            <li>\(\alpha(i \to j)\) is still very small </li>
+            <li>Enlarge both \(\alpha(i \to j)\) and \(\alpha(j \to i)\) with same factor will still satisfy the detailed balance stationary</li>
+            </ol>
+
+            <p>Therefore, the key idea of MH sampling is to enlarge either \(\alpha(i \to j)\) or \(\alpha(j \to i)\) to 1.</p>
+
+            <h4 id="toc_10">Metropolis-Hastings Algorithm</h4>
+
+            <ol>
+            <li>Input our selected transition matrix \(Q\), stationary distribution \(\pi(x)\), stationary threshold number \(n_1\), wanted sampling number \(n_2\):</li>
+            <li>Initialize the sample \(x_0\) from simple distribution</li>
+            <li>for t = 0 to \(n_2+n_1-1\):
+
+            <ul>
+            <li>Sample \(x_*\) from \(Q(x|x_t)\)</li>
+            <li>Sample \(u\) from Uniform[0,1]</li>
+            <li>if \(u &lt; \alpha(x_t \to x_*) = min(\frac{\pi(j)Q(j \to i)}{\pi(i)Q(i \to j)}, 1)\), then we accept this transition: \(x_{t+1} = x_*\)</li>
+            <li>Otherwise we reject the transition: \(x_{t+1} = x_t\)</li>
+            </ul></li>
+            </ol>
+
+            <p>Then data points \((x_{n_1},x_{n_1+1},...,x_{n_1+n_2-1})\) will be the samples from our targeted distribution \(\pi(x)\)</p>
+
+            <p>In most cases we will choose a symmetrical \(Q\) to further simplify the calculation of \(\alpha\):</p>
+
+            <p>\[\alpha(i \to j) = min(\frac{\pi(j)}{\pi(i)}, 1)\]</p>
+
+            <h4 id="toc_11">Limitation</h4>
+
+            <p>In big data era, we are facing more and more high-dimensional data, so:</p>
+
+            <ul>
+            <li>When we have many dimensions, to calculate \(\frac{\pi(j)Q(j \to i)}{\pi(i)Q(i \to j)}\) is also computational expensive</li>
+            <li>The \(\alpha\) in most cases are still below 1</li>
+            <li>Due to the high dimension, sometimes it is hard for us to have the full joint distribution. Instead, we can easily have conditional distribution for each dimension</li>
+            </ul>
+
+            <p>That&#39;s the reason we are introducing Gibbs Sampling, let&#39;s talk about it in the next article. </p>
+
+            <blockquote> Reference: <br>
+            <a href = "http://www.mit.edu/~ilkery/papers/MetropolisHastingsSampling.pdf">http://www.mit.edu/~ilkery/papers/MetropolisHastingsSampling.pdf</a>
+            <a href = "https://towardsdatascience.com/markov-chain-monte-carlo-in-python-44f7e609be98
+            ">https://towardsdatascience.com/markov-chain-monte-carlo-in-python-44f7e609be98</a>
+            <a href = "https://zhoujiansun.wordpress.com/2018/07/11/%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BD%91%EF%BC%9Amcmc%E7%AE%97%E6%B3%95%E5%8E%9F%E5%9E%8B/"></a>
+            <a href = "">https://zhoujiansun.wordpress.com/2018/07/11/%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%BD%91%EF%BC%9Amcmc%E7%AE%97%E6%B3%95%E5%8E%9F%E5%9E%8B/</a>
+            <a href = "https://www.zhihu.com/question/60437632">https://www.zhihu.com/question/60437632</a>
+            <a href = "https://towardsdatascience.com/from-scratch-bayesian-inference-markov-chain-monte-carlo-and-metropolis-hastings-in-python-ef21a29e25a">https://towardsdatascience.com/from-scratch-bayesian-inference-markov-chain-monte-carlo-and-metropolis-hastings-in-python-ef21a29e25a</a>
+            <a href = "https://segmentfault.com/a/1190000012645418">https://segmentfault.com/a/1190000012645418</a>
+            <a href = "https://zhuanlan.zhihu.com/p/25610149">https://zhuanlan.zhihu.com/p/25610149</a>
+            <a href = "https://www.jianshu.com/p/28d32aa7cc45">https://www.jianshu.com/p/28d32aa7cc45</a>
+            <a href = "https://www.cnblogs.com/pinard/p/6638955.html">https://www.cnblogs.com/pinard/p/6638955.html</a>
+            <a href = "http://stat.wharton.upenn.edu/~stjensen/stat542/lecture14.mcmchistory.pdf">http://stat.wharton.upenn.edu/~stjensen/stat542/lecture14.mcmchistory.pdf</a>
+            <a href = "https://www.mcmchandbook.net/HandbookChapter1.pdf">https://www.mcmchandbook.net/HandbookChapter1.pdf</a>
+
+            </blockquote>
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2019</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>

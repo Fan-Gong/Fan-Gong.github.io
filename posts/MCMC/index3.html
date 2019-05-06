@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background3.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Gibbs Sampling</h1>
+              <h2 class="subheading">MCMC Review (3)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on May 5, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+
+            <p>Recap: Now we understand both the theory and implementation algorithm for Metropolis-Hastings Sampling. But one limitations is that it is still not efficient when dealing with high dimensional distributions. So this article let&#39;s look at how Gibbs Sampling solves this problem.  </p>
+
+            <h2 id="toc_1">1. Intuition</h2>
+
+            <p>Let&#39;s look at the two-dimensional cases first. Suppose we have a known joint density function \(p(x,y)\). If we pick two data points with having the same \(x\) values:
+            \(A(x_1,y_1)\), \(B(x_1,y_2)\), we find out that:
+            \[p(x_1,y_1)p(y_2|x_1)=p(x_1)p(y_1|x_1)p(y_2|x_1)\]
+            \[p(x_1,y_2)p(y_1|x_1)=p(x_1)p(y_2|x_1)p(y_1|x_1)\]
+            In that case:
+            \[p(x_1,y_1)p(y_2|x_1) = p(x_1,y_2)p(y_1|x_1)\]
+            Which is:
+            \[p(A)p(y_2|x_1) = p(B)p(y_1|x_1)\]</p>
+
+            <p>By combing with what we have learned from previous articles, we conclude that: <strong>For every two points on \(x = x_1\) this line, they will satisfy the Detailed Balance Stationary if we use \(p(y|x_1)\) as the transition matrix</strong>. Similarly, for two points with the same \(y\) values: \(A(x_1,y_1)\), \(C(x_2, y_1)\), they also satisfy this stationary:
+            \[p(A)p(x_2|y_1) = p(c)p(x_1|y_1)\]</p>
+
+            <p>Therefore, we find a new way to get the transition matrix \(Q\) of target distribution \(p(x,y) = \pi(x,y)\):
+            \[Q(A\to B) = p(y_B|x_1) \text{   if $x_A=x_B=x_1$}\]
+            \[Q(A\to C) = p(x_C|y_1) \text{   if $y_A=y_c=y_1$}\]
+            \[Q(A \to D) = 0 \text{   else}\]
+            With this above construction of transition matrix \(Q\), we could easily see that for every two points \(x,y\), they will satisfy:</p>
+
+            <p>\[p(X)Q(x\to y) = p(y)Q(y \to x)\]</p>
+
+            <p>To visualize what I mean: </p>
+
+            <div style="text-align: center;">
+                        <img class="img-fluid" src="1.jpg" alt="" align='middle'>
+                        <a href = "https://segmentfault.com/a/1190000012645418"> <br>Image is from chen_h</a>
+            </div>
+
+            <p>What an amazing finding!!</p>
+
+            <h2 id="toc_2">2. Gibbs Sampling Algorithm</h2>
+
+            <ol>
+            <li>Input \(\pi(x_1,x_2,...,x_n)\) or all the conditional distribution; stationary threshold number \(n_1\), wanted sampling number \(n_2\):</li>
+            <li>Initialize the sample \(x^{0}=(x_1^{0},x_2^{0},...,x_n^{0})\) from simple distribution</li>
+            <li>For t = 0 to \(n_2+n_1-1\):
+
+            <ul>
+            <li>Sample \(x_1^{t+1}\) from \(p(x_1|x_2^{t},x_3^{t},...,x_n^{t})\)</li>
+            <li>Sample \(x_2^{t+1}\) from \(p(x_2|x_1^{t+1},x_3^{t},...,x_n^{t})\)</li>
+            <li>...</li>
+            <li>Sample \(x_n^{t+1}\) from \(p(x_n|x_1^{t+1},x_2^{t+1},...,x_{n-1}^{t+1})\)</li>
+            </ul></li>
+            </ol>
+
+            <p>Then data points \(((x_1^{n_1},x_2^{n_1},...,x_{n}^{n_1}),..., (x_1^{n_1+n_2-1},x_2^{n_1+n_2-1},...,x_{n}^{n_1+n_2-1}))\) will be the samples from our targeted distribution \(\pi(x_1,x_2,...,x_n)\)</p>
+
+            <h2 id="toc_3">3. Summary</h2>
+
+            <p>Gibbs Sampling is actually a special case of Metropolis-Hastings method where proposal distribution is the posterior conditions. So for Gibbs samplers we directly sample from the transition matrix \(P\) (the posterior conditions) and no need to think about acceptance criteria. It is commonly used in nowadays because we normally have high-dimensional data.  </p>
+
+            <p>But the drawback is that the targeted distribution should be easy to calculate the conditional distributions.</p>
+
+            <blockquote> Reference: <br>
+            <a href = "https://segmentfault.com/a/1190000012645418">https://segmentfault.com/a/1190000012645418</a>
+            <a href = "http://www.mit.edu/~ilkery/papers/MetropolisHastingsSampling.pdf">http://www.mit.edu/~ilkery/papers/MetropolisHastingsSampling.pdf</a>
+            <a href = "http://www.cnblogs.com/pinard/p/6645766.html">http://www.cnblogs.com/pinard/p/6645766.html</a>
+            </blockquote>
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2019</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>

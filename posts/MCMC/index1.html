@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background1.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Monte Carlo Method and Markov Chain</h1>
+              <h2 class="subheading">MCMC Review (1)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on Apr 25, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+
+            <p>Recently I got a new project that needs to use MCMC. That reminds me of the time when I first learned it from school. I remember at that time I was discussing with Piaoge in butler library. How time flies! So this article aims to review what I have learned and make sure I understand everything correctly. </p>
+
+            <p>To understand what is MCMC, I would like to divide these two &#39;MC&#39;s and look at them on by one. At first I would like to summarize this topic in one article, but later on I realized that this is a very good chance for me to review Markov Chain, Monte Carlo Method as well as Bayesian Inference. So in the end I decided to split it into three articles: </p>
+
+            <ul>
+            <li>Intro to Monte Carlo Method and Markov Chain</li>
+            <li>Metropolis-Hastings Sampling</li>
+            <li>Gibbs Sampling</li>
+            <li>MCMC Application with Bayesian Inference<br></li>
+            </ul>
+
+            <p>Notice that the review of Monte Carlo method and Markov Chain is highly related to MCMC so keep in mind that our final target is to <strong>sample from one target distribution</strong>.</p>
+
+            <h2 id="toc_1">1.Monte Carlo Method</h2>
+
+            <h4 id="toc_2">Definition</h4>
+
+            <p>Generally speaking, Monte Carlo method relies on repeated random sampling to obtain numerical results. </p>
+
+            <p>Monte Carlo methods vary, but tend to follow a particular pattern:</p>
+
+            <ul>
+            <li>Define a domain of possible inputs</li>
+            <li>Generate inputs randomly from a probability distribution over the domain</li>
+            <li>Perform a deterministic computation on the inputs
+            : Aggregate the results (Like expectation)</li>
+            </ul>
+
+            <h4 id="toc_3">Application</h4>
+
+            <p>The Monte Carlo method was created for solving the problem that <strong>it is very difficult to calculate the intractable integrals</strong> when dealing with the denominator of Bayes Formulas:
+            \[\int p(x|z)p(z)dz = E_{p(z)}p(x|z) \text{    , x is already known}\]<br>
+            And what Monte Carlo method does is to find the approximate value of it. The key idea is to sample from \(p(x|z)\) where \(z \sim p(z)\), and the expectation value for all these samples are almost what we want. </p>
+
+            <p>One of the simple applications is to use for estimating \(\pi\)：</p>
+
+            <ol>
+            <li>Define the domain - We put the circle within one square with side length </li>
+            <li>Sample from Uniform Distribution - We sample n point within this area. </li>
+            <li>Aggregate the results: The percentage that the points locate in the circle is actually the estimation of \(\pi\). </li>
+            </ol>
+
+            <h4 id="toc_4">Advantages</h4>
+
+            <p>For most of the distributions, especially high-dimensional ones, maybe we can write their specific probability density functions, whereas we don&#39;t know in which area we can get large density, and reality is most of the area will have very low density (near 0).That&#39;s the dilemma to calculate the arithmetic solution. So here comes the superiority of Monte Carlo method because <strong>We almost always get sample data from high density area, thus with very low computation cost, we can get pretty decent estimations</strong>. In other words, the sample sequence in some sense completes the mission of &quot;searching for the high density area&quot;. </p>
+
+            <h4 id="toc_5">Limitation</h4>
+
+            <p>However, for most of the high-dimensional distributions, it is very hard to find a proper proposal distribution that covers the targeted function. That&#39;s the reason we need to combine it with Markov Chain.</p>
+
+            <h2 id="toc_6">2.Markov Chain</h2>
+
+            <h4 id="toc_7">Definition</h4>
+
+            <p>A <a href ="https://en.wikipedia.org/wiki/Markov_chain">Markov chain</a> is a stochastic model describing a sequence of possible events in which the probability of each event depends only on the state attained in the previous event. Mathematically:</p>
+
+            <p>\[P(X_{t+1}| X_{t},X_{t-1},...,X_{2},X_{1}) = P(X_{t+1}|X_{t})\]</p>
+
+            <p>And we have transition matrix \(P\) to define the probability of each stats&#39;s transformation, Where \(P_{ij}\) means the probability of transformation from state i to state j. </p>
+
+            <h4 id="toc_8">Markov Chain Property</h4>
+
+            <p>One very important property of Markov Chain is that, suppose our initial distribution is \(\pi_0 = [\pi_0(1),...,\pi_0(p)]\) suppose we have p states. After n steps transformation: \(\pi_0\cdot P^n\), it will transform to a stationary distribution. At the same time, we found that the stationary distribution is purely decided by transition matrix \(P\) instead of the starting point \(\pi_0\). Mathematically speaking:
+            \[\pi P = \pi\]</p>
+
+            <p>Based on this key property of Markov Chain, people were thinking: <strong>we know Markov chain will converge to a stationary distribution no matter what is the start point. So we want to create this kind of Markov Chain that makes the final stationary distribution same with our targeted distribution; So when we randomly start from \(x(0)\), after certain steps n, the Markov chain has converged to the stationary distribution, then \(x(n),x(n+1),...\) can be seen as the sample data from our targeted distribution</strong>.</p>
+
+            <p>Wow, this is a very clever idea. But now the problem comes to: How can we create this kind of Markov Chain?</p>
+
+            <p>To solve the problem above, we need have another very important property from Markov Chain:</p>
+
+            <h4 id="toc_9">Detailed Balance Stationary</h4>
+
+            <p>Theorem:
+            <blockquote>If the aperiodic Markov Chain&#39;s transition matrix \(P\) and \(\pi(x)\) satisfies:
+            \[\pi(i)P(i \to j) = \pi(j)P(j \to i)\]
+            Then we can say \(\pi(x)\) is the stationary distribution of transition matrix \(P\).
+            </blockquote></p>
+
+            <p><strong>Intuition</strong>: This property is very easy to understand, we can think it this way: If \(\pi(x)\) is stationary, it is then reasonable that the amount of value transferred from \(i \to j\) equals to the amount of value transferred from \(j \to i\).</p>
+
+            <p>What does this property mean? Actually it tells us: <strong>if we can find a transition matrix P that makes our targeted distribution satisfy this equation</strong>, then our previous problem is solved. But how can we find it?</p>
+
+            <blockquote> Reference: <br>
+            <a href = "https://towardsdatascience.com/markov-chain-monte-carlo-in-python-44f7e609be98
+            ">https://towardsdatascience.com/markov-chain-monte-carlo-in-python-44f7e609be98</a>
+            <a href = "https://segmentfault.com/a/1190000012645418">https://segmentfault.com/a/1190000012645418</a>
+
+            <a href = "http://www.cnblogs.com/pinard/p/6632399.html">http://www.cnblogs.com/pinard/p/6632399.html</a>
+            <a href = "http://www.cnblogs.com/pinard/p/6625739.html">http://www.cnblogs.com/pinard/p/6625739.html</a>
+            <a href = "https://www.jianshu.com/p/28d32aa7cc45">https://www.jianshu.com/p/28d32aa7cc45</a>
+            </blockquote>
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2019</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
