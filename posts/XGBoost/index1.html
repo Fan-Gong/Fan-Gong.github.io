@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background1.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>XGBoost (1)</h1>
+              <h2 class="subheading">Ensemble Model (4)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on Oct 21, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+
+            <p>I have planned to write this post long time ago. Thanks to my procrastination, I need to review it again and write it now. I divide this post into these several parts:</p>
+
+            <ol>
+            <li>Quick review of GBM </li>
+            <li><p>How to decide the value in each node</p>
+
+            <ul>
+            <li>Object function </li>
+            <li>Optimal Results</li>
+            </ul></li>
+            <li><p>How to split the tree:
+                + Exact Greedy Algorithm
+                + Approximate Algorithm  </p></li>
+            <li><p>System Design Overview </p></li>
+            <li><p>Parameter Explanation for XGBoost</p></li>
+            </ol>
+
+            <h2 id="toc_1">1. Review of GBM</h2>
+
+            <p>You may or may not know that the full name of XGBoost is e<strong>X</strong>treme <strong>G</strong>radient <strong>B</strong>oosting. So there is no doubt that this model is built on top of GBM. The detailed GBM model explaination can be seen from  <a href = "https://fan-gong.github.io/posts/GBM/index.html">here</a>. For this post, I will list several summarized GBM information which can save us time when understanding XGBoost.</p>
+
+            <h3 id="toc_2">1.1 Theory Basis</h3>
+
+            <p>Gradient boosting machine tries to fit an additive model in a forward stage-wise manner. In each stage, we introduce a new regression tree \(f(x)\) to compensate the shortcomings of existing model and the &quot;shortcomings&quot; are identified by negative gradients.</p>
+
+            <h3 id="toc_3">1.2 Negative Gradients</h3>
+
+            <p>I think for negative gradients part I still did not explain clearly last time. So, this time I would like to deep dive a little bit more:</p>
+
+            <p>We have our additive model like this:
+            \[\hat{y^{(t)}} = \hat{y^{(t-1)}} + f_t(X) \tag{1}\]
+            And each time we want to train a weak learner \(y^{(t)}\) (here we use tree) to minimize the loss:
+            \[\arg\min_{\hat{y^{(t)}}} \ L(y,\hat{y^{(t)}})\]
+            In order to find the optimal weaker leaner to minimize the loss, we can use gradient descent. So if we deem \(\hat{y^{(t)}}\) as the parameter to update, we have:
+            \[\hat{y^{(t)}} = \hat{y^{(t-1)}} -  \frac{\partial L(y,\hat{y^{(t-1)}})}{\partial \hat{y^{(t-1)}}}\tag{2}\]
+            This type of GD is called function space gradient descent. </p>
+
+            <p>Then it comes to the amazing part: If you compare formula (1) with (2), you will realize that if we fit \(f_t(X)\approx -\frac{\partial L(y,\hat{y^{(t-1)}})}{\partial \hat{y^{(t-1)}}}\), then we will minimize the loss, and the reality is \(\hat{y^{(t-1)}}\) can be seen as known value, so the only part we train is \(f_t(X)\) within \(\hat{y^{(t)}}.\)</p>
+
+            <p><strong>That&#39;s why we are saying that in each state, GBDT tries to fit the negative gradients of the last state.</strong></p>
+
+            <p><strong>And if you use squared loss, you will find every tree just fits to the residuals.</strong></p>
+
+            <p>In a word: <strong>The loss function is still what is being minimized, while the gradient is how it is being minimized</strong>. </p>
+
+            <p>After reviewing the GBM knowledge, we can summarize that the key points to generate a boosting tree are to know:</p>
+
+            <ul>
+            <li>How to decide the value in each node</li>
+            <li>How to split the tree</li>
+            </ul>
+
+            <p>Let&#39;s then look at how XGBoost solve these two problems.</p>
+
+            <h2 id="toc_4">2. How to decide the value in each node</h2>
+
+            <h3 id="toc_5">2.1 Object Function</h3>
+
+            <p>The major difference between normal GBM and XGBoost is the object function:
+            \[obj^{t}=\sum_{i=1}^{n}l(y_i,\hat{y_i^{(t-1)}}+f_t(x_i))+\Omega(f_t)\]</p>
+
+            <p>We can see that except for the loss function which is the same with GBM, it also has a regularization term.  </p>
+
+            <h4 id="toc_6">Regularization Term</h4>
+
+            <p>The regularization term is vary common and important in preventing the overfitting. To know the specific form of the regularization term, we need to know what parameter controls the tree \(f_t(x)\).</p>
+
+            <p>Here we define:
+            \[f_t(x)= \omega_{q(x)}, q:R^{d}={1,2,..,T}, \omega \in R^{T}\]
+            where \(q(x)\) defines the tree structure and tells the mapping between each sample \(x\) to its tree leaves; \(\omega\) tells the leaf weight (leaf value) of that tree. In that case, one sample \(x_i\) belongs to one leave through \(q(x_i)\) and has the value \(\omega_{q(x_i)}\) </p>
+
+            <p>Therefore, the complication of a tree includes two parts:</p>
+
+            <ul>
+            <li>The number of leaves \(T\)</li>
+            <li>The weight value \(\omega\) for each leaf (?)</li>
+            </ul>
+
+            <p>\[\Omega(f_t) = \gamma T + \frac{1}{2}\lambda\sum_{j=1}^{T}\omega_j^2\]</p>
+
+            <h3 id="toc_7">2.2 Optimal Solution</h3>
+
+            <p>After making clear the objective function, let&#39;s now try to answer the first question: <strong>How to decide the value in each node.</strong> From GBM we know, we tried to minimize the loss to find the optimal value representing each node (Mean for L2 loss and Median for L1 loss). Here we do the same with using one mathematical technique called Tyler Theorem:</p>
+
+            <blockquote>
+            <p>Tyler Theorem gives an approximation of a k-times differentiable function around a given point by a k-th order Taylor polynomial:(here we show the second-order estimation)
+            \[f(x+\Delta x) \approx f(x)+ f^{&#39;}(x)\Delta x+\frac{1}{2}f^{&#39;&#39;}(x)\Delta x^2\] </p>
+            </blockquote>
+
+            <h4 id="toc_8">2.2.1 Usage of Tyler Formula</h4>
+
+            <p>After know this, we get back to our loss function without regularization term:
+            \[\sum_{i=1}^{n}l(y_i,\hat{y_i^{(t-1)}}+f_t(x_i))\]
+            If we ignore the \(y_i\) (that is the true value we already know), and bring Tyler formula into this:</p>
+
+            <ul>
+            <li>Let \(x\) match with \(\hat{y_i^{(t-1)}}\) in the loss function</li>
+            <li>Let \(\Delta x\) matach with \(f_t(x_i)\)</li>
+            </ul>
+
+            <p>Then we re-write the loss function as following:
+            \[loss^{(t)}\approx \sum_{i=1}^{n}[l(y_i,\hat{y_i^{(t-1)}})+ g_if_t(x_i) + \frac{1}{2}h_if^2_t(x_i)]\]
+            Where \(g_i = \partial_{\hat{y_i^{(t-1)}}} l(y_i,\hat{y_i^{(t-1)}})\) and \(h_i = \partial^2_{\hat{y_i^{(t-1)}}} l(y_i,\hat{y_i^{(t-1)}})\)</p>
+
+            <p>Next, since we are using greedy method which means the value for previous \(t-1\) trees will be worked as known in stage \(t\), so \(l(y_i,\hat{y_i^{(t-1)}})\) is constant and can be ignored. After clean it up we get:
+            \[loss^{(t)}\approx \sum_{i=1}^{n}[g_if_t(x_i) + \frac{1}{2}h_if^2_t(x_i)]\]</p>
+
+            <p>We can see that <strong>the loss function only depends on the first and second derivative of the loss function.</strong></p>
+
+            <h4 id="toc_9">2.2.2 From Sample to Leave Node</h4>
+
+            <p>Next we add regularization term together with the loss function to further optimize:
+            \[\begin{align*}
+            obj^{(t)} &amp;\approx \sum_{i=1}^{n}[g_if_t(x_i) + \frac{1}{2}h_if^2_t(x_i)]+ \gamma T + \frac{1}{2}\lambda\sum_{j=1}^{T}\omega_j^2 \\
+            &amp;=\sum_{i=1}^{n}[g_i\omega_{q(x_i)} + \frac{1}{2}h_i \omega^2_{q(x_i)}]+ \gamma T + \frac{1}{2}\lambda\sum_{j=1}^{T}\omega_j^2 \\
+            &amp;=\sum_{j=1}^{T}[(\sum_{i\in I_j}g_i)\omega_j + \frac{1}{2}(\sum_{i\in I_j}h_i + \lambda)\omega^2_j] + \gamma T
+            \end{align*}\]
+            Where \(I_j\) contains all the sample index which belongs to leave node \(j\).
+            Here we did a transformation from sample to leave node. At the beginning we add every term up in sample level <strong>i \(\to\) n</strong>, then we use \(q(x)\) and \(\omega\) to define the tree structure and gradually transfer to add term up in node level <strong>j \(\to\) T</strong>. This transferring step is really important for solving this optimization problem.</p>
+
+            <h4 id="toc_10">2.2.3 Optimal Solution:</h4>
+
+            <p>Finally, we can define \(G_j = \sum_{i\in I_j}g_i\), \(H_j =\sum_{i\in I_j}h_i\) and re-write the objective function:
+            \[obj^{(t)}=\sum_{j=1}^{T}[G_j\omega_j + \frac{1}{2}(H_j+ \lambda)\omega^2_j] + \gamma T\]
+            And if we make partial derivative on \(\omega_j\) to 0, we can get the optimal value:
+            \[\omega^{*} = -\frac{G_j}{H_j+\lambda}\]
+            And if we bring in it into the objective function:
+            \[obj = -\frac{1}{2}\sum_{j=1}^{T}\frac{G^2_j}{H_j+\lambda}+\gamma T\]
+            <strong>It tells us when the tree structure is fixed, what is the minimum loss we will get, so we also call it structure score</strong>.</p>
+
+            <p>Now we can get the optimal value (\(\omega_j\)) to minimize the objective function when the tree structure is fixed. Then the next question will be: how can we get a good tree structure? In another word, how should we split the tree? Let&#39;s talk about that in the next post.</p>
+
+            <p><blockquote class="blockquote"> Reference: <br>
+             <a href="https://arxiv.org/abs/1603.02754">https://arxiv.org/abs/1603.02754 </a><br>
+             <a href="https://zhuanlan.zhihu.com/p/38329631"> https://zhuanlan.zhihu.com/p/38329631</a><br>
+             <a href="https://towardsdatascience.com/boosting-algorithm-gbm-97737c63daa3"> https://towardsdatascience.com/boosting-algorithm-gbm-97737c63daa3</a><br>
+             <a href="https://blog.csdn.net/v_july_v/article/details/81410574"> https://blog.csdn.net/v<em>july</em>v/article/details/81410574</a><br>
+             <a href="https://explained.ai/gradient-boosting/faq.html">https://explained.ai/gradient-boosting/faq.html </a><br>
+             </blockquote class="blockquote"></p>
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2019</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
