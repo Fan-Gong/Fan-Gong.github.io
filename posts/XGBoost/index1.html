@@ -179,7 +179,7 @@
 
             <p>Here we define:
             \[f_t(x)= \omega_{q(x)}, q:R^{d}={1,2,..,T}, \omega \in R^{T}\]
-            where \(q(x)\) defines the tree structure and tells the mapping between each sample \(x\) to its tree leaves; \(\omega\) tells the leaf weight (leaf value) of that tree. In that case, one sample \(x_i\) belongs to one leave through \(q(x_i)\) and has the value \(\omega_{q(x_i)}\) </p>
+            where \(q(x)\) defines the tree structure and tells the mapping between each sample \(x\) to its tree leaves; \(\omega\) tells the leaf weight (leaf value) of that tree. In that case, one sample \(x_i\) belongs to one leaf through \(q(x_i)\) and has the value \(\omega_{q(x_i)}\) </p>
 
             <p>Therefore, the complication of a tree includes two parts:</p>
 
@@ -219,7 +219,7 @@
 
             <p>We can see that <strong>the loss function only depends on the first and second derivative of the loss function.</strong></p>
 
-            <h4 id="toc_9">2.2.2 From Sample to Leave Node</h4>
+            <h4 id="toc_9">2.2.2 From Sample to Leaf Node</h4>
 
             <p>Next we add regularization term together with the loss function to further optimize:
             \[\begin{align*}
@@ -227,8 +227,8 @@
             &amp;=\sum_{i=1}^{n}[g_i\omega_{q(x_i)} + \frac{1}{2}h_i \omega^2_{q(x_i)}]+ \gamma T + \frac{1}{2}\lambda\sum_{j=1}^{T}\omega_j^2 \\
             &amp;=\sum_{j=1}^{T}[(\sum_{i\in I_j}g_i)\omega_j + \frac{1}{2}(\sum_{i\in I_j}h_i + \lambda)\omega^2_j] + \gamma T
             \end{align*}\]
-            Where \(I_j\) contains all the sample index which belongs to leave node \(j\).
-            Here we did a transformation from sample to leave node. At the beginning we add every term up in sample level <strong>i \(\to\) n</strong>, then we use \(q(x)\) and \(\omega\) to define the tree structure and gradually transfer to add term up in node level <strong>j \(\to\) T</strong>. This transferring step is really important for solving this optimization problem.</p>
+            Where \(I_j\) contains all the sample index which belongs to leaf node \(j\).
+            Here we did a transformation from sample to leaf node. At the beginning we add every term up in sample level <strong>i \(\to\) n</strong>, then we use \(q(x)\) and \(\omega\) to define the tree structure and gradually transfer to add term up in node level <strong>j \(\to\) T</strong>. This transferring step is really important for solving this optimization problem.</p>
 
             <h4 id="toc_10">2.2.3 Optimal Solution:</h4>
 
