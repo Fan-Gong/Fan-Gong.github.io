@@ -108,23 +108,23 @@
           <div class="col-lg-8 col-md-10 mx-auto">
 
 
-            <p>I have planned to write this post long time ago. Thanks to my procrastination, I need to review it again and write it now. I divide this post into these several parts:</p>
+            <p>I have planned to write this post long time ago. Thanks to my procrastination, I need to review it again and write it now: This post include these several parts:</p>
 
             <ol>
             <li>Quick review of GBM </li>
-            <li><p>How to decide the value in each node</p>
+            <li>How to decide the value in each node
 
             <ul>
             <li>Object function </li>
             <li>Optimal Results</li>
             </ul></li>
-            <li><p>How to split the tree:
+            <li>How to split the tree:
               <ul>
               <li>Exact Greedy Algorithm </li>
               <li>Approximate Algorithm</li>
               </ul></li>
-            <li><p>System Design Overview </p></li>
-            <li><p>Parameter Explanation for XGBoost</p></li>
+            <li>System Design Overview </li>
+            <li>Parameter Explanation for XGBoost</li>
             </ol>
 
             <h2 id="toc_1">1. Review of GBM</h2>
@@ -139,7 +139,7 @@
 
             <p>I think for negative gradients part I still did not explain clearly last time. So, this time I would like to deep dive a little bit more:</p>
 
-            <p>We have our additive model like this:
+            <p>Remeber we have our additive model like this:
             \[\hat{y^{(t)}} = \hat{y^{(t-1)}} + f_t(X) \tag{1}\]
             And each time we want to train a weak learner \(y^{(t)}\) (here we use tree) to minimize the loss:
             \[\arg\min_{\hat{y^{(t)}}} \ L(y,\hat{y^{(t)}})\]
@@ -162,7 +162,7 @@
             <li>How to split the tree</li>
             </ul>
 
-            <p>Let&#39;s then look at how XGBoost solve these two problems.</p>
+            <p>Let&#39;s then look at how XGBoost solves these two problems.</p>
 
             <h2 id="toc_4">2. How to decide the value in each node</h2>
 
@@ -192,7 +192,7 @@
 
             <h3 id="toc_7">2.2 Optimal Solution</h3>
 
-            <p>After making clear the objective function, let&#39;s now try to answer the first question: <strong>How to decide the value in each node.</strong> From GBM we know, we tried to minimize the loss to find the optimal value representing each node (Mean for L2 loss and Median for L1 loss). Here we do the same with using one mathematical technique called Tyler Theorem:</p>
+            <p>After making clear the objective function, let&#39;s now try to answer the first question: <strong>How to decide the value in each node.</strong> From GBM we know, we tried to minimize the loss to find the optimal value and use it to represent each node (Mean for L2 loss and Median for L1 loss). Here we do the same with using one mathematical technique called Tyler Theorem:</p>
 
             <blockquote>
             <p>Tyler Theorem gives an approximation of a k-times differentiable function around a given point by a k-th order Taylor polynomial:(here we show the second-order estimation)
@@ -201,7 +201,7 @@
 
             <h4 id="toc_8">2.2.1 Usage of Tyler Formula</h4>
 
-            <p>After know this, we get back to our loss function without regularization term:
+            <p>After knowing this, we get back to our loss function without regularization term:
             \[\sum_{i=1}^{n}l(y_i,\hat{y_i^{(t-1)}}+f_t(x_i))\]
             If we ignore the \(y_i\) (that is the true value we already know), and bring Tyler formula into this:</p>
 
@@ -210,14 +210,14 @@
             <li>Let \(\Delta x\) matach with \(f_t(x_i)\)</li>
             </ul>
 
-            <p>Then we re-write the loss function as following:
+            <p>Then we can re-write the loss function as following:
             \[loss^{(t)}\approx \sum_{i=1}^{n}[l(y_i,\hat{y_i^{(t-1)}})+ g_if_t(x_i) + \frac{1}{2}h_if^2_t(x_i)]\]
             Where \(g_i = \partial_{\hat{y_i^{(t-1)}}} l(y_i,\hat{y_i^{(t-1)}})\) and \(h_i = \partial^2_{\hat{y_i^{(t-1)}}} l(y_i,\hat{y_i^{(t-1)}})\)</p>
 
             <p>Next, since we are using greedy method which means the value for previous \(t-1\) trees will be worked as known in stage \(t\), so \(l(y_i,\hat{y_i^{(t-1)}})\) is constant and can be ignored. After clean it up we get:
             \[loss^{(t)}\approx \sum_{i=1}^{n}[g_if_t(x_i) + \frac{1}{2}h_if^2_t(x_i)]\]</p>
 
-            <p>We can see that <strong>the loss function only depends on the first and second derivative of the loss function.</strong></p>
+            <p>We can see that <strong>the loss only depends on the first and second derivative of the loss function.</strong></p>
 
             <h4 id="toc_9">2.2.2 From Sample to Leaf Node</h4>
 

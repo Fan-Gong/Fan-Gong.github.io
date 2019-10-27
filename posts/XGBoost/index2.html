@@ -123,7 +123,7 @@
             <p>So by using this information, we can summarize an expression for measuring the gain of the split:</p>
 
             <p>\[Gain = \frac{1}{2}[\frac{G^2_L}{H_L+\lambda}+\frac{G^2_R}{H_R+\lambda} - \frac{(G_L+G_R)^2}{H_L+H_R+\lambda}]-\gamma\]
-            Where \(\frac{G^2_L}{H_L+\lambda}\) tells the gain for the left subtree, \(\frac{G^2_R}{H_R+\lambda}\) tells the gain for the right subtree. And \(\frac{(G_L+G_R)^2}{H_L+H_R+\lambda}\) tells the gain if we don&#39;t split tree. And finally \(\gamma\) is the price for adding a new tree. So basically, The gain is the left gain plus right gain minus no splitting gain and tree complication penalty.</p>
+            Where \(\frac{G^2_L}{H_L+\lambda}\) tells the gain for the left subtree, \(\frac{G^2_R}{H_R+\lambda}\) tells the gain for the right subtree. And \(\frac{(G_L+G_R)^2}{H_L+H_R+\lambda}\) tells the gain if we don&#39;t split tree. And eventually \(\gamma\) is the price for adding a new tree. So to sum them up, The total gain is the combination of left gain plus right gain minus no splitting gain and tree complication penalty.</p>
 
             <p>Normally we will set up a threshold, if the gain smaller the threshold, we will not allow this split.</p>
 
@@ -145,7 +145,8 @@
             <p><div style="text-align: center;">
                         <img class="img-fluid" src="2.jpg" alt="" align='middle'>
             </div></p>
-            the algorithm first proposes candidate
+            We can see that the last algorithm is quite time consuming so the author wants to come up with an approximation algorithm for speeding up.
+            The algorithm first proposes candidate
             splitting points according to percentiles of feature
             distribution.
             The algorithm then maps the continuous features into buckets split by these candidate points, aggregates the statistics and finds the best solution among proposals based on the aggregated statistics.</p>
