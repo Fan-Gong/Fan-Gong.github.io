@@ -158,10 +158,10 @@
             <h3 id="model-assumption">2.3 Model Assumption</h3>
             <p>After performing these analyses above, we could more easily understand the following assumptions:</p>
             <ol>
-            <li>Require the observations to be independent of each other</li>
-            <li>Require little or no multicollinearity among the independent variables</li>
-            <li>Assume linearity of independent variables and log odds.</li>
-            <li>Require large sample size</li>
+            <li><strong>Require the observations to be independent of each other</strong>: That's the assumption for Bernoulli distribution</li>
+            <li><strong>Require little or no multicollinearity among the independent variables</strong>: Same with linear regression. Multicollinearity will influence mostly the interpretability and stability of the model. The estimate of one variable's impact on the dependent variable tends to be less precise (Since the weight of the parameter for logit can be used to explain the model); Also it produces large standard errors in the related independent variables and solutions that are wildly varying and possibly numerically unstable</li>
+            <li><strong>Assume linearity of independent variables and log odds</strong>: Since logistic regression provides a linear decision boundary ($\beta x = 0$), so if the linearity is not satisfied, it is impossiable to find a good solution. </li>
+            <li><strong>Require large sample size</strong>: always good to have more data</li>
             </ol>
             <h3 id="multinomial-logistic-regression-model">2.4 Multinomial Logistic Regression Model</h3>
             <p>Based on the analysis above, we find that logistic regression could solve the binary classification problem, then how to generalize the model to multi-classes condition?</p>
@@ -197,7 +197,26 @@
             <p>Due to the space constraint, please refer to this link to see more detailed coding information:</p>
             <p><a href = "./Logistic_Regression.html" style="color:#a00e0e">Jupyter Notebook For Logistic Regression </a></p>
             <p>We could see logistic regression classify IRIS data very well.</p>
-            <p>All right, I think now we could have a very good understanding of Logistic Regression both on theory and implementation. Let us move to some other classification problem in the next post.</p>
+
+            <h2 class="section-heading">4. Summary</h2>
+
+            <p>Finally, lets summarize the pros and cons of logistic regression:</p>
+            <p><strong>Pros:</strong> </p>
+            <ul>
+            <li>Outputs have a nice probabilistic interpretation. We can also find the important feature by looking at the parameter weights</li>
+            <li>Outputs are easy to be modified based on the cut off threshold. Since LR output the probability score. </li>
+            <li>Very fast and computationally cheap </li>
+            <li>Can be regularized</li>
+            </ul>
+            <p><strong>Cons:</strong></p>
+            <ul>
+            <li>Underperform when there are multiple or non-linear decision boundaries. It is not flexible enough to naturally capture more complex relationship</li>
+            <li>Cannot handle large number of categorical features</li>
+            <li>Cannot deal with the imbalanced data problem </li>
+            </ul>
+            <p>If we want to use one sentence to describe logistic regression: <strong>Logistic regression assumes the binary data belongs to Bernoulli distribution, by using sigmoid function to approximate p(x), we then use MLE to estimate the parameter, and to get the solution we use gradient descent.</strong></p>
+
+            <p>All right, I think now we could have a very good understanding of Logistic Regression both on theory and implementation. Let us move to some other classification problems in the next post.</p>
             <blockquote class="blockquote">
             <p>Reference: <br><br />
             <a href="http://ml-cheatsheet.readthedocs.io/en/latest/logistic_regression.html" class="uri">http://ml-cheatsheet.readthedocs.io/en/latest/logistic_regression.html</a><br></br>
