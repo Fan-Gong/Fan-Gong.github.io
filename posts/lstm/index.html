@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>LSTM Input and Output</h1>
+              <h2 class="subheading">LSTM Note(1)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on Dec 17, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+
+
+            <p>When I start to use LSTM model, the first problem I faced was the model input format. Specifically, the input format is <strong>(# of samples, # of time steps, # of features)</strong>. It looks not difficult but there are many tricky things inside. So this post is going to detailedly help understand LSTM model structure especially the input and output.</p>
+
+            <h2 id="toc_1">1. LSTM Structure</h2>
+
+            <p>First and foremost, I think it is necessary to recap the structure of LSTM model. Here is my previous post link: <a href="https://fan-gong.github.io/posts/deep_learning/index8.html">RNN LSTM and GRU</a>. After reading, you will realize that this article as well as lots of other LSTM related blogs focus mostly on the explanation of single LSTM unit (that is the core for sure) but hard to find the ones grabbing more general structure. So this time I want to emphasize on the overall structure of LSTM.</p>
+
+            <p>Without further ado, let&#39;s directly look at one really amazing diagram I found from <a href = "https://github.com/MohammadFneish7/Keras_LSTM_Diagram">Mohammad Fneish&#39;s github</a>:</p>
+
+            <p><div style="text-align: center;">
+                        <img class="img-fluid" src="1.jpg" alt="" align='middle'>
+                        </div><hr></p>
+
+            <p>Let&#39;s look at the chart from bottom to the top and also summarized some bullet points:</p>
+
+            <p><strong>Input Data</strong></p>
+
+            <ul>
+            <li>For this specific input data, each sample has size \((3, 2)\) where 3 means 3 time steps and 2 means two features. Each sample will give a 2D array</li>
+            <li>We have two type of hidden states and cell states initialization based on the characteristic of the batches. In stateless cases, LSTM updates parameters on batch1 and then re-initiate hidden states and cell states (usually all zeros) for batch2; while in stateful cases, it uses batch1&#39;s last output hidden states and cell sates as initial states for batch2. Therefore:
+
+            <ul>
+            <li>Stateful LSTM is used when two sequences in two batches have connections (e.g. prices of one stock). And we need to specify the batch size (to make sure the state size is the same for each batch) at the same time make <code>shuffle = False</code>.</li>
+            <li>Stateless LSTM used when the sequence in two batches has no closed relations (e.g. one sequence represents a complete sentence) </li>
+            </ul></li>
+            </ul>
+
+            <p><strong>Hidden Layer</strong></p>
+
+            <ul>
+            <li><strong>The number of LSTM node in the layer equals to the number of time steps</strong> </li>
+            <li>Here I think despite of what this graph has showed, we can also stack the feature space in each time step, meaning combine \(X_{1,t_0}, X_{2,t_0}\) from size \((n, 1)\) to (# of sample in a batch, # of features), in that case we will only have one feature layer</li>
+            </ul>
+
+            <p><strong>Output Data</strong></p>
+
+            <ul>
+            <li>Output data shape is decided by user when initialize the hidden state and cell state. It is easier to think each time step as a fully connected layer with 1 inputs and 32 outputs but with a different computation than FC layers. </li>
+            <li>If you are about stacking multiple LSTM layers, use <code>return_sequences=True</code> parameter, so the layer will output the whole predicted sequence rather than just the last value. In another word: make it true if you want to predict <strong>next sequence of labels for a batch</strong>, else make it false if you want to predict <strong>only next value of a batch</strong></li>
+            </ul>
+
+            <p>If you still feel little bit confused about each parameter&#39;s size, there is one really good explanation here: <a href = "https://www.quora.com/In-LSTM-how-do-you-figure-out-what-size-the-weights-are-supposed-to-be/answer/Ashutosh-Choudhary-2">In LSTM, how do you figure out what size the weights are supposed to be?</a></p>
+
+            <h2 id="toc_2">2. LSTM With Time Step</h2>
+
+            <p>After previous discussion I think we are pretty much confident with the LSTM&#39;s input and output. We can easily find out that the main difference between LSTM model input and other traditional models is the usage of <strong># of time steps</strong>. So let&#39;s further look at this. </p>
+
+            <h3 id="toc_3">2.1 LSTM with one time step</h3>
+
+            <p>For example we have sales data with \(p\) other related features. and in most cases the value in \(t\) time will also be related to values in \(t-1, t-2..\). So here we were thinking to add more features with the window method. Basically we take \(w\) lags into considerations. For example if here we take window length \(w = 3\), then our input data shape will be \((n, 1, p+3)\). And if we use this as input data for LSTM, it will work similar to basic MLP model since here we only have one time step so actually the benefit of using LSTM cannot be fully reflected (remember the power of it is to have long-term memory due to the cell state). </p>
+
+            <h3 id="toc_4">2.3 LSTM with time steps</h3>
+
+            <p>Time steps provide another way to phrase our time series problem. Like above in the window example, we can take prior time steps in our time series as inputs to predict the output at the next time step. But still we deem each data sample an individual point and has no relationship with others.</p>
+
+            <p>So instead of phrasing the past observations as separate input features, we can use them as time steps of the one input feature, which is indeed a more accurate framing of the problem.</p>
+
+            <p>For example, if we have panel data (multi-group data across time), we can reshape the input data to: \((n \times m, t, p)\), here we suppose m is the number of groups, n is the row number for each group, t is the time steps for all groups (needs padding some time), and p is the number of features.</p>
+
+            <blockquote class="blockquote"> Reference:<br>
+
+            <a href = "https://machinelearningmastery.com/time-series-prediction-lstm-recurrent-neural-networks-python-keras/">https://machinelearningmastery.com/time-series-prediction-lstm-recurrent-neural-networks-python-keras/ </a><br>
+            <a href = "https://www.quora.com/In-LSTM-how-do-you-figure-out-what-size-the-weights-are-supposed-to-be/answer/Ashutosh-Choudhary-2">https://www.quora.com/In-LSTM-how-do-you-figure-out-what-size-the-weights-are-supposed-to-be/answer/Ashutosh-Choudhary-2</a><br>
+            <a href = "https://github.com/MohammadFneish7/Keras_LSTM_Diagram">https://github.com/MohammadFneish7/Keras_LSTM_Diagram</a>
+            </blockquote>
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2019</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
