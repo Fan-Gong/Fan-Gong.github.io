@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Linear Regression</h1>
+              <h2 class="subheading">Regression Model (1)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on Dec 12, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+
+
+            <p>Linear regression is the very first model people will learn in machine learning field. It tries to find the linear relationship between the independent and dependent variables. So this post will work as my review notes for capturing its important concepts.</p>
+
+            <h2 id="toc_0">1. Linear Regression</h2>
+
+            <h3 id="toc_1">1.1 Model Assumptions</h3>
+
+            <ol>
+            <li>Independent and dependent variables tends to have linear relationship </li>
+            <li>All features are not correlated with each other</li>
+            <li>There should be no correlation between the error terms </li>
+            <li>The error terms must have constant variance </li>
+            <li>The error terms also need to belong to normal distribution</li>
+            </ol>
+
+            <p><strong>What if these assumptions get violated:</strong></p>
+
+            <ol>
+            <li>If you fit a linear model to a non-linear, non-additive data set, the regression algorithm would fail to capture the trend mathematically, thus resulting in an inefficient model</li>
+            <li>Multicollinearity: It becomes difficult to find out which variable is actually contributing to predict the response variable; also it produces large standard errors in the related independent variables (also means wider confidence interval)</li>
+            <li>Autocorrelation: The presence of correlation in error terms drastically reduces model’s accuracy. This usually occurs in time series models where the next instant is dependent on previous instant. If the error terms are correlated, the estimated standard errors tend to underestimate the true standard error.</li>
+            <li>Heteroskedasticity: Generally, non-constant variance arises in presence of outliers or extreme leverage values. Look like, these values get too much weight, thereby disproportionately influences the model’s performance. When this phenomenon occurs, the confidence interval for out of sample prediction tends to be unrealistically wide or narrow.</li>
+            <li>OLS will not work well. And confidence intervals may become too wide or narrow</li>
+            </ol>
+
+            <p>I think for all these assumptions, the normality of error term is kind of weak. </p>
+
+            <h3 id="toc_2">1.2 Parameter Estimation</h3>
+
+            <p>\[\hat{y_i} = b_1x_i+ b_0 + \epsilon\]</p>
+
+            <p>There are two ways to estimate the parameters:</p>
+
+            <ul>
+            <li>Ordinary least squares: \(\arg\min_{\beta_0 , \beta_1}  \sum(y_i-\hat{y_i})^2\). If we deem it as a function of parameter \(\beta\), we can then do partial derivative for all parameters and makes it equal to 0 to get the optimal estimation. </li>
+            <li>MLE: It is then an inference problem. We know if the error term \(\epsilon \sim N(0,\sigma^2)\) then \(\hat{y_i} \sim N(b_1x_i+ b_0, \sigma^2)\). So the pdf function will be:
+            \[p(y|x,b_0,b_1,\sigma) = \prod_{I=1}^n \frac{1}{2\pi \sigma^2}e^{-\frac{(y_i-b_0-b_1x_i)^2}{2\sigma^2}}\]
+            Since the data are known, so we can deem this pdf as the likelihood function for any parameters. Our goal is then to:
+            \[\arg \max_{b_0,b_1} log \sum_{i=1}^n -(y_i-b_0-b_1x_i)^2\]
+            Which equals to:
+            \[\arg \min_{b_0,b_1}log \sum_{i=1}^n (y_i-b_0-b_1x_i)^2\]</li>
+            </ul>
+
+            <p>So we can see when the error term \(\epsilon\) belongs to normal distribution, the MLE is totally the same with OLS. However, if the error is not normal, MLE should perform better. This situation happens when certain assumptions for OLS are not satisfied for example the error term is not iid normal distribution. </p>
+
+            <h3 id="toc_3">1.3 Advantages/Disadvantages</h3>
+
+            <p><strong>Pros:</strong></p>
+
+            <ul>
+            <li>Linear regression is an extremely simple method. It is very easy to use, understand, and explain.</li>
+            <li>The best fit line is the line with minimum error from all the points, it has high efficiency</li>
+            </ul>
+
+            <p><strong>Cons:</strong></p>
+
+            <ul>
+            <li>Linear regression only models relationships between dependent and independent variables that are linear. It assumes there is a straight-line relationship between them which is incorrect sometimes.</li>
+            <li>Linear regression is very sensitive to the anomalies/outliers in the data</li>
+            <li>If the number of the parameters are greater than the samples, then the model starts to model noise rather than relationship</li>
+            </ul>
+
+            <h3 id="toc_4">1.4 Parameter Confidence Interval</h3>
+
+            <p>I reviewed inference part from <a href="https://fan-gong.github.io/posts/Inference_Review/index2.html">this post</a> but I think I did not write a complete one. So here I am trying to re-write it and also combine it with the linear regression knowledge. </p>
+
+            <p>The intuition of confidence interval is that we want to know how confident about our estimation. So we want to find a statistic which has a <strong>known</strong> distribution and contains both the true value and our estimation, in the sense after transformation we can get (take \(\mu\) as an example):
+            \[P(\mu \in [\hat{\mu}-s, \hat{\mu}+s]) \ge 1-\alpha\]</p>
+
+            <p><strong>a). Confidence Interval for the mean of a Gaussian</strong></p>
+
+            <p>Suppose we have \(n\) observations \(x_i\) where \(x_1,...,x_n \sim N(\mu,\sigma^2)\)
+            and our goal is to estimate the \(\mu\). </p>
+
+            <ul>
+            <li><p>If \(\sigma\) is known, the MLE of \(\mu\) is the sample mean: \[\hat{\mu}=\frac{1}{n}\sum_{i=1}^n x_i \sim N(\mu, \frac{\sigma^2}{n})\] and we can easily find: \[\frac{\sqrt{n}(\hat{\mu}-\mu)}{\sigma} \sim N(0,1)\] so the \(1-\alpha\) CI is: \[P(\frac{\sqrt{n}(\hat{\mu}-\mu)}{\sigma} \in [-s,s]) = 1-\alpha\] After transformation we can get:\[P(\mu \in [\hat{\mu}-s\sigma \sqrt{n} ,\hat{\mu}+s\sigma \sqrt{n}]) = 1-\alpha\]</p></li>
+            <li><p>If \(\sigma\) is unknown, so we first use MLE to get the sample variance: \[\hat{\sigma}= \sqrt{\frac{1}{n}\sum_{I=1}^n(x_i-\bar{x})}\] Then we need to characterize the distribution of \(\frac{\sqrt{n}(\hat{\mu}-\mu)}{\sqrt{\frac{1}{n}\sum_{I=1}^n(x_i-\bar{x})}}\). If we divide both the numerator and denominator by \(\frac{\sigma}{\sqrt{n}}\), then We can see the numerator belongs to normal distribution, and the denominator belongs to \(\chi^2(n-1)\). So overall it belongs to \(t(n-1)\). Then we can use the same way above to calculate the CI </p></li>
+            </ul>
+
+            <p><strong>b). Confidence Interval for Linear Regression</strong></p>
+
+            <p>Use the logic above, we can also get the confidence interval for all the parameter estimations in linear regression. So I will not write down the math transformation here but it is easy to prove that all the parameters will either belong to normal or t distribution based on whether the error term \(\epsilon\) has the known or unknown \(\sigma\) value.</p>
+
+            <h3 id="toc_5">1.5 Bias-variance Trade-off</h3>
+
+            <p>We know for all the machine learning models we need to minimize the loss, suppose we choose squared loss here:
+            \[L(y, \hat{y}) = \frac{1}{n}\sum(y_i-\hat{y_i})^2 = E[(y - \hat{y})^2]\]</p>
+
+            <p>If we do a trick to add the mean value of \(\hat{y}\) and minus it after, we can get:
+            \[E[(y - \hat{y})^2] = E(y-\bar{\hat{y}}+\bar{\hat{y}} -\hat{y})^2\]
+            To further transform, we get:
+            \[E[(y - \hat{y})^2] = E[(y-\bar{\hat{y}})^2] + E[(\hat{y}-\bar{\hat{y}})^2] = Bias + Varaince\] </p>
+
+            <p><strong>Bias</strong>: The deviation of average prediction from true value; So to lower bias we tend to give a complicate model.</p>
+
+            <p><strong>Variance</strong>: The variance of predictions. So lower variance we tend to give a simple model.</p>
+
+            <p>So you can see the trade-off here, and a good model will need to have both small bias and variance.</p>
+
+            <h3 id="toc_6">1.6 Some statistics to evaluate the performance</h3>
+
+            <p><strong>Coefficient of determination (\(R^2\))</strong></p>
+
+            <p>\[R^2 = 1 - \frac{SS_{res}}{SS_{tot}}=\frac{SS_{reg}}{SS_{tot}}\]
+            Where \(SS_{res}=\sum(y_i - \hat{y_i})\), \(SS_{reg}=\sum(\hat{y_i}-\bar{y_i})\), \(SS_{tot}=\sum(y_i - \bar{y_i})\)</p>
+
+            <p>So we can deem is as the percentage variance explained by the model. But high \(R^2\) may result from overfitting; also, as we increase the number of features, \(R^2\) will always increase because the variance will be explained more. </p>
+
+            <p><strong>Adjusted \(R^2\)</strong>
+            To solve the problem that \(R^2\) tend to give more complicated models, Adjusted \(R^2\) will penalize you for adding independent variables.
+            \[Adjusted \ R^2 = \frac{\frac{SS_{reg}}{n-p-1}}{\frac{SS_{tot}}{n-1}}\]</p>
+
+            <p><strong>AIC and BIC</strong></p>
+
+            <p>AIC and BIC are penalized-likelihood criteria.</p>
+
+            <p>Suppose that we have a statistical model of some data. Let p be the number of estimated parameters in the model. Let \( {\hat {L}}\) be the maximum value of the likelihood function for the model; \(n\) be the number of data points. Then the AIC and BIC value of the model is the following：
+            \[{AIC} \,=\,2p-2\ln({\hat {L}})\]
+            \[{BIC} \,=\,log(n)p-2\ln({\hat {L}})\]</p>
+
+            <p>So despite various subtle theoretical differences, their only difference in practice is the size of the penalty; BIC penalizes model complexity more heavily</p>
+
+            <h2 id="toc_7">2. Regression with Ridge and Lasso</h2>
+
+            <p>Ridge uses L2 penalty when fitting the model and lasso uses L1 penalty. </p>
+
+            <ul>
+            <li><p>For ridge:
+            \[\hat{\beta_{ridge}}=\arg\min \sum_{i=1}^{n} L(y_i,\hat{y_i})+ \lambda \sum_{j=1}^p \beta_j^2\]</p></li>
+            <li><p>For lasso:
+            \[\hat{\beta_{lasso}}=\arg\min \sum_{i=1}^{n} L(y_i,\hat{y_i})+ \lambda \sum_{j=1}^p |\beta_j|\]</p></li>
+            </ul>
+
+            <p>\(\lambda\) is the tuning parameter that decides how much we want to penalize the flexibility of our model.
+            As lambda increases, the impact of the shrinkage penalty grows, and the regression coefficient estimates will approach zero. Selecting a good value of lambda is critical, cross validation comes in handy for this purpose, the coefficient estimates produced by this method are also known as the L1/L2 norm.</p>
+
+            <p>Comparison:</p>
+
+            <ul>
+            <li>Ridge will perform better when the response is a function of many predictors, all with coefficients of roughly equal size; Ridge regression also has substantial computational advantages. </li>
+            <li>Lasso will perform better in a setting where a relatively small number of predictors have substantial coefficients, and the remaining predictors have coefficients that are very small or that equal zero</li>
+            <li>Cannot deal with the imbalanced data problem </li>
+            </ul>
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2019</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
