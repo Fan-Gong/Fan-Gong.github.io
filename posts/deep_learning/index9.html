@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('background9.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Attention Model</h1>
+              <h2 class="subheading">Neural Network Learning notes (6)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on Dec 17, 2019</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+
+
+<h2 id="toc_1">1. Why we need it?</h2>
+
+<p>First lets review what sequence to sequence model does:
+<div style="text-align: center;">
+            <img class="img-fluid" src="9.1.jpg" alt="" align='middle'>
+            <a href = "https://easyai.tech/ai-definition/encoder-decoder-seq2seq/"> Image is from easyai </a>
+            </div>
+We have a fixed length <strong>vector C</strong> that contains all the information we encoded for input sequence. But you can imagine, as the sequence length gets longer, it is hard for vector C to store all necessary information. So in order to overcome this, we would like to make vector C a sequence vectors; at the same time focus on different part of the necessary information. 
+<div style="text-align: center;">
+            <img class="img-fluid" src="9.2.jpg" alt="" align='middle'>
+            <a href = "https://easyai.tech/ai-definition/encoder-decoder-seq2seq/"> Image is from easyai </a>
+            </div></p>
+
+<p>You may argue that LSTM or GRU also has the functionality to remember both the long and short term memory (which is basically the name of LSTM). However to achieve that we need to store lots of different parameters. </p>
+
+<p>However for attention based model we can achieve that without having more parameters.</p>
+
+<h2 id="toc_2">2. Basic Structure</h2>
+
+<p>1) Use bidirectional GRU/LSTM for encoding</p>
+
+<p>2) Instead of one output for each of the sequence, for decoder we build one RNN on top of each unit (like adding one more layer)</p>
+
+<p>3) Use attention weights to get useful information for the encoder  </p>
+
+<p>I think among all tutorial materials, professor Hung-yi Lee&#39;s make more sense. He made one specific machine translation examples:
+<div style="text-align: center;">
+            <img class="img-fluid" src="9.3.jpg" alt="" align='middle'>
+            <a href = "http://speech.ee.ntu.edu.tw/~tlkagk/courses/MLDS_2015_2/Lecture/Attain%20(v3).ecm.mp4/index.html"> Image is from Hung-yi Lee </a>
+            </div>
+The key idea is:</p>
+
+<ul>
+<li>One vector from the encoder is hard to represent all the information. At the same time, for the input from decoder, we not only want the overall info, but also some focus for only translating this unit</li>
+<li>What we will do is that we calculate the similarities or to say try to find the most relevant input part by using either Cosine similarities or building one simple NN, after that use softmax to standardize this relevance. (Here \(\alpha\) represent the relevance)</li>
+<li>Finally calculate the weighted sum (weight is the relevance parameter \(alpha\) and value is the activations for each hidden layer) as the input for that decoder unit </li>
+</ul>
+
+<h2 id="toc_3">3. Why works?</h2>
+
+<p>Still use back propagation to get the attention weights for each of the unit, but this time we use the weights to tell us which part of the sequence we need to focus on. Comparing with the traditional encoder-decoder model which will take the whole sequence as a whole for the decoder.</p>
+
+            <p><blockquote class="blockquote"> Reference: <br></p>
+
+            <p><a href="https://www.coursera.org/specializations/deep-learningaction=enroll&authMode=login&specialization=deep-learning"> DeepLearning.ai</a><br>
+             <a href = "http://speech.ee.ntu.edu.tw/~tlkagk/courses.html">http://speech.ee.ntu.edu.tw/~tlkagk/courses.html</a>
+             <br><a href = "https://easyai.tech/ai-definition/encoder-decoder-seq2seq/">https://easyai.tech/ai-definition/encoder-decoder-seq2seq/</a></p>
+
+            <p></blockquote class="blockquote"></p>
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2019</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>
