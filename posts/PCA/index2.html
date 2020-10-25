@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Fan Gong's Blog</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../img/title.png" type="image/png">
+
+    <!-- Custom fonts for this template -->
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../../css/clean-blog.min.css" rel="stylesheet">
+
+    <script type="text/x-mathjax-config"> MathJax.Hub.Config({
+            extensions: ["tex2jax.js"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+            tex2jax: {
+                inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                processEscapes: true
+            }});
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
+    </script>
+
+    <style>
+      table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+      }
+
+      td, th {
+          border: 1px solid #dddddd;
+          text-align: left;
+          padding: 8px;
+      }
+
+      tr:nth-child(even) {
+          background-color: #dddddd;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="../../index.html">Fan Gong's Blog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../about.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../article.html">Article</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="masthead" style="background-image: url('./pca2.jpg')">
+      <div class="overlay"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-heading">
+              <h1>Comparison Between PCA and SVD</h1>
+              <h2 class="subheading">Unsupervised Learning Method (3)</h2>
+              <span class="meta">Posted by
+                <a href="../../about.html">Fan Gong</a>
+                on Oct 25, 2020</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <p>Recently I was asked about the difference between PCA and SVD and I realized I could not answer it well. So today let&#39;s extend from my last post <a href=https://fan-gong.github.io/posts/PCA/index.html> PCA</a> and simply summarize the similarities and difference between PCA and SVD.</p>
+
+<h3 id="toc_1">1.  SVD for dimension reduction</h3>
+
+<h4 id="toc_2">1.1. SVD in PCA</h4>
+
+<p>First lets review how to use SVD to realize PCA:
+<p>SVD tells us that any arbitrary matrix \(X\) can be converted to an orthogonal matrix, a diagonal matrix and another orthogonal matrix:
+            \[X = U \Sigma V^T\]
+            Then: 
+            \[\begin{align*}
+            C_X &amp;= \frac{1}{n-1}X^TX \\&amp;=(V \Sigma U^T)(U\Sigma V^T) \\ &amp;= V\Sigma^2V^T
+            \end{align*}\]</p>
+            If we define \(P = V\), then:
+            \[\begin{align*}
+            C_Y &amp;= (XP)^T(XP) \\ &amp;=P^TP\Sigma U^T U \Sigma P^TP \\ &amp;=\Sigma^2
+            \end{align*}\]
+Therefore, the columns of \(V\) are the loading vectors of \(X\)</p>
+
+<h4 id="toc_3">1.2 SVD itself performs dimension reduction</h4>
+
+<p>SVD can not only used to prove PCA, itself can also perform dimension reduction:
+we know SVD is:
+\[X_{(m,n)} = U_{(m,m)} \Sigma_{(m,n)} V^T_{(n,n)}\]</p>
+
+<p>We found out that the sum of top 10% or 1% diagonal elements of matrix \(\Sigma_{(m,n)}\) which are singular values represent almost 99% of the sum of all singular values. In that case we can use only top k singular values and the corresponding \(U\) and \(V\) to re-express the original matrix.</p>
+
+<h3 id="toc_4">2. Difference comparing to PCA</h3>
+
+<ol>
+<li><p>Purpose </p>
+
+<ul>
+<li>SVD is a method to purely decompose a matrix. It generalizes the eigen-decomposition of a square normal matrix to any \(m\times n\) matrix via an extension of the polar decomposition.</li>
+<li>PCA literally is a method for dimension reduction</li>
+</ul></li>
+<li><p>Method</p>
+
+<ul>
+<li><strong>PCA needs to calculate the covariance matrix which will take a lot of time</strong> when there are lots of data and features</li>
+<li>SVD can calculate right singular matrix V without calculating covariance matrix \(X^TX\), so that it will take less time than PCA using eigenvector decomposing method</li>
+<li>Also, you may notice that SVD only uses the right singular matrix \(V\) but not left one \(U\). Lets say we have \(X_{m,n}\), and we found the matrix \(U_{(m,d)}\) which gives the k-dimensional \(V\). If we do: \(X&#39; = U^T_{(d,m)} X_{(m,n)}\) then it results in a \(d \times n\) matrix. It tells us that the left singular matrix \(U\) is for compressing the data in row level and the right singular matrix \(V\) is for compressing in column level. In another word, <strong>SVD could compress the data in two directions whereas PCA can only get the feature-wise dimension reduction.</strong></li>
+</ul></li>
+<li><p>Implementation</p>
+
+<ul>
+<li>SVD can deal with sparse-matrix better -&gt; save more space for large matrix</li>
+<li>PCA needs to do normalization which will destroy the sparsity for its original matrix</li>
+</ul></li>
+</ol>
+
+<p>Hopefully after reading this short article you can have a deeper understanding of PCA and SVD. </p>
+
+<blockquote class="blockquote">
+<p>Reference: <br><br>
+Book: <a href="http://www-bcf.usc.edu/~gareth/ISL/">An Introduction to Statistical Learning </a><br>
+<a href="https://arxiv.org/abs/1404.1100">https://arxiv.org/abs/1404.1100</a><br>
+<a href="http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html"> sklean.decomposition.PCA documentation</a>
+<a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">https://en.wikipedia.org/wiki/Singular_value_decomposition</a>
+<a href="https://www.cnblogs.com/bjwu/p/9358777.html">https://www.cnblogs.com/bjwu/p/9358777.html</a><br>
+</blockquote>
+
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <ul class="list-inline text-center">
+              <li class="list-inline-item">
+                <a href="https://twitter.com/Fan93fine">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://www.facebook.com/profile.php?id=100012777241298">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="https://github.com/Fan-Gong">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <p class="copyright text-muted">Copyright &copy; Fan Gong 2018</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/clean-blog.min.js"></script>
+
+  </body>
+
+</html>

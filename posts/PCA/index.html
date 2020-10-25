@@ -145,7 +145,7 @@
             $$\begin{align*}
             C_Y & = \frac{1}{n-1}YY^T \\ &= \frac{1}{n-1} (PX)(PX)^T \\ &= \frac{1}{n-1}PXX^TP^T \\ &=P(\frac{1}{n-1}XX^T)P^T \\&= PC_XP^T
             \end{align*}$$</p>
-            <p>Then, we have a theorem that for a symmetric matrix $A$ is diagonalized by an orthogonal matrix of its eigenvectors. $A = EDE^T$, where $D$ is a diagonal matrix and $E$ is a matrix of eigenvectors of $A$ arranged as columns. So we want our $C_Y$ to be that $D$ matrix.</p>
+            <p>Then, we have a theorem that for a symmetric matrix $A$ is diagonalized by an orthogonal matrix of its eigenvectors. $A = EDE^T$, where $D$ is a diagonal matrix and $E$ is a matrix of eigenvectors of $A$ arranged as columns. So we want our $C_X$ to be that $D$ matrix.</p>
             <p>Based on theroem that the inverse of an orthogonal matrix is its transpose, we find that when $P = E^T$ or to say $p_i$ is an eigenvecotor of $C_X$, we could get that results. Here is the proof:
             $$\begin{align*}
             C_Y & = PC_XP^T \\ &= P(E^TDE)P^T \\ &=(PP^T)D(PP^T) \\ &=(PP^{-1})D(PP^{-1}) \\&=D
@@ -183,10 +183,13 @@
             <li>In most cases we not only need to center the data (Centering is because that makes it easy to calculate the covaiance matrix), but also standadizing it to make each feature in the same scale</li>
             </ul>
             <h2 id="pca-implementation">3. PCA Implementation</h2>
-            <p>In practice, computing PCA entails:</p>
+            <p>In practice, computing PCA entails (suppose we have $X_{(m,n)}$):</p>
             <ol>
             <li>Subtracting off the mean of each feature</li>
+            <li>Calculating the covariance matrix $C_X$</li>
             <li>Computing the eigenvectors of $C_X$</li>
+            <li>Taking top k eigenvalues's associated eigenvectors and form into matrix $P$</li>
+            <li>$Y=PX$ is the output of k-dimensional data</li>
             </ol>
             <p>Here is the link for <a href="./PCA.html" style="color:#a00e0e">Jupyter Notebook of PCA </a>.</p>
             <p>All right, these are all the reviews for PCA. Let us see more unsupervised learning method the next time.</p>
@@ -195,7 +198,8 @@
 <p>Reference: <br><br>
 Book: <a href="http://www-bcf.usc.edu/~gareth/ISL/">An Introduction to Statistical Learning </a><br>
 <a href="https://arxiv.org/abs/1404.1100">https://arxiv.org/abs/1404.1100</a><br>
-<a href="http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html"> sklean.decomposition.PCA documentation</a></p>
+<a href="http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html"> sklean.decomposition.PCA documentation</a><br>
+<a href="https://www.cnblogs.com/bjwu/p/9358777.html">https://www.cnblogs.com/bjwu/p/9358777.html</a><br>
 </blockquote>
 
 
