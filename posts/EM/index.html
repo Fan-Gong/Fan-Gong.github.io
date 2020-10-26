@@ -164,6 +164,23 @@
             <div style="text-align: center;"><br />
             <img class="img-fluid" src="1.jpg" alt="" align='middle'><br />
             </div></p>
+            <h3 id="toc_0">2.3 How to find the optimal k</h3>
+
+<p>Since it is an unsupervised learning method, so how to find the cluster number k is a problem that cannot be learned from data but needs to be decided from the user. Normally there are following several ways:</p>
+
+<ol>
+<li><p>The Elbow method:</p>
+
+<p>The elbow method looks at the percentage of variance explained as a function of the number of clusters. Percentage of variance explained is the ratio of the between-group variance to the total variance. Here 
+\[𝑆𝑆𝐸_{between}=\sum_{k=1}^Kn_k(\bar{x_k} - \bar{x})^2 \]</p>
+
+<p>where  \(n_k\)  is the number of observations assigned to cluster \(k\), \(\bar{x_k}\)  is the centroid for cluster \(k\), and  \(\bar{x}\) is the overall mean of the data.
+And total variance is:
+\[SSE = \sum_{i=1}^{n}(x_i-\bar{x})^2\]</p></li>
+<li><p>Information Criterion Approach 
+The k-means model is &quot;almost&quot; a gaussian mixture model and we can calculate likelihood for each data point and also determine information criterion values</p></li>
+</ol>
+
             <h2 id="k-medoids">3. K-medoids</h2>
             <p>There is another method that is very similar to k-means. The difference is that we will choose the <strong>observation</strong> to work as the centroid to minimize the pairwise distance. Here are the comparisons:</p>
             <ul>
